@@ -25,5 +25,6 @@
     <modules>
         <module>JPojoAssert-processor</module>
         <module>JPojoAssert-end-to-end</module>
+        <module>JPojoAssert-Vision</module>
     </modules>
 </project>
