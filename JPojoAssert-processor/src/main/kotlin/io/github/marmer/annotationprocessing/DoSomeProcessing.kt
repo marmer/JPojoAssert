@@ -1,11 +1,5 @@
-package io.github.marmer.annotationprocessing;
+package io.github.marmer.annotationprocessing
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.SOURCE)
-public @interface DoSomeProcessing {
-}
+@Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+annotation class DoSomeProcessing
