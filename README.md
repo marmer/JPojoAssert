@@ -15,11 +15,11 @@ Example:
             .withFirstProperty()
             .withFirstProperty("Some value")
             .withFirstProperty(equalTo("Some value"))
-            .withFirstProperty(() -> assertThat(it, equalTo("Some value")))
+            .withFirstProperty(() -> {assertThat(it, equalTo("Some value"))})
             .withSecondProperty()
             .withSecondProperty(42)
             .withSecondProperty(equalTo(42))
-            .withSecondProperty(() -> assertThat(it, equalTo("42")))
+            .withSecondProperty(() -> {assertThat(it, equalTo("42"))})
             .assertSoftly()
 ```
 
