@@ -10,17 +10,13 @@ How does it work? It's a Java annotation Processor.
 Example:
 ```java
         SomePojoAsserter.assertThat(pojo)
-            .matches(hasProperty("notExistingProperty"))
-            .isInstanceOfSomePojo()
-            .withFirstProperty()
-            .withFirstProperty("Some value")
-            .withFirstProperty(equalTo("Some value"))
-            .withFirstProperty(() -> assertThat(it, equalTo("Some value")))
-            .withSecondProperty()
-            .withSecondProperty(42)
-            .withSecondProperty(equalTo(42))
-            .withSecondProperty(() -> assertThat(it, equalTo("42")))
-            .assertSoftly()
+            .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
+            .isInstanceOfSomePojo() // Optional Check whether it is an instance related to the Base Class the Asserter was created of
+            .withFirstProperty() // Check whether the passed pojo has a property
+            .withFirstProperty("Some value") // Equals Check for the value of the related property of the pojo
+            .withFirstProperty(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo
+            .withFirstProperty(() -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth)            
+            .assertSoftly() // Soft assertion for an atomic result (you could also use assertHardly())
 ```
 
 UNDER CONSTRUCTION
