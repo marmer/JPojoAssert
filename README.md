@@ -3,7 +3,7 @@
 JPojoAssert
 ===========
 
-Vision: A library which generates compile safe assertions for Pojos, Beans, Models, Entities, Objects, Types, ... (whatever you wanna call it) with properties in a fluent and typesafe and (optional) an atomic way.    
+Vision: A library which generates compile safe assertions for Pojos, Beans, Models, Entities, Objects, Types, ... (whatever you wanna call it) with properties in a fluent and typesafe and (optional) an atomic way and independently of a testingframework. (Should at least work with JUnit4, JUnit5 and TestNG)    
 
 Example:
 ```java
