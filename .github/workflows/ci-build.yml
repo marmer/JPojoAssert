@@ -28,7 +28,7 @@ jobs:
       run: ./mvnw clean install
 
     - name: Analyze with SonarCloud
-      run: ./mvnw -B verify sonar:sonar -Dsonar.projectKey=io.github.marmer.testutils:jpojoassert -Dsonar.organization=marmer-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.scanner.force-deprecated-java-version
+      run: ./mvnw -B verify sonar:sonar -Dsonar.projectKey=marmer_JPojoAssert -Dsonar.organization=marmer-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN -Dsonar.scanner.force-deprecated-java-version
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
