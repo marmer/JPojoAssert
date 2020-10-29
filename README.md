@@ -13,8 +13,9 @@ Example:
             .withFirstProperty() // Check whether the passed pojo has a property
             .withFirstProperty("Some value") // Equals Check for the value of the related property of the pojo
             .withFirstProperty(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo
-            .withFirstProperty(() -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
+            .withFirstProperty(it -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
             .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
+            .matches( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
             .isInstanceOfSomePojo() // Optional Check whether it is an instance related to the Base Class the Asserter was created of
             .assertSoftly() // Soft assertion for an atomic result (you could also use assertHardly())
 ```
