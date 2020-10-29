@@ -16,8 +16,8 @@
         <kotlin.code.style>official</kotlin.code.style>
         <sonar.organization>marmer-github</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.sources>src/main/*</sonar.sources>
-        <sonar.tests>src/test/*</sonar.tests>
+        <sonar.sources>src/main/java,src/main/kotlin</sonar.sources>
+        <sonar.tests>src/test/java,src/test/kotlin</sonar.tests>
         <sonar.test.inclusions>**/*Test*/**</sonar.test.inclusions>
         <sonar.exclusions>**/*Test*/**</sonar.exclusions>
     </properties>
