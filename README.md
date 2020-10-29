@@ -10,7 +10,7 @@ How does it work? It's a Java annotation Processor.
 Example:
 ```java
         // Pojos, Beans, Models, Entities, Objects, Types, ...
-        public static class SomePojo{
+        public class SomePojo{
                 private String firstProperty;
                 private String getFirstProperty(){
                         return firstProperty;
