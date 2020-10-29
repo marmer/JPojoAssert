@@ -9,6 +9,17 @@ How does it work? It's a Java annotation Processor.
 
 Example:
 ```java
+        // Pojos, Beans, Models, Entities, Objects, Types, ...
+        public static class SomePojo{
+                private String firstProperty;
+                private String getFirstProperty(){
+                        return firstProperty;
+                }
+        }
+```
+
+```java
+        // Sample Assertion related to "SomePojo"        
         SomePojoAsserter.assertThat(pojo)
             .withFirstProperty() // Check whether the passed pojo has a property
             .withFirstProperty("Some value") // Equals Check for the value of the related property of the pojo
