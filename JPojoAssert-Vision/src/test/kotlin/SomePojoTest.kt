@@ -20,16 +20,16 @@ internal class SomePojoTest {
 
         // Assertion
         SomePojoAsserter.assertThat(pojo)
-            .matches(hasProperty("notExistingProperty"))
+//            .matches(hasProperty("notExistingProperty"))
             .isInstanceOfSomePojo()
             .withFirstProperty()
-            .withFirstProperty("x")
-            .withFirstProperty(equalTo("x"))
-            .withFirstProperty { assertThat(it, equalTo("x")) }
+            .withFirstProperty("Some value")
+            .withFirstProperty(equalTo("Some value"))
+            .withFirstProperty { assertThat(it, equalTo("Some value")) }
             .withSecondProperty()
-            .withSecondProperty(3)
-            .withSecondProperty(equalTo(3))
-            .withSecondProperty { assertThat(it, equalTo("3")) }
+            .withSecondProperty(42)
+            .withSecondProperty(equalTo(42))
+            .withSecondProperty { assertThat(it, equalTo("42")) }
 //            .assertHardly()
             .assertSoftly()
     }
