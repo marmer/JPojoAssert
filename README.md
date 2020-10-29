@@ -9,12 +9,16 @@ How does it work? It's a Java annotation Processor.
 
 Example:
 ```java
-        // Pojos, Beans, Models, Entities, Objects, Types, ...
+        // Some possible Pojos, Beans, Models, Entities, Objects, Types, ...
         public class SomePojo{
                 private String firstProperty;
-                private String getFirstProperty(){
+                public String getFirstProperty(){
                         return firstProperty;
                 }
+        }
+        
+        public interface SomePojo{
+                public String getFirstProperty()
         }
 ```
 
