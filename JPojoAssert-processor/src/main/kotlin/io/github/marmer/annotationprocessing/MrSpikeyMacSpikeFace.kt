@@ -19,7 +19,8 @@ class MrSpikeyMacSpikeFace : AbstractProcessor() {
     override fun process(set: Set<TypeElement?>, roundEnvironment: RoundEnvironment): Boolean {
         if (!roundEnvironment.processingOver()) {
             processingEnv.messager.printMessage(
-                Diagnostic.Kind.ERROR, "WIRD AUSGEFÜHRT. Gefunden: " + roundEnvironment.getElementsAnnotatedWith(
+                Diagnostic.Kind.MANDATORY_WARNING,
+                "WIRD AUSGEFÜHRT. Gefunden: " + roundEnvironment.getElementsAnnotatedWith(
                     DoSomeProcessing::class.java
                 ).toString()
             )
