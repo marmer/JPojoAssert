@@ -20,7 +20,6 @@ internal class SomePojoTest {
 
         // Assertion
         SomePojoAsserter.assertThat(pojo)
-//            .matches(hasProperty("notExistingProperty"))
             .isInstanceOfSomePojo()
             .withFirstProperty()
             .withFirstProperty("Some value")
@@ -30,6 +29,8 @@ internal class SomePojoTest {
             .withSecondProperty(42)
             .withSecondProperty(equalTo(42))
             .withSecondProperty { assertThat(it, equalTo("42")) }
+            .matches(hasProperty("notExistingProperty"))
+            .matches { assertThat(it, hasProperty("notExistingProperty")) }
 //            .assertHardly()
             .assertSoftly()
     }
@@ -68,6 +69,9 @@ class SomePojoAsserter private constructor(
 
     fun matches(matcher: Matcher<SomePojo>) =
         plusAssertion { assertThat(pojo, matcher) }
+
+    fun matches(dynamicAssertion: (SomePojo) -> Unit) =
+        plusAssertion { dynamicAssertion(pojo) }
 
     // ###### First Property ###########
     fun withFirstProperty() =
