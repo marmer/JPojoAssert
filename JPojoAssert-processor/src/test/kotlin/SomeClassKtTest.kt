@@ -7,6 +7,8 @@ internal class SomeClassKtTest {
 
         // Execution
         val result = someMethod()
+        someOtherMethod()
+        yetAnotherMethod()
 
         // Assertion
     }
