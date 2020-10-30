@@ -28,9 +28,9 @@ internal class SomePojoTest {
             .withSecondProperty()
             .withSecondProperty(42)
             .withSecondProperty(equalTo(42))
-            .withSecondProperty { assertThat(it, equalTo("42")) }
-            .matches(hasProperty("notExistingProperty"))
-            .matches { assertThat(it, hasProperty("notExistingProperty")) }
+            .withSecondProperty { assertThat(it, equalTo(42)) }
+//            .matches(hasProperty("notExistingProperty"))
+//            .matches { assertThat(it, hasProperty("notExistingProperty")) }
 //            .assertHardly()
             .assertSoftly()
     }

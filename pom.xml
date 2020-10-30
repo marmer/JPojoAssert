@@ -14,12 +14,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <sonar.organization>marmer-github</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.sources>src/main/java,src/main/kotlin</sonar.sources>
-        <sonar.tests>src/test/java,src/test/kotlin</sonar.tests>
-        <sonar.test.inclusions>**/*Test*/**</sonar.test.inclusions>
-        <sonar.exclusions>**/*Test*/**</sonar.exclusions>
     </properties>
 
     <repositories>
@@ -33,4 +27,96 @@
         <module>JPojoAssert-end-to-end</module>
         <module>JPojoAssert-Vision</module>
     </modules>
+
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.organization>marmer-github</sonar.organization>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+                <sonar.sources>src/main/java,src/main/kotlin</sonar.sources>
+                <sonar.tests>src/test/java,src/test/kotlin</sonar.tests>
+                <sonar.test.inclusions>**/*Test*/**</sonar.test.inclusions>
+                <sonar.exclusions>**/*Test*/**</sonar.exclusions>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.6</version>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>prepare-agent-integration</id>
+                                <goals>
+                                    <goal>prepare-agent-integration</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report-integration</id>
+                                <goals>
+                                    <goal>report-integration</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report-aggregate</id>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                            </execution>
+                            <!--                            <execution>-->
+                            <!--                                <id>restore-instrumented-classes</id>-->
+                            <!--                                <goals>-->
+                            <!--                                    <goal>restore-instrumented-classes</goal>-->
+                            <!--                                </goals>-->
+                            <!--                            </execution>-->
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <version>3.7.0.1746</version>
+                        <executions>
+                            <execution>
+                                <id>sonar</id>
+                                <goals>
+                                    <goal>sonar</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
