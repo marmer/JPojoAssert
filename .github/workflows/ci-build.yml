@@ -38,10 +38,10 @@ jobs:
           mkdir -p JPojoAssert-processor/src/{main,test}/{java,kotlin}
           mkdir -p JPojoAssert-Vision/src/{main,test}/{java,kotlin}
 
-      - name: Build and analyze
+      - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report org.jacoco:jacoco-maven-plugin:report-aggregate
-          ./mvnw clean package
+          ./mvnw -B clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report org.jacoco:jacoco-maven-plugin:report-aggregate
+          ./mvnw -B sonar:sonar
