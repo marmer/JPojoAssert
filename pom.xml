@@ -36,6 +36,7 @@
         </repository>
     </repositories>
     <modules>
+        <module>JPojoAssert-core</module>
         <module>JPojoAssert-processor</module>
         <module>JPojoAssert-end-to-end</module>
         <module>JPojoAssert-Vision</module>
