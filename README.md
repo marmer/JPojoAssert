@@ -1,4 +1,4 @@
-![CI](https://github.com/marmer/JPojoAssert/workflows/CI/badge.svg)
+![CI-Build](https://github.com/marmer/JPojoAssert/workflows/CI-Build/badge.svg)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.marmer.testutils/JPojoAssert/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.marmer.testutils/JPojoAssert)
  
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.marmer.testutils:JPojoAssert)
