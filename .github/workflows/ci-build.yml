@@ -37,6 +37,7 @@ jobs:
           mkdir -p JPojoAssert-end-to-end/src/{main,test}/{java,kotlin}
           mkdir -p JPojoAssert-processor/src/{main,test}/{java,kotlin}
           mkdir -p JPojoAssert-Vision/src/{main,test}/{java,kotlin}
+          mkdir -p JPojoAssert-core/src/{main,test}/{java,kotlin}
 
       - name: Build
         env:
