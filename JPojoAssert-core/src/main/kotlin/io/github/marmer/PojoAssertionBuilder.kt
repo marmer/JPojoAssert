@@ -1,27 +1,29 @@
 package io.github.marmer
 
-import org.opentest4j.AssertionFailedError
 import org.opentest4j.MultipleFailuresError
 
-class PojoAssertionBuilder<out T>(private val pojo: T, private val assertionCallbacks: List<() -> Unit> = emptyList()) {
+class PojoAssertionBuilder<out T>(
+    private val pojo: T,
+    private val assertionCallbacks: List<() -> Unit> = emptyList(),
+    private val heading: String = "Unexpected exceptions thrown"
+) {
 
     fun add(assertionCallback: (T) -> Unit) =
-        PojoAssertionBuilder(pojo, assertionCallbacks + { assertionCallback(pojo) })
+        PojoAssertionBuilder(pojo, assertionCallbacks + { assertionCallback(pojo) }, "What a good day to throw")
 
     fun assertHardly() =
-        assertionCallbacks.forEach {
-            try {
-                it()
-            } catch (e: Exception) {
-                throw AssertionFailedError("Something bad happend", e)
-            }
+        assertionCallbacks.forEach { callback ->
+            callback.toThrownExceptionOrNull()
+                .let {
+                    if (it != null) throw MultipleFailuresError(heading, listOf(it))
+                }
         }
 
     fun assertSoftly() =
         with(assertionCallbacks.map {
             it.toThrownExceptionOrNull()
         }.filterNotNull()) {
-            if (isNotEmpty()) throw MultipleFailuresError("Something bad happend", this)
+            if (isNotEmpty()) throw MultipleFailuresError(heading, this)
         }
 
     fun (() -> Unit).toThrownExceptionOrNull() =

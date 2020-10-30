@@ -134,4 +134,34 @@ internal class PojoAssertionBuilderTest {
             { assertThat(result.message, containsString("third")) }
         )
     }
+
+    @Test
+    fun `on hard asserts a given heading should be used for the assertion error`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "What a good day to throw")
+            .add { fail("first") }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) {
+            builder.assertHardly()
+        }
+
+        // Assertion
+        assertThat(result.message, containsString("What a good day to throw"))
+    }
+
+    @Test
+    fun `on soft asserts a given heading should be used for the assertion error`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "What a good day to throw")
+            .add { fail("first") }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) {
+            builder.assertSoftly()
+        }
+
+        // Assertion
+        assertThat(result.message, containsString("What a good day to throw"))
+    }
 }
