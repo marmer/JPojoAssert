@@ -1,4 +1,13 @@
 ![CI](https://github.com/marmer/JPojoAssert/workflows/CI/badge.svg)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.marmer.testutils/JPojoAssert/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.marmer.testutils/JPojoAssert)
+ 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=alert_status)](https://sonarcloud.io/dashboard?id=io.github.marmer.testutils:JPojoAssert)
+[![Code Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=coverage)](https://sonarcloud.io/component_measures?id=io.github.marmer.testutils:JPojoAssert&metric=Coverage)
+[![Technical Dept](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=sqale_index)](https://sonarcloud.io/project/issues?facetMode=effort&id=io.github.marmer.testutils:JPojoAssert&resolved=false&types=CODE_SMELL)
+
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=security_rating)](https://sonarcloud.io/component_measures?id=io.github.marmer.testutils:JPojoAssert&metric=Security)
+[![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=sqale_rating)](https://sonarcloud.io/component_measures?id=io.github.marmer.testutils:JPojoAssert&metric=Maintainability)
+[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=reliability_rating)](https://sonarcloud.io/component_measures?id=io.github.marmer.testutils:JPojoAssert&metric=Reliability)
 
 JPojoAssert
 ===========
