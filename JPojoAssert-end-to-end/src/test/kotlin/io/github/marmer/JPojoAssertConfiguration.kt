@@ -1,6 +1,6 @@
 package io.github.marmer
 
-import io.github.marmer.testutils.annotationprocessing.jpojoassert.GeneratePojoAsserter
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter
 
-@GeneratePojoAsserter
+@GenerateAsserter
 class JPojoAssertConfiguration
