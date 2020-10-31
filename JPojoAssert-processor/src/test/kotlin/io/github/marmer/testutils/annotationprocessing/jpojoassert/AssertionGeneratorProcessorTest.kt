@@ -14,9 +14,9 @@ internal class AssertionGeneratorProcessorTest {
         val configurationClass = JavaFileObjects.forSourceLines(
             "some.pck.JPojoAssertConfiguration", """package some.pck;
 
-import io.github.marmer.testutils.annotationprocessing.jpojoassert.GeneratePojoAsserter;
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
 
-@GeneratePojoAsserter
+@GenerateAsserter("some.other.pck.SimplePojoInterface")
 public class JPojoAssertConfiguration{}
 """
         )
@@ -30,14 +30,14 @@ public interface SimplePojoInterface{
         )
         val today = LocalDate.now().toString()
         val expectedOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.SomeGeneratedClass", """package some.other.pck;
+            "some.other.pck.SimplePojoInterfaceAsserter", """package some.other.pck;
 
 import javax.annotation.processing.Generated;
 
 @Generated(
 value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
 date = "$today")
-public class SomeGeneratedClass{
+public class SimplePojoInterfaceAsserter{
 }"""
         )
 
