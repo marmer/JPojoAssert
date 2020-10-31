@@ -4,7 +4,7 @@ import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourcesSubjectFactory
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
+import java.time.LocalDate
 import java.util.*
 
 internal class AssertionGeneratorProcessorTest {
@@ -28,16 +28,15 @@ public interface SimplePojoInterface{
     String getSomeStringProperty();
 }"""
         )
-        val today = LocalDateTime.now().toString()
+        val today = LocalDate.now().toString()
         val expectedOutput = JavaFileObjects.forSourceString(
             "some.other.pck.SomeGeneratedClass", """package some.other.pck;
 
 import javax.annotation.processing.Generated;
 
 @Generated(
-value = {"io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor"},
-date = "$today", 
-comments = "Configuration: some.pck.JPojoAssertConfiguration")
+value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+date = "$today")
 public class SomeGeneratedClass{
 }"""
         )
