@@ -27,7 +27,7 @@ Example:
         }
         
         public interface SomePojo{
-                public String getFirstProperty()
+                String getFirstProperty();
         }
 ```
 
