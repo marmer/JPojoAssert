@@ -1,4 +1,4 @@
-package io.github.marmer
+package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.opentest4j.MultipleFailuresError
 

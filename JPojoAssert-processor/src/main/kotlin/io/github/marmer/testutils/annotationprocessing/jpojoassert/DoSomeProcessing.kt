@@ -1,4 +1,4 @@
-package io.github.marmer.annotationprocessing
+package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)

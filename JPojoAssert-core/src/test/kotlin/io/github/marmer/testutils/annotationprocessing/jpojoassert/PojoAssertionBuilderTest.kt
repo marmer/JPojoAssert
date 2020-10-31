@@ -1,4 +1,4 @@
-package io.github.marmer
+package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
@@ -13,7 +13,6 @@ import kotlin.test.fail
 internal class PojoAssertionBuilderTest {
 
     private data class Type1(val value: Int)
-    private data class Type2(val value: Int)
 
     @Test
     fun `exceptions within an assertion should throw an AssertionError at hard asserts`() {

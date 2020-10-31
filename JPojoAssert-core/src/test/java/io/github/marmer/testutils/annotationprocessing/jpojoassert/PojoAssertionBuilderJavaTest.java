@@ -1,4 +1,4 @@
-package io.github.marmer;
+package io.github.marmer.testutils.annotationprocessing.jpojoassert;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
