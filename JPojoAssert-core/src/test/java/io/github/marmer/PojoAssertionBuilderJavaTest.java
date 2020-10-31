@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PojoAssertionBuilderJavaTest {
+
+    // TODO: marmer 31.10.2020 What about a proxy for java to avoid the nasty "retorn null" for unit=
+
     @Test
     @DisplayName("Callbacks should work with java")
     void assertHard_CallbacksShouldWorkWithJava() {
