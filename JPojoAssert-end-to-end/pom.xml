@@ -15,15 +15,6 @@
 
     <name>JPojoAssert-end-to-end</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-
-
     <dependencies>
         <dependency>
             <artifactId>JPojoAssert-processor</artifactId>
