@@ -20,13 +20,15 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
     override fun process(set: Set<TypeElement?>, roundEnvironment: RoundEnvironment): Boolean {
         if (!roundEnvironment.processingOver()) {
             if (set.any { it != null && it.qualifiedName.toString() == GenerateAsserter::class.java.name })
-                generate()
+                roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
+                    .forEach { generate(it.getAnnotation(GenerateAsserter::class.java)) }
             return true
         }
         return false
     }
 
-    private fun generate() {
+    private fun generate(configuration: GenerateAsserter) {
+        // TODO: marmer 31.10.2020  go on here. The test is prepared
         JavaFile.builder(
             "some.other.pck",
             classBuilder("SomeGeneratedClass")
