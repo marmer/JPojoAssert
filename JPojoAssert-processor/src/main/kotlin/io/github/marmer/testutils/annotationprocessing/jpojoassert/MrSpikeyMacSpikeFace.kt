@@ -1,4 +1,4 @@
-package io.github.marmer.annotationprocessing
+package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import com.google.auto.service.AutoService
 import javax.annotation.processing.*
@@ -7,7 +7,7 @@ import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("io.github.marmer.annotationprocessing.DoSomeProcessing")
+@SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.DoSomeProcessing")
 @AutoService(Processor::class)
 class MrSpikeyMacSpikeFace : AbstractProcessor() {
     @Synchronized
@@ -19,7 +19,7 @@ class MrSpikeyMacSpikeFace : AbstractProcessor() {
     override fun process(set: Set<TypeElement?>, roundEnvironment: RoundEnvironment): Boolean {
         if (!roundEnvironment.processingOver()) {
             processingEnv.messager.printMessage(
-                Diagnostic.Kind.MANDATORY_WARNING,
+                Diagnostic.Kind.ERROR,
                 "WIRD AUSGEFÜHRT. Gefunden: " + roundEnvironment.getElementsAnnotatedWith(
                     DoSomeProcessing::class.java
                 ).toString()
