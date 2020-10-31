@@ -84,7 +84,7 @@ internal class PojoAssertionBuilderTest {
     fun `nothing shold happen if nothing fails at soft asserts`() {
         // Preparation
         val builder = PojoAssertionBuilder(Type1(42))
-            .add { assertTrue(true, "Well, when this fails, we've got a problem") }
+            .add { assertEquals(42, it.value) }
 
         // Execution
         builder.assertSoftly()
@@ -164,4 +164,5 @@ internal class PojoAssertionBuilderTest {
         // Assertion
         assertThat(result.message, containsString("What a good day to throw"))
     }
+
 }
