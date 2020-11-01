@@ -19,6 +19,10 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
 
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
         if (!roundEnvironment.processingOver() && set.containsTypeInfoFor(GenerateAsserter::class.java)) {
+            // TODO: marmer 01.11.2020 Delegate Generation
+            AssertionGenerator(roundEnvironment, processingEnv)
+
+
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
                 .forEach { generate(it.getAnnotation(GenerateAsserter::class.java)) }
             return true
