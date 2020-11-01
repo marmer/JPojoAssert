@@ -2,6 +2,7 @@ package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import com.squareup.javapoet.*
 import java.time.LocalDateTime
+import java.util.*
 import javax.annotation.processing.Generated
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Modifier
@@ -15,7 +16,7 @@ class PojoAsserterGenerator(
 ) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
-        TypeSpec.classBuilder(getSimpleAsserterName())
+        TypeSpec.classBuilder(simpleAsserterName)
             .addModifiers(Modifier.PUBLIC)
             .addAnnotation(getGeneratedAnnotation())
             .addField(getPojoAssertionBuilderField())
@@ -25,22 +26,37 @@ class PojoAsserterGenerator(
         .writeTo(processingEnv.filer)
 
     private fun getInitializers() = listOf(
-        getBaseTypeconstructor()
+        getBaseTypeConstructor(),
+        getBuilderConstructor(),
+        getApiInitializer()
     )
 
-    private fun getBaseTypeconstructor(): MethodSpec {
-        return MethodSpec.constructorBuilder()
-            .addModifiers(Modifier.PRIVATE)
-            .addParameter(baseType.typeName, "base", Modifier.FINAL)
-            .addStatement(
-                "this(new \$T (base, emptyList(), \$S))",
-                getBuilderFieldType(),
-                baseType.simpleName
-            )
-            .build()
-    }
+    private fun getApiInitializer() = MethodSpec.methodBuilder("assertThat")
+        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+        .addParameter(baseType.typeName, "base", Modifier.FINAL)
+        .addStatement("return new \$L(base)", simpleAsserterName)
+        .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+        .build()
 
-    private fun getSimpleAsserterName() = "${baseType.simpleName}Asserter"
+    private fun getBuilderConstructor() = MethodSpec.constructorBuilder()
+        .addModifiers(Modifier.PRIVATE)
+        .addParameter(baseType.typeName, "base", Modifier.FINAL)
+        .addStatement(
+            "this(new \$T (base, \$T.emptyList(), \$S))",
+            getBuilderFieldType(),
+            Collections::class.java,
+            baseType.simpleName
+        )
+        .build()
+
+
+    private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
+        .addModifiers(Modifier.PRIVATE)
+        .addParameter(getBuilderFieldType(), builderFieldName, Modifier.FINAL)
+        .addStatement("this.$builderFieldName = $builderFieldName")
+        .build()
+
+    private val simpleAsserterName = "${baseType.simpleName}Asserter"
 
 
     private val builderFieldName = "pojoAssertionBuilder"
