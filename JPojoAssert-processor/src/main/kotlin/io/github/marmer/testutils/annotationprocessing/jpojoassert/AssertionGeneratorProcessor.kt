@@ -7,7 +7,9 @@ import java.time.LocalDate
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Modifier
+import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
+
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter")
@@ -15,7 +17,6 @@ import javax.lang.model.element.TypeElement
 class AssertionGeneratorProcessor : AbstractProcessor() {
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) = super.init(processingEnvironment)
-
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
         if (!roundEnvironment.processingOver() && set.containsTypeInfoFor(GenerateAsserter::class.java)) {
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
@@ -26,31 +27,32 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
     }
 
     private fun generate(configuration: GenerateAsserter) {
+        val baseType = processingEnv.elementUtils.getTypeElement(configuration.value)
+
         JavaFile.builder(
-            configuration.value.toPackageName(),
-            classBuilder(configuration.value.toClassName())
+            baseType.packageElement.toString(),
+            classBuilder("${baseType.simpleName}Asserter")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(generatedAnnotation())
-                .addField(pojoAssertionBuilderField(configuration))
+                .addField(pojoAssertionBuilderField(baseType))
                 .build()
         ).build()
             .writeTo(processingEnv.filer)
     }
 
-    private fun pojoAssertionBuilderField(configuration: GenerateAsserter): FieldSpec = FieldSpec.builder(
-        getBuilderFieldTypeFor(configuration),
+    private fun pojoAssertionBuilderField(baseType: TypeElement): FieldSpec = FieldSpec.builder(
+        getBuilderFieldTypeFor(baseType),
         "pojoAssertionBuilder",
         Modifier.PRIVATE,
         Modifier.FINAL
     ).build()
 
-    private fun getBuilderFieldTypeFor(configuration: GenerateAsserter): ParameterizedTypeName? {
+    private fun getBuilderFieldTypeFor(baseType: TypeElement): ParameterizedTypeName? {
         return ParameterizedTypeName.get(
             ClassName.get(PojoAssertionBuilder::class.java),
-            TypeName.get(processingEnv.elementUtils.getTypeElement(configuration.value).asType())
+            TypeName.get(baseType.asType())
         )
     }
-
 
     private fun generatedAnnotation(): AnnotationSpec? {
         return AnnotationSpec.builder(Generated::class.java)
@@ -58,9 +60,12 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
             .addMember("date", "\$S", LocalDate.now())
             .build()
     }
-}
 
-private fun String.toClassName(): String = replace(Regex("^.*\\."), "") + "Asserter"
+
+    private val TypeElement.packageElement: PackageElement
+        get() = processingEnv.elementUtils.getPackageOf(this)
+
+}
 
 private fun String.toPackageName(): String =
     removeRange(lastIndexOf("."), length)
