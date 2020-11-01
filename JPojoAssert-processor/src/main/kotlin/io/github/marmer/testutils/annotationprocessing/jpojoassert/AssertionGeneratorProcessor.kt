@@ -1,6 +1,7 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import com.google.auto.service.AutoService
+import java.time.LocalDateTime
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
@@ -9,7 +10,14 @@ import javax.lang.model.element.TypeElement
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter")
 @AutoService(Processor::class)
-class AssertionGeneratorProcessor : AbstractProcessor() {
+class AssertionGeneratorProcessor(val timeProvider: () -> LocalDateTime = { LocalDateTime.now() }) :
+    AbstractProcessor() {
+
+    /**
+     * Needed for the compiler
+     */
+    constructor() {}
+
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) = super.init(processingEnvironment)
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
@@ -19,7 +27,7 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
                     val baseType =
                         processingEnv.elementUtils.getTypeElement(it.getAnnotation(GenerateAsserter::class.java).value)
 
-                    PojoAsserterGenerator(processingEnv, baseType).generate()
+                    PojoAsserterGenerator(processingEnv, baseType, timeProvider).generate()
                 }
             return true
         }

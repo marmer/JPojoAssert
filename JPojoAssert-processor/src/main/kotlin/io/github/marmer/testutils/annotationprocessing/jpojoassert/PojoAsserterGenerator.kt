@@ -1,14 +1,18 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import com.squareup.javapoet.*
-import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.annotation.processing.Generated
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 
-class PojoAsserterGenerator(private val processingEnv: ProcessingEnvironment, private val baseType: TypeElement) {
+class PojoAsserterGenerator(
+    private val processingEnv: ProcessingEnvironment,
+    private val baseType: TypeElement,
+    private val generationTimeStamp: () -> LocalDateTime
+) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
         TypeSpec.classBuilder("${baseType.simpleName}Asserter")
@@ -33,7 +37,7 @@ class PojoAsserterGenerator(private val processingEnv: ProcessingEnvironment, pr
 
     private fun generatedAnnotation() = AnnotationSpec.builder(Generated::class.java)
         .addMember("value", "\$S", javaClass.name)
-        .addMember("date", "\$S", LocalDate.now())
+        .addMember("date", "\$S", generationTimeStamp())
         .build()
 
     private val TypeElement.packageElement: PackageElement
