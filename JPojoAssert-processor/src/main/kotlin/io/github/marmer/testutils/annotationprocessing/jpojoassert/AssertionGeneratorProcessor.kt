@@ -11,27 +11,25 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.GeneratePojoAsserter")
+@SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter")
 @AutoService(Processor::class)
 class AssertionGeneratorProcessor : AbstractProcessor() {
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) = super.init(processingEnvironment)
 
-    override fun process(set: Set<TypeElement?>, roundEnvironment: RoundEnvironment): Boolean {
-        if (!roundEnvironment.processingOver()) {
-            if (set.any { it != null && it.qualifiedName.toString() == GenerateAsserter::class.java.name })
-                roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
-                    .forEach { generate(it.getAnnotation(GenerateAsserter::class.java)) }
+    override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
+        if (!roundEnvironment.processingOver() && set.containsTypeInfoFor(GenerateAsserter::class.java)) {
+            roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
+                .forEach { generate(it.getAnnotation(GenerateAsserter::class.java)) }
             return true
         }
         return false
     }
 
     private fun generate(configuration: GenerateAsserter) {
-        // TODO: marmer 31.10.2020  go on here. The test is prepared
         JavaFile.builder(
-            "some.other.pck",
-            classBuilder("SomeGeneratedClass")
+            configuration.value.toPackageName(),
+            classBuilder(configuration.value.toClassName())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(generatedAnnotation())
                 .build()
@@ -46,3 +44,11 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
             .build()
     }
 }
+
+private fun String.toClassName(): String = replace(Regex("^.*\\."), "") + "Asserter"
+
+private fun String.toPackageName(): String =
+    removeRange(lastIndexOf("."), length)
+
+private fun <T> Iterable<TypeElement>.containsTypeInfoFor(type: Class<T>): Boolean =
+    any { it.qualifiedName.toString() == type.name }
