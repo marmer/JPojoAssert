@@ -10,13 +10,13 @@ import javax.lang.model.element.TypeElement
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter")
 @AutoService(Processor::class)
-class AssertionGeneratorProcessor(val timeProvider: () -> LocalDateTime = { LocalDateTime.now() }) :
+class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime) :
     AbstractProcessor() {
 
     /**
      * Needed for the compiler
      */
-    constructor() {}
+    constructor() : this({ LocalDateTime.now() })
 
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) = super.init(processingEnvironment)
