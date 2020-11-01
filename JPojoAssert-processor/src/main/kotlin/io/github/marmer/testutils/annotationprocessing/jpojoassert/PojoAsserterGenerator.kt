@@ -8,7 +8,12 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 
-class PojoAsserterGenerator(private val processingEnv: ProcessingEnvironment, private val baseType: TypeElement) {
+class PojoAsserterGenerator(
+    private val processingEnv: ProcessingEnvironment,
+    configuration: GenerateAsserter
+) {
+    private var baseType: TypeElement = processingEnv.elementUtils.getTypeElement(configuration.value)
+
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
         TypeSpec.classBuilder("${baseType.simpleName}Asserter")
