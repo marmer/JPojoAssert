@@ -29,16 +29,18 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
     private fun generate(configuration: GenerateAsserter) {
         val baseType = processingEnv.elementUtils.getTypeElement(configuration.value)
 
-        JavaFile.builder(
-            baseType.packageElement.toString(),
-            classBuilder("${baseType.simpleName}Asserter")
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(generatedAnnotation())
-                .addField(pojoAssertionBuilderField(baseType))
-                .build()
-        ).build()
-            .writeTo(processingEnv.filer)
+        generate(baseType)
     }
+
+    private fun generate(baseType: TypeElement) = JavaFile.builder(
+        baseType.packageElement.toString(),
+        classBuilder("${baseType.simpleName}Asserter")
+            .addModifiers(Modifier.PUBLIC)
+            .addAnnotation(generatedAnnotation())
+            .addField(pojoAssertionBuilderField(baseType))
+            .build()
+    ).build()
+        .writeTo(processingEnv.filer)
 
     private fun pojoAssertionBuilderField(baseType: TypeElement): FieldSpec = FieldSpec.builder(
         getBuilderFieldTypeFor(baseType),
