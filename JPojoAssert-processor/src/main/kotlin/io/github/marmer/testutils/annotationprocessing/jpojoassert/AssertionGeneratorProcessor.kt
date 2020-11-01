@@ -16,10 +16,10 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
         if (!roundEnvironment.processingOver() && set.containsTypeInfoFor(GenerateAsserter::class.java)) {
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
                 .forEach {
-                    val baseType =
-                        processingEnv.elementUtils.getTypeElement(it.getAnnotation(GenerateAsserter::class.java).value)
-
-                    PojoAsserterGenerator(processingEnv, baseType).generate()
+                    PojoAsserterGenerator(
+                        processingEnv = processingEnv,
+                        configuration = it.getAnnotation(GenerateAsserter::class.java)
+                    ).generate()
                 }
             return true
         }
