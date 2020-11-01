@@ -19,26 +19,22 @@ class PojoAsserterGenerator(private val processingEnv: ProcessingEnvironment, pr
     ).build()
         .writeTo(processingEnv.filer)
 
-    private fun pojoAssertionBuilderField(): FieldSpec = FieldSpec.builder(
+    private fun pojoAssertionBuilderField() = FieldSpec.builder(
         getBuilderFieldType(),
         "pojoAssertionBuilder",
         Modifier.PRIVATE,
         Modifier.FINAL
     ).build()
 
-    private fun getBuilderFieldType(): ParameterizedTypeName? {
-        return ParameterizedTypeName.get(
-            ClassName.get(PojoAssertionBuilder::class.java),
-            TypeName.get(baseType.asType())
-        )
-    }
+    private fun getBuilderFieldType() = ParameterizedTypeName.get(
+        ClassName.get(PojoAssertionBuilder::class.java),
+        TypeName.get(baseType.asType())
+    )
 
-    private fun generatedAnnotation(): AnnotationSpec? {
-        return AnnotationSpec.builder(Generated::class.java)
-            .addMember("value", "\$S", javaClass.name)
-            .addMember("date", "\$S", LocalDate.now())
-            .build()
-    }
+    private fun generatedAnnotation() = AnnotationSpec.builder(Generated::class.java)
+        .addMember("value", "\$S", javaClass.name)
+        .addMember("date", "\$S", LocalDate.now())
+        .build()
 
     private val TypeElement.packageElement: PackageElement
         get() = processingEnv.elementUtils.getPackageOf(this)
