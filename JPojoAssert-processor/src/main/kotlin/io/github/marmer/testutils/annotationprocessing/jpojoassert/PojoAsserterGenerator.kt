@@ -15,31 +15,56 @@ class PojoAsserterGenerator(
 ) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
-        TypeSpec.classBuilder("${baseType.simpleName}Asserter")
+        TypeSpec.classBuilder(getSimpleAsserterName())
             .addModifiers(Modifier.PUBLIC)
-            .addAnnotation(generatedAnnotation())
-            .addField(pojoAssertionBuilderField())
+            .addAnnotation(getGeneratedAnnotation())
+            .addField(getPojoAssertionBuilderField())
+            .addMethods(getInitializers())
             .build()
     ).build()
         .writeTo(processingEnv.filer)
 
-    private fun pojoAssertionBuilderField() = FieldSpec.builder(
+    private fun getInitializers() = listOf(
+        getBaseTypeconstructor()
+    )
+
+    private fun getBaseTypeconstructor(): MethodSpec {
+        return MethodSpec.constructorBuilder()
+            .addModifiers(Modifier.PRIVATE)
+            .addParameter(baseType.typeName, "base", Modifier.FINAL)
+            .addStatement(
+                "this(new \$T (base, emptyList(), \$S))",
+                getBuilderFieldType(),
+                baseType.simpleName
+            )
+            .build()
+    }
+
+    private fun getSimpleAsserterName() = "${baseType.simpleName}Asserter"
+
+
+    private val builderFieldName = "pojoAssertionBuilder"
+
+    private fun getPojoAssertionBuilderField() = FieldSpec.builder(
         getBuilderFieldType(),
-        "pojoAssertionBuilder",
+        builderFieldName,
         Modifier.PRIVATE,
         Modifier.FINAL
     ).build()
 
     private fun getBuilderFieldType() = ParameterizedTypeName.get(
         ClassName.get(PojoAssertionBuilder::class.java),
-        TypeName.get(baseType.asType())
+        baseType.typeName
     )
 
-    private fun generatedAnnotation() = AnnotationSpec.builder(Generated::class.java)
+    private fun getGeneratedAnnotation() = AnnotationSpec.builder(Generated::class.java)
         .addMember("value", "\$S", javaClass.name)
         .addMember("date", "\$S", generationTimeStamp())
         .build()
 
     private val TypeElement.packageElement: PackageElement
         get() = processingEnv.elementUtils.getPackageOf(this)
+
+    private val TypeElement.typeName: TypeName
+        get() = TypeName.get(asType())
 }

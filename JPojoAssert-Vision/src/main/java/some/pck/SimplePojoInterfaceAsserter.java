@@ -15,17 +15,21 @@ import static java.util.Collections.emptyList;
 public class SimplePojoInterfaceAsserter {
     private final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder;
 
-    public SimplePojoInterfaceAsserter(SimplePojoInterface pojo) {
-        this.pojoAssertionBuilder = new PojoAssertionBuilder<SimplePojoInterface>(pojo, emptyList(), "SimplePojo");
+    private SimplePojoInterfaceAsserter(SimplePojoInterface base) {
+        this.pojoAssertionBuilder = new PojoAssertionBuilder<SimplePojoInterface>(base, emptyList(), "SimplePojo");
     }
 
     private SimplePojoInterfaceAsserter(PojoAssertionBuilder<SimplePojoInterface> pojoPojoAssertionBuilder) {
         this.pojoAssertionBuilder = pojoPojoAssertionBuilder;
     }
 
+    public static SimplePojoInterfaceAsserter assertThat(SimplePojoInterface base) {
+        return new SimplePojoInterfaceAsserter(base);
+    }
+
     public SimplePojoInterfaceAsserter add(@NotNull Consumer<SimplePojoInterface> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(pojo -> {
-            assertionCallback.accept(pojo);
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> {
+            assertionCallback.accept(base);
             return null;
         }));
     }
