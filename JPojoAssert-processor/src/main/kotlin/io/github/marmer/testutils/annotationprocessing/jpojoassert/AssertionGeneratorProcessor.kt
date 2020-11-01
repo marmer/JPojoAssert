@@ -1,8 +1,7 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import com.google.auto.service.AutoService
-import com.squareup.javapoet.AnnotationSpec
-import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.*
 import com.squareup.javapoet.TypeSpec.classBuilder
 import java.time.LocalDate
 import javax.annotation.processing.*
@@ -19,10 +18,6 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
 
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
         if (!roundEnvironment.processingOver() && set.containsTypeInfoFor(GenerateAsserter::class.java)) {
-            // TODO: marmer 01.11.2020 Delegate Generation
-            AssertionGenerator(roundEnvironment, processingEnv)
-
-
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
                 .forEach { generate(it.getAnnotation(GenerateAsserter::class.java)) }
             return true
@@ -36,10 +31,26 @@ class AssertionGeneratorProcessor : AbstractProcessor() {
             classBuilder(configuration.value.toClassName())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(generatedAnnotation())
+                .addField(pojoAssertionBuilderField(configuration))
                 .build()
         ).build()
             .writeTo(processingEnv.filer)
     }
+
+    private fun pojoAssertionBuilderField(configuration: GenerateAsserter): FieldSpec = FieldSpec.builder(
+        getBuilderFieldTypeFor(configuration),
+        "pojoAssertionBuilder",
+        Modifier.PRIVATE,
+        Modifier.FINAL
+    ).build()
+
+    private fun getBuilderFieldTypeFor(configuration: GenerateAsserter): ParameterizedTypeName? {
+        return ParameterizedTypeName.get(
+            ClassName.get(PojoAssertionBuilder::class.java),
+            TypeName.get(processingEnv.elementUtils.getTypeElement(configuration.value).asType())
+        )
+    }
+
 
     private fun generatedAnnotation(): AnnotationSpec? {
         return AnnotationSpec.builder(Generated::class.java)
