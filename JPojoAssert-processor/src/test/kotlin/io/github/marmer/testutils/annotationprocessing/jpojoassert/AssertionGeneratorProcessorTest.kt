@@ -48,15 +48,15 @@ public class SimplePojoInterfaceAsserter{
         this(new PojoAssertionBuilder<SimplePojoInterface>(base, emptyList(), "SimplePojo"));
     }
 
-    private SimplePojoInterfaceAsserter(PojoAssertionBuilder<SimplePojoInterface> pojoPojoAssertionBuilder) {
-        this.pojoAssertionBuilder = pojoPojoAssertionBuilder;
+    private SimplePojoInterfaceAsserter(PojoAssertionBuilder<SimplePojoInterface> builder) {
+        this.pojoAssertionBuilder = builder;
     }
 
     public static SimplePojoInterfaceAsserter assertThat(SimplePojoInterface base) {
         return new SimplePojoInterfaceAsserter(base);
     }
 
-    public SimplePojoInterfaceAsserter add(@NotNull Consumer<SimplePojoInterface> assertionCallback) {
+    public SimplePojoInterfaceAsserter add(Consumer<SimplePojoInterface> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> {
             assertionCallback.accept(base);
             return null;
@@ -84,3 +84,9 @@ public class SimplePojoInterfaceAsserter{
             .generatesSources(expectedOutput)
     }
 }
+
+// TODO: marmer 02.11.2020 test elements in root package
+// TODO: marmer 02.11.2020 test all types used as base for generation (primitives, Objects, Arrays, Void?, Same name, Generics, inner Types)
+// TODO: marmer 02.11.2020 test all types for fields at least (primitives, Objects, Arrays, Void?, Same name, Generics, inner Types)
+// TODO: marmer 02.11.2020 add Test from experience of Hamcrest Matcher generator
+// TODO: marmer 02.11.2020 test Elements in different modules
