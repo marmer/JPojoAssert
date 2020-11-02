@@ -31,12 +31,10 @@ public interface SimplePojoInterface{
         val expectedOutput = JavaFileObjects.forSourceString(
             "some.other.pck.SimplePojoInterfaceAsserter", """package some.other.pck;
 
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.processing.Generated;
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+import java.util.Collections;
 import java.util.function.Consumer;
-
-import static java.util.Collections.emptyList;
+import javax.annotation.processing.Generated;
 
 @Generated(
 value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
@@ -44,19 +42,19 @@ date = "$now")
 public class SimplePojoInterfaceAsserter{
     private final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder;
 
-    private SimplePojoInterfaceAsserter(SimplePojoInterface base) {
-        this(new PojoAssertionBuilder<SimplePojoInterface>(base, emptyList(), "SimplePojo"));
+    private SimplePojoInterfaceAsserter(final SimplePojoInterface base) {
+        this(new PojoAssertionBuilder<SimplePojoInterface>(base, Collections.emptyList(), "SimplePojo"));
     }
 
-    private SimplePojoInterfaceAsserter(PojoAssertionBuilder<SimplePojoInterface> builder) {
+    private SimplePojoInterfaceAsserter(final PojoAssertionBuilder<SimplePojoInterface> builder) {
         this.pojoAssertionBuilder = builder;
     }
 
-    public static SimplePojoInterfaceAsserter assertThat(SimplePojoInterface base) {
+    public static SimplePojoInterfaceAsserter assertThat(final SimplePojoInterface base) {
         return new SimplePojoInterfaceAsserter(base);
     }
 
-    public SimplePojoInterfaceAsserter add(Consumer<SimplePojoInterface> assertionCallback) {
+    public SimplePojoInterfaceAsserter add(final Consumer<SimplePojoInterface> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> {
             assertionCallback.accept(base);
             return null;

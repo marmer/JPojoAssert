@@ -3,6 +3,7 @@ package io.github.marmer.testutils.annotationprocessing.jpojoassert
 import com.squareup.javapoet.*
 import java.time.LocalDateTime
 import java.util.*
+import java.util.function.Consumer
 import javax.annotation.processing.Generated
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Modifier
@@ -21,9 +22,46 @@ class PojoAsserterGenerator(
             .addAnnotation(getGeneratedAnnotation())
             .addField(getPojoAssertionBuilderField())
             .addMethods(getInitializers())
+            .addMethods(getBaseAssertionMethods())
+            .addMethods(getFinisherMethods())
             .build()
     ).build()
         .writeTo(processingEnv.filer)
+
+    private fun getBaseAssertionMethods() = listOf(
+        MethodSpec.methodBuilder("add")
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(
+                ParameterizedTypeName.get(ClassName.get(Consumer::class.java), baseType.typeName),
+                "assertionCallback",
+                Modifier.FINAL
+            )
+            .addCode(
+                """return new $simpleAsserterName($builderFieldName.add(base->{
+            assertionCallback.accept(base);
+            return null;
+        }));
+
+        """.trimIndent()
+            )
+            .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+            .build()
+    )
+
+    private fun getFinisherMethods() = listOf(
+        getHardAssertMethod(),
+        getSoftAssertMethod()
+    )
+
+    private fun getHardAssertMethod() = MethodSpec.methodBuilder("assertHardly")
+        .addModifiers(Modifier.PUBLIC)
+        .addStatement("$builderFieldName.assertHardly()")
+        .build()
+
+    private fun getSoftAssertMethod() = MethodSpec.methodBuilder("assertSoftly")
+        .addModifiers(Modifier.PUBLIC)
+        .addStatement("$builderFieldName.assertSoftly()")
+        .build()
 
     private fun getInitializers() = listOf(
         getBaseTypeConstructor(),
