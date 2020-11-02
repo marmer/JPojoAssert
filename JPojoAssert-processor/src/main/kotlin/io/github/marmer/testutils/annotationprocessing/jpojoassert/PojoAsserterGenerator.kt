@@ -13,7 +13,8 @@ import javax.lang.model.element.TypeElement
 class PojoAsserterGenerator(
     private val processingEnv: ProcessingEnvironment,
     private val baseType: TypeElement,
-    private val generationTimeStamp: () -> LocalDateTime
+    private val generationTimeStamp: () -> LocalDateTime,
+    private val generationMarker: String,
 ) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
@@ -76,7 +77,7 @@ class PojoAsserterGenerator(
         .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
         .build()
 
-    private fun getBuilderConstructor() = MethodSpec.constructorBuilder()
+    private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)
         .addParameter(baseType.typeName, "base", Modifier.FINAL)
         .addStatement(
@@ -88,7 +89,7 @@ class PojoAsserterGenerator(
         .build()
 
 
-    private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
+    private fun getBuilderConstructor() = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)
         .addParameter(getBuilderFieldType(), builderFieldName, Modifier.FINAL)
         .addStatement("this.$builderFieldName = $builderFieldName")
@@ -112,7 +113,7 @@ class PojoAsserterGenerator(
     )
 
     private fun getGeneratedAnnotation() = AnnotationSpec.builder(Generated::class.java)
-        .addMember("value", "\$S", javaClass.name)
+        .addMember("value", "\$S", generationMarker)
         .addMember("date", "\$S", generationTimeStamp())
         .build()
 
