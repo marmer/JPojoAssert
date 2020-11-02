@@ -27,7 +27,7 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime)
                     val baseType =
                         processingEnv.elementUtils.getTypeElement(it.getAnnotation(GenerateAsserter::class.java).value)
 
-                    PojoAsserterGenerator(processingEnv, baseType, timeProvider).generate()
+                    PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
                 }
             return true
         }

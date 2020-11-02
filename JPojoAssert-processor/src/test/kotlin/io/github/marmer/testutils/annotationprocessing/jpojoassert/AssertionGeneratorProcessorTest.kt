@@ -43,11 +43,11 @@ public class SimplePojoInterfaceAsserter{
     private final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder;
 
     private SimplePojoInterfaceAsserter(final SimplePojoInterface base) {
-        this(new PojoAssertionBuilder<SimplePojoInterface>(base, Collections.emptyList(), "SimplePojo"));
+        this(new PojoAssertionBuilder<SimplePojoInterface>(base, Collections.emptyList(), "SimplePojoInterface"));
     }
 
-    private SimplePojoInterfaceAsserter(final PojoAssertionBuilder<SimplePojoInterface> builder) {
-        this.pojoAssertionBuilder = builder;
+    private SimplePojoInterfaceAsserter(final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder) {
+        this.pojoAssertionBuilder = pojoAssertionBuilder;
     }
 
     public static SimplePojoInterfaceAsserter assertThat(final SimplePojoInterface base) {
