@@ -16,7 +16,7 @@ Vision: A library which generates compile safe assertions for Pojos, Beans, Mode
 
 How does it work? It's a Java annotation Processor.
 
-Example:
+Draft:
 ```java
         // Some possible Pojos, Beans, Models, Entities, Objects, Types, ...
         public class SomePojo{
