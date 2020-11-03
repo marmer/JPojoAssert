@@ -7,7 +7,7 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 
 
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedSourceVersion(SourceVersion.RELEASE_11)
 @SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter")
 @AutoService(Processor::class)
 class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime) :
