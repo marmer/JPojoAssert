@@ -4,5 +4,5 @@ import lombok.Value;
 
 @Value
 public class SomePojo {
-    String someProperts;
+    String firstName;
 }
