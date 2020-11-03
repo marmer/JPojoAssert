@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 internal class AssertionGeneratorProcessorTest {
     @Test
-    fun `something should be generated`() {
+    fun `simple asserters should be generated with a default configuration`() {
         // Preparation
         val configurationClass = JavaFileObjects.forSourceLines(
             "some.pck.JPojoAssertConfiguration", """package some.pck;
@@ -23,7 +23,7 @@ public class JPojoAssertConfiguration{}
             "some.other.pck.SimplePojoInterface",
             """package some.other.pck;
 
-public interface SimplePojoInterface{
+public interface SimplePojoInterface<A, B extends CharSequence>{
     String getSomeStringProperty();
 }"""
         )
