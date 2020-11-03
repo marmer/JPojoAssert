@@ -31,9 +31,8 @@ public interface SimplePojoInterface{
         val expectedOutput = JavaFileObjects.forSourceString(
             "some.other.pck.SimplePojoInterfaceAsserter", """package some.other.pck;
 
-import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
 import java.util.Collections;
-import java.util.function.Consumer;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -54,11 +53,8 @@ public class SimplePojoInterfaceAsserter{
         return new SimplePojoInterfaceAsserter(base);
     }
 
-    public SimplePojoInterfaceAsserter add(final Consumer<SimplePojoInterface> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> {
-            assertionCallback.accept(base);
-            return null;
-        }));
+    public SimplePojoInterfaceAsserter add(final AssertionCallback<SimplePojoInterface> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
 
     public void assertHardly() {
