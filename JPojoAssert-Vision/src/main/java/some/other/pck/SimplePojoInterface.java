@@ -1,4 +1,4 @@
-package some.pck;
+package some.other.pck;
 
 import lombok.Value;
 
