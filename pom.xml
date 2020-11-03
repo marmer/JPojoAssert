@@ -70,7 +70,7 @@
         <sonar.sources>src/main/java,src/main/kotlin</sonar.sources>
         <sonar.tests>src/test/java,src/test/kotlin</sonar.tests>
         <sonar.test.inclusions>**/*Test*/**</sonar.test.inclusions>
-        <sonar.exclusions>**/*Test*/**</sonar.exclusions>
+        <sonar.exclusions>**/*Test*/**,**/JPojoAssert-Vision/**/*</sonar.exclusions>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.kotlin.coveragePlugin>jacoco</sonar.kotlin.coveragePlugin>
         <sonar.coverage.jacoco.xmlReportPaths>
