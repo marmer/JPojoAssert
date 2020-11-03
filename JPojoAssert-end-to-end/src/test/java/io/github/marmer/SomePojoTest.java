@@ -16,8 +16,8 @@ class SomePojoTest {
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
                 () -> SomePojoAsserter.assertThat(new SomePojo("Helge"))
-                        .add(somePojo -> assertEquals("HelgeX", somePojo.getFirstName(), "firstName"))
-                        .add(toConsume -> {
+                        .with(somePojo -> assertEquals("HelgeX", somePojo.getFirstName(), "firstName"))
+                        .with(toConsume -> {
                             throw new Exception("Fancy Exception");
                         })
                         .assertSoftly());
