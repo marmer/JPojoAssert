@@ -10,18 +10,13 @@ import javax.lang.model.element.TypeElement
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 @SupportedAnnotationTypes("io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter")
 @AutoService(Processor::class)
-class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime) :
+class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime = LocalDateTime::now) :
     AbstractProcessor() {
-
-    /**
-     * Needed for the compiler
-     */
-    constructor() : this({ LocalDateTime.now() })
 
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) = super.init(processingEnvironment)
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
-        if (!roundEnvironment.processingOver() && set.containsTypeInfoFor(GenerateAsserter::class.java)) {
+        if (!roundEnvironment.processingOver() && set.isNotEmpty()) {
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
                 .forEach {
                     val baseType =
@@ -37,5 +32,3 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime)
 
 }
 
-private fun <T> Iterable<TypeElement>.containsTypeInfoFor(type: Class<T>): Boolean =
-    any { it.qualifiedName.toString() == type.name }
