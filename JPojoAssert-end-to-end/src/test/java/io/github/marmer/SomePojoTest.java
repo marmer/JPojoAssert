@@ -1,12 +1,11 @@
 package io.github.marmer;
 
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SomePojoTest {
     @Test
@@ -16,14 +15,18 @@ class SomePojoTest {
 
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
-
-
-                // TODO: marmer 03.11.2020 what about "buildAssertionFor" or just "for" instead of "assertThat"
                 () -> SomePojoAsserter.assertThat(new SomePojo("Helge"))
                         .add(somePojo -> assertEquals("HelgeX", somePojo.getFirstName(), "firstName"))
+                        .add(toConsume -> {
+                            throw new Exception("Fancy Exception");
+                        })
                         .assertSoftly());
         // Assertion
-        MatcherAssert.assertThat(assertionError.toString(), containsString("HelgeX"));
+        assertAll(
+                () -> assertThat(assertionError.toString(), containsString("HelgeX")),
+                () -> assertThat(assertionError.toString(), containsString("Fancy Exception"))
+        );
+
     }
 
 }

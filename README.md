@@ -38,8 +38,8 @@ Draft:
             .hasPropertyFirstName("Some value") // Equals Check for the value of the related property of the pojo
             .hasPropertyFirstName(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo
             .hasPropertyFirstName(it -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
-            .add(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
-            .add( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
+            .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
+            .has( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
             .isInstanceOfSomePojo() // Optional Check whether it is an instance related to the Base Class the Asserter was created of
             .hasSamePropertiesLike(otherPojo)
             .hasSamePropertiesLikeExclusive(otherPojo)
