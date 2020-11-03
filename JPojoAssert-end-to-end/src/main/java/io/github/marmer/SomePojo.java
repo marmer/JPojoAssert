@@ -1,8 +1,10 @@
 package io.github.marmer;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Value
+@Getter
+@AllArgsConstructor
 public class SomePojo {
-    String firstName;
+    private final String firstName;
 }
