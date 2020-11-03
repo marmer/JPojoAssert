@@ -16,6 +16,9 @@ class SomePojoTest {
 
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
+
+
+                // TODO: marmer 03.11.2020 what about "buildAssertionFor" or just "for" instead of "assertThat"
                 () -> SomePojoAsserter.assertThat(new SomePojo("Helge"))
                         .add(somePojo -> assertEquals("HelgeX", somePojo.getFirstName(), "firstName"))
                         .assertSoftly());
