@@ -29,7 +29,7 @@ class PojoAsserterGenerator(
         .writeTo(processingEnv.filer)
 
     private fun getBaseAssertionMethods() = listOf(
-        MethodSpec.methodBuilder("add")
+        MethodSpec.methodBuilder("with")
             .addModifiers(Modifier.PUBLIC)
             .addParameter(
                 ParameterizedTypeName.get(ClassName.get(AssertionCallback::class.java), baseType.typeName),

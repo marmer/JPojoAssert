@@ -53,7 +53,7 @@ public class SimplePojoInterfaceAsserter{
         return new SimplePojoInterfaceAsserter(base);
     }
 
-    public SimplePojoInterfaceAsserter add(final AssertionCallback<SimplePojoInterface> assertionCallback) {
+    public SimplePojoInterfaceAsserter with(final AssertionCallback<SimplePojoInterface> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
 

@@ -17,7 +17,6 @@ class PojoAssertionBuilderJavaTest {
         final PojoAssertionBuilder<SomeType> builder = new PojoAssertionBuilder<>(new SomeType(), emptyList(), "someHeading")
                 .add(it -> {
                     assertEquals(43, it.getValue());
-                    return null;
                 });
 
         // Assertion
