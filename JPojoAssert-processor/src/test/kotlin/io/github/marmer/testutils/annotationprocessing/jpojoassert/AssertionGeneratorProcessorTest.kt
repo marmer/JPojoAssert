@@ -23,7 +23,7 @@ public class JPojoAssertConfiguration{}
             "some.other.pck.SimplePojoInterface",
             """package some.other.pck;
 
-public interface SimplePojoInterface<A, B extends CharSequence>{
+public interface SimplePojoInterface{
     String getSomeStringProperty();
 }"""
         )
