@@ -44,4 +44,4 @@ jobs:
         run: |
           ./mvnw -B clean install -DskipTests
           ./mvnw -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.jacoco:jacoco-maven-plugin:report-aggregate
-          ./mvnw -B sonar:sonar -Psonar
+          ./mvnw -B sonar:sonar --projects "JPojoAssert-core,JPojoAssert-processor"
