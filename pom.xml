@@ -272,6 +272,13 @@
 
     <profiles>
         <profile>
+            <id>sonar</id>
+            <modules>
+                <module>JPojoAssert-core</module>
+                <module>JPojoAssert-processor</module>
+            </modules>
+        </profile>
+        <profile>
             <id>release</id>
             <modules>
                 <module>JPojoAssert-core</module>
