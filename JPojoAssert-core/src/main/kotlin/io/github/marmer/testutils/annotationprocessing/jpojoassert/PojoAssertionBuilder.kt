@@ -1,17 +1,19 @@
-package io.github.marmer
+package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.opentest4j.MultipleFailuresError
 
-private typealias Callback = (() -> Unit)
+private typealias LocalAssertionCallback = (() -> Unit)
 
-class PojoAssertionBuilder<out T>(
+class PojoAssertionBuilder<T>(
     private val pojo: T,
-    private val assertionCallbacks: List<Callback> = emptyList(),
+    private val assertionCallbacks: List<LocalAssertionCallback> = emptyList(),
     private val heading: String = "Unexpected exceptions thrown"
 ) {
 
-    fun add(assertionCallback: (T) -> Unit) =
-        PojoAssertionBuilder(pojo, assertionCallbacks + { assertionCallback(pojo) }, "What a good day to throw")
+    fun add(assertionCallback: AssertionCallback<T>) =
+        PojoAssertionBuilder(pojo, assertionCallbacks + { assertionCallback.accept(pojo) }, "What a good day to throw")
+
+    fun add(assertionCallback: (T) -> Unit) = add(AssertionCallback { assertionCallback(it) })
 
     fun assertHardly() =
         assertionCallbacks.forEach { callback ->
@@ -28,7 +30,7 @@ class PojoAssertionBuilder<out T>(
             if (isNotEmpty()) throw MultipleFailuresError(heading, this)
         }
 
-    private fun Callback.toThrownExceptionOrNull() =
+    private fun LocalAssertionCallback.toThrownExceptionOrNull() =
         try {
             this()
             null

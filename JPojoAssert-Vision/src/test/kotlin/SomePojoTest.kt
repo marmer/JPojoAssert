@@ -21,14 +21,14 @@ internal class SomePojoTest {
         // Assertion
         SomePojoAsserter.assertThat(pojo)
             .isInstanceOfSomePojo()
-            .withFirstProperty()
-            .withFirstProperty("Some value")
-            .withFirstProperty(equalTo("Some value"))
-            .withFirstProperty { assertThat(it, equalTo("Some value")) }
-            .withSecondProperty()
-            .withSecondProperty(42)
-            .withSecondProperty(equalTo(42))
-            .withSecondProperty { assertThat(it, equalTo(42)) }
+            .hasPropertyFirstProperty()
+            .hasPropertyFirstProperty("Some value")
+            .hasPropertyFirstProperty(equalTo("Some value"))
+            .firstProperty { assertThat(it, equalTo("Some value")) }
+            .hasSecondProperty()
+            .hasSecondProperty(42)
+            .hasSecondProperty(equalTo(42))
+            .secondProperty { assertThat(it, equalTo(42)) }
 //            .matches(hasProperty("notExistingProperty"))
 //            .matches { assertThat(it, hasProperty("notExistingProperty")) }
 //            .assertHardly()
@@ -74,7 +74,7 @@ class SomePojoAsserter private constructor(
         plusAssertion { dynamicAssertion(pojo) }
 
     // ###### First Property ###########
-    fun withFirstProperty() =
+    fun hasPropertyFirstProperty() =
         plusAssertion {
             assertThat(
                 additionalMessage,
@@ -83,7 +83,7 @@ class SomePojoAsserter private constructor(
             )
         }
 
-    fun withFirstProperty(value: String?) =
+    fun hasPropertyFirstProperty(value: String?) =
         plusAssertion {
             assertThat(
                 additionalMessage,
@@ -92,7 +92,7 @@ class SomePojoAsserter private constructor(
             )
         }
 
-    fun withFirstProperty(matcher: Matcher<String>) =
+    fun hasPropertyFirstProperty(matcher: Matcher<String>) =
         plusAssertion {
             assertThat(
                 additionalMessage,
@@ -101,11 +101,11 @@ class SomePojoAsserter private constructor(
             )
         }
 
-    fun withFirstProperty(dynamicAssertion: (String) -> Unit) =
+    fun firstProperty(dynamicAssertion: (String) -> Unit) =
         plusAssertion { dynamicAssertion(pojo.firstProperty) }
 
     // ###### Second Property ###########
-    fun withSecondProperty() =
+    fun hasSecondProperty() =
         plusAssertion {
             assertThat(
                 additionalMessage,
@@ -114,7 +114,7 @@ class SomePojoAsserter private constructor(
             )
         }
 
-    fun withSecondProperty(value: Int?) =
+    fun hasSecondProperty(value: Int?) =
         plusAssertion {
             assertThat(
                 additionalMessage,
@@ -123,7 +123,7 @@ class SomePojoAsserter private constructor(
             )
         }
 
-    fun withSecondProperty(matcher: Matcher<Int>) =
+    fun hasSecondProperty(matcher: Matcher<Int>) =
         plusAssertion {
             assertThat(
                 additionalMessage,
@@ -132,7 +132,7 @@ class SomePojoAsserter private constructor(
             )
         }
 
-    fun withSecondProperty(dynamicAssertion: (Int) -> Unit) =
+    fun secondProperty(dynamicAssertion: (Int) -> Unit) =
         plusAssertion { dynamicAssertion(pojo.secondProperty) }
 
 

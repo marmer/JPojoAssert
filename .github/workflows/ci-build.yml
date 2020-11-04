@@ -32,17 +32,19 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Prepare source directories end to end
+      - name: Prepare source directories for sonar
         run: |
-          mkdir -p JPojoAssert-end-to-end/src/{main,test}/{java,kotlin}
           mkdir -p JPojoAssert-processor/src/{main,test}/{java,kotlin}
-          mkdir -p JPojoAssert-Vision/src/{main,test}/{java,kotlin}
           mkdir -p JPojoAssert-core/src/{main,test}/{java,kotlin}
 
       - name: Build
+        run: ./mvnw -B clean install -DskipTests
+
+      - name: Test
+        run: ./mvnw -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.jacoco:jacoco-maven-plugin:report-aggregate
+
+      - name: Sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          ./mvnw -B clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report org.jacoco:jacoco-maven-plugin:report-aggregate
-          ./mvnw -B sonar:sonar
+        run: ./mvnw -B sonar:sonar -am --projects "JPojoAssert-core,JPojoAssert-processor"

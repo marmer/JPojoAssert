@@ -62,9 +62,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>${maven.compiler.target}</maven.compiler.source>
-        <kotlin.compiler.jvmTarget>${maven.compiler.target}</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
 
         <!-- Sonar -->
         <sonar.organization>marmer-github</sonar.organization>
@@ -72,7 +70,7 @@
         <sonar.sources>src/main/java,src/main/kotlin</sonar.sources>
         <sonar.tests>src/test/java,src/test/kotlin</sonar.tests>
         <sonar.test.inclusions>**/*Test*/**</sonar.test.inclusions>
-        <sonar.exclusions>**/*Test*/**</sonar.exclusions>
+        <sonar.exclusions>**/*Test*/**,**/JPojoAssert-Vision/**/*</sonar.exclusions>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.kotlin.coveragePlugin>jacoco</sonar.kotlin.coveragePlugin>
         <sonar.coverage.jacoco.xmlReportPaths>
@@ -82,6 +80,7 @@
 
         <!-- Plugin and dependency Versions-->
         <kotlin.version>1.4.10</kotlin.version>
+        <auto-service.version>1.0-rc7</auto-service.version>
     </properties>
 
     <repositories>
@@ -100,6 +99,26 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>javapoet</artifactId>
+                <version>1.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.16</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.testing.compile</groupId>
+                <artifactId>compile-testing</artifactId>
+                <version>0.19</version>
+            </dependency>
+            <dependency>
                 <groupId>org.opentest4j</groupId>
                 <artifactId>opentest4j</artifactId>
                 <version>1.2.0</version>
@@ -112,7 +131,7 @@
             <dependency>
                 <groupId>com.google.auto.service</groupId>
                 <artifactId>auto-service</artifactId>
-                <version>1.0-rc7</version>
+                <version>${auto-service.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -206,6 +225,7 @@
                         </execution>
                     </executions>
                     <configuration>
+                        <release>${kotlin.compiler.jvmTarget}</release>
                         <compilerArgs>
                             <arg>-parameters</arg>
                         </compilerArgs>

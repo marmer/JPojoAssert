@@ -1,4 +1,4 @@
-package io.github.marmer
+package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
@@ -13,7 +13,6 @@ import kotlin.test.fail
 internal class PojoAssertionBuilderTest {
 
     private data class Type1(val value: Int)
-    private data class Type2(val value: Int)
 
     @Test
     fun `exceptions within an assertion should throw an AssertionError at hard asserts`() {
@@ -84,7 +83,7 @@ internal class PojoAssertionBuilderTest {
     fun `nothing shold happen if nothing fails at soft asserts`() {
         // Preparation
         val builder = PojoAssertionBuilder(Type1(42))
-            .add { assertTrue(true, "Well, when this fails, we've got a problem") }
+            .add { assertEquals(42, it.value) }
 
         // Execution
         builder.assertSoftly()
@@ -164,4 +163,5 @@ internal class PojoAssertionBuilderTest {
         // Assertion
         assertThat(result.message, containsString("What a good day to throw"))
     }
+
 }
