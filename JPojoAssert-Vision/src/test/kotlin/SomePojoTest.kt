@@ -4,8 +4,8 @@ import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 
 data class SomePojo(
-    val firstProperty: String,
-    val secondProperty: Int
+    val firstName: String,
+    val noseCount: Int
 )
 
 
@@ -19,18 +19,18 @@ internal class SomePojoTest {
         // Execution
 
         // Assertion
-        SomePojoAsserter.assertThat(pojo)
+        SomePojoAsserter.prepareFor(pojo)
             .isInstanceOfSomePojo()
-            .hasPropertyFirstProperty()
-            .hasPropertyFirstProperty("Some value")
-            .hasPropertyFirstProperty(equalTo("Some value"))
-            .firstProperty { assertThat(it, equalTo("Some value")) }
-            .hasSecondProperty()
-            .hasSecondProperty(42)
-            .hasSecondProperty(equalTo(42))
-            .secondProperty { assertThat(it, equalTo(42)) }
-//            .matches(hasProperty("notExistingProperty"))
-//            .matches { assertThat(it, hasProperty("notExistingProperty")) }
+            .hasPropertyFirstName()
+            .hasPropertyFirstName("Some value")
+            .hasPropertyFirstName(equalTo("Some value"))
+            .withFirstName { assertThat(it, equalTo("Some value")) }
+            .hasNoseCount()
+            .hasNoseCount(42)
+            .hasNoseCount(equalTo(42))
+            .withNoseCount { assertThat(it, equalTo(42)) }
+//            .with(hasProperty("notExistingProperty"))
+            .with { assertThat(it, hasProperty("notExistingProperty")) }
 //            .assertHardly()
             .assertSoftly()
     }
@@ -67,73 +67,73 @@ class SomePojoAsserter private constructor(
             }.joinToString(separator = "\n\n"))
         }
 
-    fun matches(matcher: Matcher<SomePojo>) =
+    fun with(matcher: Matcher<SomePojo>) =
         plusAssertion { assertThat(pojo, matcher) }
 
-    fun matches(dynamicAssertion: (SomePojo) -> Unit) =
+    fun with(dynamicAssertion: (SomePojo) -> Unit) =
         plusAssertion { dynamicAssertion(pojo) }
 
     // ###### First Property ###########
-    fun hasPropertyFirstProperty() =
+    fun hasPropertyFirstName() =
         plusAssertion {
             assertThat(
                 additionalMessage,
                 pojo,
-                hasProperty("firstProperty")
+                hasProperty("firstName")
             )
         }
 
-    fun hasPropertyFirstProperty(value: String?) =
+    fun hasPropertyFirstName(value: String?) =
         plusAssertion {
             assertThat(
                 additionalMessage,
                 pojo,
-                hasProperty("firstProperty", equalTo(value))
+                hasProperty("firstName", equalTo(value))
             )
         }
 
-    fun hasPropertyFirstProperty(matcher: Matcher<String>) =
+    fun hasPropertyFirstName(matcher: Matcher<String>) =
         plusAssertion {
             assertThat(
                 additionalMessage,
                 pojo,
-                hasProperty("firstProperty", matcher)
+                hasProperty("firstName", matcher)
             )
         }
 
-    fun firstProperty(dynamicAssertion: (String) -> Unit) =
-        plusAssertion { dynamicAssertion(pojo.firstProperty) }
+    fun withFirstName(dynamicAssertion: (String) -> Unit) =
+        plusAssertion { dynamicAssertion(pojo.firstName) }
 
     // ###### Second Property ###########
-    fun hasSecondProperty() =
+    fun hasNoseCount() =
         plusAssertion {
             assertThat(
                 additionalMessage,
                 pojo,
-                hasProperty("secondProperty")
+                hasProperty("noseCount")
             )
         }
 
-    fun hasSecondProperty(value: Int?) =
+    fun hasNoseCount(value: Int?) =
         plusAssertion {
             assertThat(
                 additionalMessage,
                 pojo,
-                hasProperty("secondProperty", equalTo(value))
+                hasProperty("noseCount", equalTo(value))
             )
         }
 
-    fun hasSecondProperty(matcher: Matcher<Int>) =
+    fun hasNoseCount(matcher: Matcher<Int>) =
         plusAssertion {
             assertThat(
                 additionalMessage,
                 pojo,
-                hasProperty("secondProperty", matcher)
+                hasProperty("noseCount", matcher)
             )
         }
 
-    fun secondProperty(dynamicAssertion: (Int) -> Unit) =
-        plusAssertion { dynamicAssertion(pojo.secondProperty) }
+    fun withNoseCount(dynamicAssertion: (Int) -> Unit) =
+        plusAssertion { dynamicAssertion(pojo.noseCount) }
 
 
     private fun plusAssertion(newAssertion: () -> Unit) =
@@ -143,7 +143,7 @@ class SomePojoAsserter private constructor(
 
     companion object {
         @JvmStatic
-        fun assertThat(pojo: SomePojo) = SomePojoAsserter(pojo)
+        fun prepareFor(pojo: SomePojo) = SomePojoAsserter(pojo)
     }
 }
 
