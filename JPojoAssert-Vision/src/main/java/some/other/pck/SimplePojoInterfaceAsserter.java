@@ -20,14 +20,13 @@ public class SimplePojoInterfaceAsserter {
         this.pojoAssertionBuilder = pojoAssertionBuilder;
     }
 
-    public static SimplePojoInterfaceAsserter assertThat(final SimplePojoInterface base) {
+    public static SimplePojoInterfaceAsserter prepareFor(final SimplePojoInterface base) {
         return new SimplePojoInterfaceAsserter(base);
     }
 
     public SimplePojoInterfaceAsserter add(final Consumer<SimplePojoInterface> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> {
             assertionCallback.accept(base);
-            return null;
         }));
     }
 
