@@ -64,7 +64,7 @@ class PojoAsserterGenerator(
         getApiInitializer()
     )
 
-    private fun getApiInitializer() = MethodSpec.methodBuilder("assertThat")
+    private fun getApiInitializer() = MethodSpec.methodBuilder("prepareFor")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
         .addParameter(baseType.typeName, "base", Modifier.FINAL)
         .addStatement("return new \$L(base)", simpleAsserterName)

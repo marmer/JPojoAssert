@@ -36,8 +36,8 @@ import java.util.Collections;
 import javax.annotation.processing.Generated;
 
 @Generated(
-value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
-date = "$now")
+        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+        date = "$now")
 public class SimplePojoInterfaceAsserter{
     private final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder;
 
@@ -49,7 +49,7 @@ public class SimplePojoInterfaceAsserter{
         this.pojoAssertionBuilder = pojoAssertionBuilder;
     }
 
-    public static SimplePojoInterfaceAsserter assertThat(final SimplePojoInterface base) {
+    public static SimplePojoInterfaceAsserter prepareFor(final SimplePojoInterface base) {
         return new SimplePojoInterfaceAsserter(base);
     }
 

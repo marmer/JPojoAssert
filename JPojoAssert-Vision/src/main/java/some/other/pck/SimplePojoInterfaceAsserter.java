@@ -1,15 +1,15 @@
 package some.other.pck;
 
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
 
 import javax.annotation.processing.Generated;
 import java.util.Collections;
-import java.util.function.Consumer;
 
 @Generated(
         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
         date = "now")
-public class SimplePojoInterfaceAsserter {
+public class SimplePojoInterfaceAsserter{
     private final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder;
 
     private SimplePojoInterfaceAsserter(final SimplePojoInterface base) {
@@ -24,10 +24,8 @@ public class SimplePojoInterfaceAsserter {
         return new SimplePojoInterfaceAsserter(base);
     }
 
-    public SimplePojoInterfaceAsserter add(final Consumer<SimplePojoInterface> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> {
-            assertionCallback.accept(base);
-        }));
+    public SimplePojoInterfaceAsserter with(final AssertionCallback<SimplePojoInterface> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
 
     public void assertHardly() {
