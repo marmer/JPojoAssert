@@ -24,7 +24,39 @@ public class JPojoAssertConfiguration{}
             """package some.other.pck;
 
 public interface SimplePojoInterface{
-    String getFirstName();
+    // Object Type
+    String getFirst();
+    // Number primitive
+    int getSecond();
+    // TODO boolean primitive
+    // TODO boolean wrapper
+    // TODO primitive array
+    // TODO object array
+    // TODO multidimensional array
+    // TODO case after prefix ( getsomething and issomething should not be a property)
+    // TODO For Property: Generics
+    // TODO For Property: Type With Generics
+    // TODO For Property: Type With nested Generics
+    // TODO For Property: Nested Types
+    // TODO For Property: static 
+    // TODO For Property: (all) kinds of Modifiers (not just private, public, protected, package)
+    // TODO For Property: Fields
+    // TODO For Property: property like methods with parameters
+    // TODO For Property: what else edge cases we found already in hamcrest-matcher-generator
+    // TODO For nested Types: Generics
+    // TODO For nested Types: Type With Generics
+    // TODO For nested Types: Type With nested Generics
+    // TODO For nested Types: Nested Types
+    // TODO For nested Types: static/non static 
+    // TODO For nested Types: (all) kinds of Modifiers (not just private, public, protected, package)
+    // TODO For nested Types: Fields
+    // TODO For nested Types: property like methods with parameters
+    // TODO For nested Types: what else edge cases we found already in hamcrest-matcher-generator
+    // TODO Inheritance: Direct inherited Props
+    // TODO Inheritance: Indirect inherited Props
+    // TODO General: claimed names
+    // TODO General: different Methods
+
 }"""
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
@@ -33,6 +65,7 @@ public interface SimplePojoInterface{
 
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+import java.lang.Integer;
 import java.lang.String;
 import java.util.Collections;
 import javax.annotation.processing.Generated;
@@ -59,8 +92,12 @@ public class SimplePojoInterfaceAsserter{
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
     
-    public SimplePojoInterfaceAsserter withFirstName(final AssertionCallback<String> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFirstName())));
+    public SimplePojoInterfaceAsserter withFirst(final AssertionCallback<String> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFirst())));
+    }
+    
+    public SimplePojoInterfaceAsserter withSecond(final AssertionCallback<Integer> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getSecond())));
     }
 
     public void assertHardly() {
@@ -87,6 +124,7 @@ public class SimplePojoInterfaceAsserter{
     }
 }
 
+// TODO: marmer 05.11.2020 don't stop generation on errors. Just warn and generate the rest (as far as possible)
 // TODO: marmer 02.11.2020 test elements in root package
 // TODO: marmer 02.11.2020 test all types used as base for generation (primitives, Objects, Arrays, Void?, Same name, Generics, inner Types)
 // TODO: marmer 02.11.2020 test all types for fields at least (primitives, Objects, Arrays, Void?, Same name, Generics, inner Types)
