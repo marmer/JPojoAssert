@@ -30,7 +30,7 @@ internal class SomePojoTest {
             .hasNoseCount(equalTo(42))
             .withNoseCount { assertThat(it, equalTo(42)) }
 //            .with(hasProperty("notExistingProperty"))
-            .with { assertThat(it, hasProperty("notExistingProperty")) }
+//            .with { assertThat(it, hasProperty("notExistingProperty")) }
 //            .assertHardly()
             .assertSoftly()
     }

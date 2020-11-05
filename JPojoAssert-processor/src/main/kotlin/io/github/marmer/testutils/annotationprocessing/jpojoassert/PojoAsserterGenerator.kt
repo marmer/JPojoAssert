@@ -23,10 +23,30 @@ class PojoAsserterGenerator(
             .addField(getPojoAssertionBuilderField())
             .addMethods(getInitializers())
             .addMethods(getBaseAssertionMethods())
+            .addMethods(getPropertyAssertionMethods())
             .addMethods(getFinisherMethods())
             .build()
     ).build()
         .writeTo(processingEnv.filer)
+
+    // FIXME: marmer 05.11.2020 It's fake. Time to make!
+    private fun getPropertyAssertionMethods() = listOf(
+        MethodSpec.methodBuilder("withFirstName")
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(
+                ParameterizedTypeName.get(
+                    ClassName.get(AssertionCallback::class.java),
+                    ClassName.get(String::class.java)
+                ),
+                "assertionCallback",
+                Modifier.FINAL
+            )
+            .addStatement(
+                "return new $simpleAsserterName($builderFieldName.add(base -> assertionCallback.accept(base.getFirstName())))"
+            )
+            .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+            .build()
+    )
 
     private fun getBaseAssertionMethods() = listOf(
         MethodSpec.methodBuilder("with")

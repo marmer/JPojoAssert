@@ -24,14 +24,16 @@ public class JPojoAssertConfiguration{}
             """package some.other.pck;
 
 public interface SimplePojoInterface{
-    String getSomeStringProperty();
+    String getFirstName();
 }"""
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         val expectedOutput = JavaFileObjects.forSourceString(
             "some.other.pck.SimplePojoInterfaceAsserter", """package some.other.pck;
 
-import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+import java.lang.String;
 import java.util.Collections;
 import javax.annotation.processing.Generated;
 
@@ -56,6 +58,10 @@ public class SimplePojoInterfaceAsserter{
     public SimplePojoInterfaceAsserter with(final AssertionCallback<SimplePojoInterface> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
+    
+    public SimplePojoInterfaceAsserter withFirstName(final AssertionCallback<String> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFirstName())));
+    }
 
     public void assertHardly() {
         pojoAssertionBuilder.assertHardly();
@@ -74,6 +80,8 @@ public class SimplePojoInterfaceAsserter{
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
             .compilesWithoutError()
+            // TODO: marmer 05.11.2020 No warning should be given here!
+//            .compilesWithoutWarnings()
             .and()
             .generatesSources(expectedOutput)
     }

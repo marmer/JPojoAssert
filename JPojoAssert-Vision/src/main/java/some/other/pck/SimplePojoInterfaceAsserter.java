@@ -28,6 +28,10 @@ public class SimplePojoInterfaceAsserter{
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
 
+    public SimplePojoInterfaceAsserter withFirstName(final AssertionCallback<String> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add((base) -> assertionCallback.accept(base.getFirstName())));
+    }
+
     public void assertHardly() {
         pojoAssertionBuilder.assertHardly();
     }
