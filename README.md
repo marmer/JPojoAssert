@@ -33,21 +33,18 @@ Draft:
 
 ```java
         // Sample Assertion related to "SomePojo"        
-        SomePojoAsserter.assertThat(pojo)
-            .hasPropertyFirstName() // Check whether the passed pojo has a property
-            .hasPropertyFirstName("Some value") // Equals Check for the value of the related property of the pojo
-            .hasPropertyFirstName(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo
-            .hasPropertyFirstName(it -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
+        SomePojoAsserter.prepareFor(pojo)
+            .with( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth)
+            .withFirstName(it -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
+
+            .hasFirstName() // Check whether the passed pojo has a property
+            .hasFirstName("Some value") // Equals Check for the value of the related property of the pojo
+
+            .withFirstName(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo
+
             .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
-            .with( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
+
             .isInstanceOfSomePojo() // Optional Check whether it is an instance related to the Base Class the Asserter was created of
-            .hasSamePropertiesLike(otherPojo)
-            .hasSamePropertiesLikeExclusive(otherPojo)
-            .hasSamePropertiesLikeInclusive(otherPojo)
-            .hasSamePropertyValuesLike(otherPojo)
-            .hasSamePropertyValuesExclusiveLike(otherPojo)
-            .hasSamePropertyValuesInclusiveLike(otherPojo)
-            .assertSoftly() // Soft assertion for an atomic result (you could also use assertHardly())
+
+            .assertAll() // Soft assertion for an atomic result (you could also use assertFirstFail())
 ```
-
-
