@@ -71,14 +71,14 @@ class PojoAsserterGenerator(
     )
 
 
-    private fun getHardAssertMethod() = MethodSpec.methodBuilder("assertHardly")
+    private fun getHardAssertMethod() = MethodSpec.methodBuilder("assertToFirstFail")
         .addModifiers(Modifier.PUBLIC)
-        .addStatement("$builderFieldName.assertHardly()")
+        .addStatement("$builderFieldName.assertToFirstFail()")
         .build()
 
-    private fun getSoftAssertMethod() = MethodSpec.methodBuilder("assertSoftly")
+    private fun getSoftAssertMethod() = MethodSpec.methodBuilder("assertAll")
         .addModifiers(Modifier.PUBLIC)
-        .addStatement("$builderFieldName.assertSoftly()")
+        .addStatement("$builderFieldName.assertAll()")
         .build()
 
     private fun getInitializers() = listOf(

@@ -22,7 +22,7 @@ class SomePojoTest {
                             throw new Exception("Fancy Exception");
                         })
                         .withFirstName(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeY", it))
-                        .assertSoftly());
+                        .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("HelgeX")),

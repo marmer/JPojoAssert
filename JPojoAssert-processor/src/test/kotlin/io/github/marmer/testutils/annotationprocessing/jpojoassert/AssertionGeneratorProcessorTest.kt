@@ -100,12 +100,12 @@ public class SimplePojoInterfaceAsserter{
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getSecond())));
     }
 
-    public void assertHardly() {
-        pojoAssertionBuilder.assertHardly();
+    public void assertToFirstFail() {
+        pojoAssertionBuilder.assertToFirstFail();
     }
 
-    public void assertSoftly() {
-        pojoAssertionBuilder.assertSoftly();
+    public void assertAll() {
+        pojoAssertionBuilder.assertAll();
     }
 }"""
         )

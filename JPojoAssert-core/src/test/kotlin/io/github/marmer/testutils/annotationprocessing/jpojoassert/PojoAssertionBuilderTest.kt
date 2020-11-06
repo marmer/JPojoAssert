@@ -23,7 +23,7 @@ internal class PojoAssertionBuilderTest {
         // Assertion
         assertThrows(AssertionError::class.java) {
             // Execution
-            builder.assertHardly()
+            builder.assertToFirstFail()
         }
     }
 
@@ -36,7 +36,7 @@ internal class PojoAssertionBuilderTest {
         // Assertion
         assertThrows(AssertionError::class.java) {
             // Execution
-            builder.assertHardly()
+            builder.assertToFirstFail()
         }
     }
 
@@ -47,7 +47,7 @@ internal class PojoAssertionBuilderTest {
             .add { assertTrue(true, "Well, when this fails, we've got a problem") }
 
         // Execution
-        builder.assertHardly()
+        builder.assertToFirstFail()
 
         // Assertion
         //well nothing shou happen ;)
@@ -62,7 +62,7 @@ internal class PojoAssertionBuilderTest {
         // Assertion
         assertThrows(AssertionError::class.java) {
             // Execution
-            builder.assertSoftly()
+            builder.assertAll()
         }
     }
 
@@ -75,7 +75,7 @@ internal class PojoAssertionBuilderTest {
         // Assertion
         assertThrows(AssertionError::class.java) {
             // Execution
-            builder.assertSoftly()
+            builder.assertAll()
         }
     }
 
@@ -86,7 +86,7 @@ internal class PojoAssertionBuilderTest {
             .add { assertEquals(42, it.value) }
 
         // Execution
-        builder.assertSoftly()
+        builder.assertAll()
 
         // Assertion
         //well nothing shou happen ;)
@@ -102,7 +102,7 @@ internal class PojoAssertionBuilderTest {
 
         // Execution
         val result = assertThrows(AssertionError::class.java) {
-            builder.assertHardly()
+            builder.assertToFirstFail()
         }
 
         // Assertion
@@ -123,7 +123,7 @@ internal class PojoAssertionBuilderTest {
 
         // Execution
         val result = assertThrows(AssertionError::class.java) {
-            builder.assertSoftly()
+            builder.assertAll()
         }
 
         // Assertion
@@ -142,7 +142,7 @@ internal class PojoAssertionBuilderTest {
 
         // Execution
         val result = assertThrows(AssertionError::class.java) {
-            builder.assertHardly()
+            builder.assertToFirstFail()
         }
 
         // Assertion
@@ -157,7 +157,7 @@ internal class PojoAssertionBuilderTest {
 
         // Execution
         val result = assertThrows(AssertionError::class.java) {
-            builder.assertSoftly()
+            builder.assertAll()
         }
 
         // Assertion

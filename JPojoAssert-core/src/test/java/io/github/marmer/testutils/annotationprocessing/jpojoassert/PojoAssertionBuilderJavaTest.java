@@ -20,7 +20,7 @@ class PojoAssertionBuilderJavaTest {
                 });
 
         // Assertion
-        assertThrows(AssertionError.class, builder::assertHardly);
+        assertThrows(AssertionError.class, builder::assertToFirstFail);
     }
 
     private static class SomeType {

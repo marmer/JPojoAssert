@@ -13,7 +13,7 @@ class PojoAssertionBuilder<T>(
     fun add(assertionCallback: AssertionCallback<T>) =
         PojoAssertionBuilder(pojo, assertionCallbacks + { assertionCallback.accept(pojo) }, "What a good day to throw")
 
-    fun assertHardly() =
+    fun assertToFirstFail() =
         assertionCallbacks.forEach { callback ->
             callback.toThrownExceptionOrNull()
                 .let {
@@ -21,7 +21,7 @@ class PojoAssertionBuilder<T>(
                 }
         }
 
-    fun assertSoftly() =
+    fun assertAll() =
         with(assertionCallbacks.map {
             it.toThrownExceptionOrNull()
         }.filterNotNull()) {

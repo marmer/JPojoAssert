@@ -46,5 +46,5 @@ Draft:
 
             .isInstanceOfSomePojo() // Optional Check whether it is an instance related to the Base Class the Asserter was created of
 
-            .assertAll() // Soft assertion for an atomic result (you could also use assertFirstFail())
+            .assertAll() // Soft assertion for an atomic result (you could also use assertToFirstFail() to fail fast)
 ```
