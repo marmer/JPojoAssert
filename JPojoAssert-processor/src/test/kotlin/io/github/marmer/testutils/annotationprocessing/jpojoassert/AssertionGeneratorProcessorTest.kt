@@ -44,6 +44,11 @@ public class ExampleType{
     public String[] getNinth(){return null;}
     // multidimensional array
     public String[][] getTenth(){return null;}
+    // property like method no return
+    public void getEleventh(){}
+    // property like method with parameters
+    public String getEleventh(String prop){return null;}
+
     
     // TODO case after prefix ( getsomething and issomething should not be a property)
     // TODO For Property: Generics

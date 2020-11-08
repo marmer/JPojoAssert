@@ -7,6 +7,7 @@ import javax.annotation.processing.Generated
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.*
 import javax.lang.model.type.PrimitiveType
+import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 
 
@@ -141,7 +142,7 @@ class PojoAsserterGenerator(
 
     private val TypeElement.properties: List<Property>
         get() = enclosedElements
-            .filter { it.kind == ElementKind.METHOD }
+            .filter { it.isProperty }
             .map { it as ExecutableElement }
             .map {
                 Property(
@@ -162,6 +163,23 @@ class PojoAsserterGenerator(
     private fun Name.withoutPropertyPrefix() = toString()
         .replaceFirst(Regex("^((get)|(is))"), "")
         .decapitalize()
+
+    private val Element.isProperty
+        get() =
+            this is ExecutableElement &&
+                    hasReturnType() &&
+                    hasNoParameters()
+
+    private fun ExecutableElement.hasNoParameters() =
+        this.parameters.isEmpty()
+
+    private fun ExecutableElement.hasReturnType() =
+        returnType.kind != TypeKind.VOID
+
+    private fun Element.isMethod() =
+        kind == ElementKind.METHOD
+
+
 }
 
 data class Property(val name: String, val type: TypeMirror, val accessor: String)
