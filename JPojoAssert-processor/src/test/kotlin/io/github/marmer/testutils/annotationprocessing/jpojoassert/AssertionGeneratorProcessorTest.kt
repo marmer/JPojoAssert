@@ -38,9 +38,13 @@ public interface SimplePojoInterface{
     Boolean isGetSixth();
     //identifier mix 4
     Boolean getIsSeventh();
-    // TODO primitive array
-    // TODO object array
-    // TODO multidimensional array
+    // primitive array
+    int[] getEight();
+    // object array
+    String[] getNinth();
+    // multidimensional array
+    String[][] getTenth();
+    
     // TODO case after prefix ( getsomething and issomething should not be a property)
     // TODO For Property: Generics
     // TODO For Property: Type With Generics
@@ -51,15 +55,6 @@ public interface SimplePojoInterface{
     // TODO For Property: Fields
     // TODO For Property: property like methods with parameters
     // TODO For Property: what else edge cases we found already in hamcrest-matcher-generator
-    // TODO For nested Types: Generics
-    // TODO For nested Types: Type With Generics
-    // TODO For nested Types: Type With nested Generics
-    // TODO For nested Types: Nested Types
-    // TODO For nested Types: static/non static 
-    // TODO For nested Types: (all) kinds of Modifiers (not just private, public, protected, package)
-    // TODO For nested Types: Fields
-    // TODO For nested Types: property like methods with parameters
-    // TODO For nested Types: what else edge cases we found already in hamcrest-matcher-generator
     // TODO Inheritance: Direct inherited Props
     // TODO Inheritance: Indirect inherited Props
     // TODO General: claimed names
@@ -127,6 +122,18 @@ public class SimplePojoInterfaceAsserter{
     
     public SimplePojoInterfaceAsserter withIsSeventh(final AssertionCallback<Boolean> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsSeventh())));
+    }
+    
+    public SimplePojoInterfaceAsserter withEight(final AssertionCallback<int[]> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getEight())));
+    }
+    
+    public SimplePojoInterfaceAsserter withNinth(final AssertionCallback<String[]> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getNinth())));
+    }
+    
+    public SimplePojoInterfaceAsserter withTenth(final AssertionCallback<String[][]> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTenth())));
     }
 
     public void assertToFirstFail() {
