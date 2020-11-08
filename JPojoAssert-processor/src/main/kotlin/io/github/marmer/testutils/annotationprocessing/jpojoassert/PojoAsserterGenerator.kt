@@ -156,7 +156,7 @@ class PojoAsserterGenerator(
 
     private val Property.boxedType: TypeMirror
         get() =
-            if (type.kind.isPrimitive) processingEnv.typeUtils.boxedClass(type as PrimitiveType).asType()
+            if (type is PrimitiveType) processingEnv.typeUtils.boxedClass(type).asType()
             else type
 
     private fun Name.withoutPropertyPrefix() = toString()
