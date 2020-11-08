@@ -142,6 +142,7 @@ class PojoAsserterGenerator(
 
     private val TypeElement.properties: List<Property>
         get() = enclosedElements
+            .filter { it.kind == ElementKind.METHOD }
             .map { it as ExecutableElement }
             .map {
                 Property(

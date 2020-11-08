@@ -15,35 +15,35 @@ internal class AssertionGeneratorProcessorTest {
 
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
 
-@GenerateAsserter("some.other.pck.SimplePojoInterface")
+@GenerateAsserter("some.other.pck.ExampleType")
 public class JPojoAssertConfiguration{}
 """
         )
         val javaFileObject = JavaFileObjects.forSourceLines(
-            "some.other.pck.SimplePojoInterface",
+            "some.other.pck.ExampleType",
             """package some.other.pck;
 
-public interface SimplePojoInterface{
+public class ExampleType{
     // Object Type
-    String getFirst();
+    public String getFirst(){return null;}
     // Number primitive
-    int getSecond();
+    public int getSecond(){return 0;}
     // boolean primitive
-    boolean isThird();
+    public boolean isThird(){return false;}
     //identifier mix 1
-    boolean isGetFourth();
+    public boolean isGetFourth(){return false;}
     //identifier mix 2
-    boolean getIsFifth();
+    public boolean getIsFifth(){return false;}
     //identifier mix 3
-    Boolean isGetSixth();
+    public Boolean isGetSixth(){return false;}
     //identifier mix 4
-    Boolean getIsSeventh();
+    public Boolean getIsSeventh(){return false;}
     // primitive array
-    int[] getEight();
+    public int[] getEight(){return null;}
     // object array
-    String[] getNinth();
+    public String[] getNinth(){return null;}
     // multidimensional array
-    String[][] getTenth();
+    public String[][] getTenth(){return null;}
     
     // TODO case after prefix ( getsomething and issomething should not be a property)
     // TODO For Property: Generics
@@ -64,7 +64,7 @@ public interface SimplePojoInterface{
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         val expectedOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.SimplePojoInterfaceAsserter", """package some.other.pck;
+            "some.other.pck.ExampleTypeAsserter", """package some.other.pck;
 
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
@@ -77,63 +77,63 @@ import javax.annotation.processing.Generated;
 @Generated(
         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
         date = "$now")
-public class SimplePojoInterfaceAsserter{
-    private final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder;
+public class ExampleTypeAsserter{
+    private final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder;
 
-    private SimplePojoInterfaceAsserter(final SimplePojoInterface base) {
-        this(new PojoAssertionBuilder<SimplePojoInterface>(base, Collections.emptyList(), "SimplePojoInterface"));
+    private ExampleTypeAsserter(final ExampleType base) {
+        this(new PojoAssertionBuilder<ExampleType>(base, Collections.emptyList(), "ExampleType"));
     }
 
-    private SimplePojoInterfaceAsserter(final PojoAssertionBuilder<SimplePojoInterface> pojoAssertionBuilder) {
+    private ExampleTypeAsserter(final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder) {
         this.pojoAssertionBuilder = pojoAssertionBuilder;
     }
 
-    public static SimplePojoInterfaceAsserter prepareFor(final SimplePojoInterface base) {
-        return new SimplePojoInterfaceAsserter(base);
+    public static ExampleTypeAsserter prepareFor(final ExampleType base) {
+        return new ExampleTypeAsserter(base);
     }
 
-    public SimplePojoInterfaceAsserter with(final AssertionCallback<SimplePojoInterface> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(assertionCallback));
+    public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
     
-    public SimplePojoInterfaceAsserter withFirst(final AssertionCallback<String> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFirst())));
+    public ExampleTypeAsserter withFirst(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFirst())));
     }
     
-    public SimplePojoInterfaceAsserter withSecond(final AssertionCallback<Integer> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getSecond())));
+    public ExampleTypeAsserter withSecond(final AssertionCallback<Integer> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getSecond())));
     }
     
-    public SimplePojoInterfaceAsserter withThird(final AssertionCallback<Boolean> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isThird())));
+    public ExampleTypeAsserter withThird(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isThird())));
     }
     
-    public SimplePojoInterfaceAsserter withGetFourth(final AssertionCallback<Boolean> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetFourth())));
+    public ExampleTypeAsserter withGetFourth(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetFourth())));
     }
     
-    public SimplePojoInterfaceAsserter withIsFifth(final AssertionCallback<Boolean> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsFifth())));
+    public ExampleTypeAsserter withIsFifth(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsFifth())));
     }
     
-    public SimplePojoInterfaceAsserter withGetSixth(final AssertionCallback<Boolean> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetSixth())));
+    public ExampleTypeAsserter withGetSixth(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetSixth())));
     }
     
-    public SimplePojoInterfaceAsserter withIsSeventh(final AssertionCallback<Boolean> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsSeventh())));
+    public ExampleTypeAsserter withIsSeventh(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsSeventh())));
     }
     
-    public SimplePojoInterfaceAsserter withEight(final AssertionCallback<int[]> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getEight())));
+    public ExampleTypeAsserter withEight(final AssertionCallback<int[]> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getEight())));
     }
     
-    public SimplePojoInterfaceAsserter withNinth(final AssertionCallback<String[]> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getNinth())));
+    public ExampleTypeAsserter withNinth(final AssertionCallback<String[]> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getNinth())));
     }
     
-    public SimplePojoInterfaceAsserter withTenth(final AssertionCallback<String[][]> assertionCallback) {
-        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTenth())));
+    public ExampleTypeAsserter withTenth(final AssertionCallback<String[][]> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTenth())));
     }
 
     public void assertToFirstFail() {
