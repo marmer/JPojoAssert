@@ -30,6 +30,14 @@ public interface SimplePojoInterface{
     int getSecond();
     // boolean primitive
     boolean isThird();
+    //identifier mix 1
+    boolean isGetFourth();
+    //identifier mix 2
+    boolean getIsFifth();
+    //identifier mix 3
+    String isGetSixth();
+    //identifier mix 4
+    String getIsSeventh();
     // TODO boolean wrapper
     // TODO primitive array
     // TODO object array
@@ -104,6 +112,22 @@ public class SimplePojoInterfaceAsserter{
     
     public SimplePojoInterfaceAsserter withThird(final AssertionCallback<Boolean> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isThird())));
+    }
+    
+    public SimplePojoInterfaceAsserter withGetFourth(final AssertionCallback<Boolean> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetFourth())));
+    }
+    
+    public SimplePojoInterfaceAsserter withIsFifth(final AssertionCallback<Boolean> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsFifth())));
+    }
+    
+    public SimplePojoInterfaceAsserter withGetSixth(final AssertionCallback<String> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetSixth())));
+    }
+    
+    public SimplePojoInterfaceAsserter withIsSeventh(final AssertionCallback<String> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsSeventh())));
     }
 
     public void assertToFirstFail() {

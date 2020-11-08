@@ -157,13 +157,9 @@ class PojoAsserterGenerator(
     private val Property.boxedType: TypeMirror
         get() = if (type.kind.isPrimitive) processingEnv.typeUtils.boxedClass(type as PrimitiveType).asType() else type
 
-    private fun Name.withoutPropertyPrefix() =
-        toString()
-            // FIXME: marmer 08.11.2020 this should remove to much in some times;)
-            .replaceFirst("get", "")
-            .replaceFirst("is", "")
-            .mapIndexed { index, c -> if (index == 0) c.toLowerCase() else c }
-            .joinToString("")
+    private fun Name.withoutPropertyPrefix() = toString()
+        .replaceFirst(Regex("^((get)|(is))"), "")
+        .decapitalize()
 }
 
 data class Property(val name: String, val type: TypeMirror, val accessor: String)
