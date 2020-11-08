@@ -113,7 +113,6 @@ class PojoAsserterGenerator(
 
     private val simpleAsserterName = "${baseType.simpleName}Asserter"
 
-
     private val builderFieldName = "pojoAssertionBuilder"
 
     private fun getPojoAssertionBuilderField() = FieldSpec.builder(
@@ -146,9 +145,9 @@ class PojoAsserterGenerator(
             .map { it as ExecutableElement }
             .map {
                 Property(
-                    it.simpleName.withoutPropertyPrefix(),
-                    it.returnType,
-                    it.toString()
+                    name = it.simpleName.withoutPropertyPrefix(),
+                    type = it.returnType,
+                    accessor = it.toString()
                 )
             }
 
@@ -156,7 +155,9 @@ class PojoAsserterGenerator(
         get() = processingEnv.typeUtils.asElement(this).simpleName.toString()
 
     private val Property.boxedType: TypeMirror
-        get() = if (type.kind.isPrimitive) processingEnv.typeUtils.boxedClass(type as PrimitiveType).asType() else type
+        get() =
+            if (type.kind.isPrimitive) processingEnv.typeUtils.boxedClass(type as PrimitiveType).asType()
+            else type
 
     private fun Name.withoutPropertyPrefix() = toString()
         .replaceFirst(Regex("^((get)|(is))"), "")
