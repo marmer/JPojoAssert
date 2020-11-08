@@ -48,9 +48,13 @@ public class ExampleType{
     public void getEleventh(){}
     // property like method with parameters
     public String getEleventh(String prop){return null;}
+    // package private properties shold work too
+    String getTwelfth(){return null;}
+    // protected private properties shold not work
+    protected String getThirteenth(){return null;}
+    // private private properties shold not work
+    private String getFourteenth(){return null;}
 
-    
-    // TODO case after prefix ( getsomething and issomething should not be a property)
     // TODO For Property: Generics
     // TODO For Property: Type With Generics
     // TODO For Property: Type With nested Generics
@@ -139,6 +143,10 @@ public class ExampleTypeAsserter{
     
     public ExampleTypeAsserter withTenth(final AssertionCallback<String[][]> assertionCallback) {
         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTenth())));
+    }
+    
+    public ExampleTypeAsserter withTwelfth(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTwelfth())));
     }
 
     public void assertToFirstFail() {

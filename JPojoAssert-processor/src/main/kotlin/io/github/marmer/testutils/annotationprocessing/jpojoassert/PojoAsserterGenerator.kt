@@ -143,6 +143,7 @@ class PojoAsserterGenerator(
     private val TypeElement.properties: List<Property>
         get() = enclosedElements
             .filter { it.isProperty }
+            .filter { it.isAtLeastVisibleInPackage }
             .map { it as ExecutableElement }
             .map {
                 Property(
@@ -166,6 +167,9 @@ class PojoAsserterGenerator(
             this is ExecutableElement &&
                     hasReturnType() &&
                     hasNoParameters()
+
+    private val Element.isAtLeastVisibleInPackage: Boolean
+        get() = !modifiers.contains(Modifier.PRIVATE) && !modifiers.contains(Modifier.PROTECTED)
 
     private fun ExecutableElement.hasNoParameters() =
         this.parameters.isEmpty()
