@@ -56,18 +56,10 @@ public class ExampleType{
     private String getFourteenth(){return null;}
 
     // TODO For Property: Generics
-    // TODO For Property: Type With Generics
-    // TODO For Property: Type With nested Generics
-    // TODO For Property: Nested Types
     // TODO For Property: static 
-    // TODO For Property: (all) kinds of Modifiers (not just private, public, protected, package)
-    // TODO For Property: Fields
-    // TODO For Property: property like methods with parameters
+    // TODO For Property: abstract
+    // TODO For Property: final
     // TODO For Property: what else edge cases we found already in hamcrest-matcher-generator
-    // TODO Inheritance: Direct inherited Props
-    // TODO Inheritance: Indirect inherited Props
-    // TODO General: claimed names
-    // TODO General: different Methods
 
 }"""
         )
@@ -172,10 +164,3 @@ public class ExampleTypeAsserter{
             .generatesSources(expectedOutput)
     }
 }
-
-// TODO: marmer 05.11.2020 don't stop generation on errors. Just warn and generate the rest (as far as possible)
-// TODO: marmer 02.11.2020 test elements in root package
-// TODO: marmer 02.11.2020 test all types used as base for generation (primitives, Objects, Arrays, Void?, Same name, Generics, inner Types)
-// TODO: marmer 02.11.2020 test all types for fields at least (primitives, Objects, Arrays, Void?, Same name, Generics, inner Types)
-// TODO: marmer 02.11.2020 add Test from experience of Hamcrest Matcher generator
-// TODO: marmer 02.11.2020 test Elements in different modules
