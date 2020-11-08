@@ -152,9 +152,6 @@ class PojoAsserterGenerator(
                 )
             }
 
-    private val TypeMirror.simpleName: String
-        get() = processingEnv.typeUtils.asElement(this).simpleName.toString()
-
     private val Property.boxedType: TypeMirror
         get() =
             if (type is PrimitiveType) processingEnv.typeUtils.boxedClass(type).asType()
@@ -175,11 +172,6 @@ class PojoAsserterGenerator(
 
     private fun ExecutableElement.hasReturnType() =
         returnType.kind != TypeKind.VOID
-
-    private fun Element.isMethod() =
-        kind == ElementKind.METHOD
-
-
 }
 
 data class Property(val name: String, val type: TypeMirror, val accessor: String)
