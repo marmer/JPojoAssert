@@ -159,7 +159,9 @@ class PojoAsserterGenerator(
 
     private fun Name.withoutPropertyPrefix() =
         toString()
-            .replace("get", "")
+            // FIXME: marmer 08.11.2020 this should remove to much in some times;)
+            .replaceFirst("get", "")
+            .replaceFirst("is", "")
             .mapIndexed { index, c -> if (index == 0) c.toLowerCase() else c }
             .joinToString("")
 }

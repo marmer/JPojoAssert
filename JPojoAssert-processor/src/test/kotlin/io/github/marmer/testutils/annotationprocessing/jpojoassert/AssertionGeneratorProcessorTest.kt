@@ -28,7 +28,8 @@ public interface SimplePojoInterface{
     String getFirst();
     // Number primitive
     int getSecond();
-    // TODO boolean primitive
+    // boolean primitive
+    boolean isThird();
     // TODO boolean wrapper
     // TODO primitive array
     // TODO object array
@@ -65,6 +66,7 @@ public interface SimplePojoInterface{
 
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Collections;
@@ -98,6 +100,10 @@ public class SimplePojoInterfaceAsserter{
     
     public SimplePojoInterfaceAsserter withSecond(final AssertionCallback<Integer> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getSecond())));
+    }
+    
+    public SimplePojoInterfaceAsserter withThird(final AssertionCallback<Boolean> assertionCallback) {
+        return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isThird())));
     }
 
     public void assertToFirstFail() {
