@@ -35,10 +35,9 @@ public interface SimplePojoInterface{
     //identifier mix 2
     boolean getIsFifth();
     //identifier mix 3
-    String isGetSixth();
+    Boolean isGetSixth();
     //identifier mix 4
-    String getIsSeventh();
-    // TODO boolean wrapper
+    Boolean getIsSeventh();
     // TODO primitive array
     // TODO object array
     // TODO multidimensional array
@@ -122,11 +121,11 @@ public class SimplePojoInterfaceAsserter{
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsFifth())));
     }
     
-    public SimplePojoInterfaceAsserter withGetSixth(final AssertionCallback<String> assertionCallback) {
+    public SimplePojoInterfaceAsserter withGetSixth(final AssertionCallback<Boolean> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetSixth())));
     }
     
-    public SimplePojoInterfaceAsserter withIsSeventh(final AssertionCallback<String> assertionCallback) {
+    public SimplePojoInterfaceAsserter withIsSeventh(final AssertionCallback<Boolean> assertionCallback) {
         return new SimplePojoInterfaceAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsSeventh())));
     }
 
