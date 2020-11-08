@@ -55,11 +55,18 @@ public class ExampleType{
     // private private properties shold not work
     private String getFourteenth(){return null;}
 
-    // TODO For Property: Generics
-    // TODO For Property: static 
-    // TODO For Property: abstract
-    // TODO For Property: final
-    // TODO For Property: what else edge cases we found already in hamcrest-matcher-generator
+    // TODO: marmer 08.11.2020 For Property: Generics
+    // TODO: marmer 08.11.2020 For Property: static 
+    // TODO: marmer 08.11.2020 For Property: abstract
+    // TODO: marmer 08.11.2020 For Property: final
+    // TODO: marmer 08.11.2020 For Property: what else edge cases we found already in hamcrest-matcher-generator
+    // TODO: marmer 08.11.2020 Type is Interface 
+    // TODO: marmer 08.11.2020 Type is Abstract class
+    // TODO: marmer 08.11.2020 Type is Enum class
+    // TODO: marmer 08.11.2020 Type is at least package private 
+    // TODO: marmer 08.11.2020 Type with Generics 
+    // TODO: marmer 08.11.2020 Type with wildcard generics 
+    // TODO: marmer 08.11.2020 No Generation for self generated types 
 
 }"""
         )
