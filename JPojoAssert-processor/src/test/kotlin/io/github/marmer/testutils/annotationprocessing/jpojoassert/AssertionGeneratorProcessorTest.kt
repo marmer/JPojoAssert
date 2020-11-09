@@ -43,7 +43,6 @@ public abstract class ExampleType{
     protected String getProtectedProperty(){return null;}
     private String getPrivateProperty(){return null;}
     public Map<String, List<Integer>> getGenericProperty(){return null;}
-    public static String getStaticPropertyLike(){return null;}
     public abstract String getAbstractProperty();
     public final String getFinalProperty(){return null;}
     
@@ -145,10 +144,6 @@ public class ExampleTypeAsserter{
         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
     }
 
-    public ExampleTypeAsserter withStaticPropertyLike(final AssertionCallback<String> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getStaticPropertyLike())));
-    }
-    
     public ExampleTypeAsserter withAbstractProperty(final AssertionCallback<String> assertionCallback) {
         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getAbstractProperty())));
     }
@@ -173,9 +168,7 @@ public class ExampleTypeAsserter{
             .that(listOf(configurationClass, javaFileObject))
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
-            .compilesWithoutError()
-            // TODO: marmer 05.11.2020 No warning should be given here!
-//            .compilesWithoutWarnings()
+            .compilesWithoutWarnings()
             .and()
             .generatesSources(expectedOutput)
     }
