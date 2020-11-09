@@ -26,7 +26,7 @@ public class JPojoAssertConfiguration{}
 import java.util.List;
 import java.util.Map;
 
-public class ExampleType{
+public abstract class ExampleType{
     public String getObjectProperty(){return null;}
     public int getPrimitiveProperty(){return 0;}
     public boolean isPrimitiveBooleanProperty(){return false;}
@@ -43,11 +43,10 @@ public class ExampleType{
     protected String getProtectedProperty(){return null;}
     private String getPrivateProperty(){return null;}
     public Map<String, List<Integer>> getGenericProperty(){return null;}
-
-    // TODO: marmer 08.11.2020 For Property: static 
-    // TODO: marmer 08.11.2020 For Property: abstract
-    // TODO: marmer 08.11.2020 For Property: final
-    // TODO: marmer 08.11.2020 For Property: what else edge cases we found already in hamcrest-matcher-generator
+    public static String getStaticPropertyLike(){return null;}
+    public abstract String getAbstractProperty();
+    public final String getFinalProperty(){return null;}
+    
     // TODO: marmer 08.11.2020 Type is Interface 
     // TODO: marmer 08.11.2020 Type is Abstract class
     // TODO: marmer 08.11.2020 Type is Enum class
@@ -144,6 +143,18 @@ public class ExampleTypeAsserter{
     
     public ExampleTypeAsserter withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
+    }
+
+    public ExampleTypeAsserter withStaticPropertyLike(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getStaticPropertyLike())));
+    }
+    
+    public ExampleTypeAsserter withAbstractProperty(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getAbstractProperty())));
+    }
+    
+    public ExampleTypeAsserter withFinalProperty(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFinalProperty())));
     }
 
     public void assertToFirstFail() {
