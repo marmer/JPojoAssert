@@ -27,38 +27,22 @@ import java.util.List;
 import java.util.Map;
 
 public class ExampleType{
-    // Object Type
-    public String getFirst(){return null;}
-    // Number primitive
-    public int getSecond(){return 0;}
-    // boolean primitive
-    public boolean isThird(){return false;}
-    //identifier mix 1
-    public boolean isGetFourth(){return false;}
-    //identifier mix 2
-    public boolean getIsFifth(){return false;}
-    //identifier mix 3
-    public Boolean isGetSixth(){return false;}
-    //identifier mix 4
-    public Boolean getIsSeventh(){return false;}
-    // primitive array
-    public int[] getEight(){return null;}
-    // object array
-    public String[] getNinth(){return null;}
-    // multidimensional array
-    public String[][] getTenth(){return null;}
-    // property like method no return
-    public void getEleventh(){}
-    // property like method with parameters
-    public String getEleventh(String prop){return null;}
-    // package private properties shold work too
-    String getTwelfth(){return null;}
-    // protected private properties shold not work
-    protected String getThirteenth(){return null;}
-    // private private properties shold not work
-    private String getFourteenth(){return null;}
-    // Generics in Property
-    public Map<String, List<Integer>> getFifteenth(){return null;}
+    public String getObjectProperty(){return null;}
+    public int getPrimitiveProperty(){return 0;}
+    public boolean isPrimitiveBooleanProperty(){return false;}
+    public boolean isGetRightBooleanMixProperty(){return false;}
+    public boolean getIsWrongPrimitiveBooleanProperty(){return false;}
+    public Boolean isGetWrongBooleanWrapperProperty(){return false;}
+    public Boolean getIsRightBooleanWrapperProperty(){return false;}
+    public int[] getPrimitiveArrayProperty(){return null;}
+    public String[] getObjectArrayProperty(){return null;}
+    public String[][] getMultidimensionalArrayProperty(){return null;}
+    public void getVoidPropertyLike(){}
+    public String getParameterizedPropertyLike(String prop){return null;}
+    String getPackagePrivateProperty(){return null;}
+    protected String getProtectedProperty(){return null;}
+    private String getPrivateProperty(){return null;}
+    public Map<String, List<Integer>> getGenericProperty(){return null;}
 
     // TODO: marmer 08.11.2020 For Property: static 
     // TODO: marmer 08.11.2020 For Property: abstract
@@ -110,52 +94,56 @@ public class ExampleTypeAsserter{
         return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
     }
     
-    public ExampleTypeAsserter withFirst(final AssertionCallback<String> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFirst())));
+    public ExampleTypeAsserter withObjectProperty(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getObjectProperty())));
     }
     
-    public ExampleTypeAsserter withSecond(final AssertionCallback<Integer> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getSecond())));
+    public ExampleTypeAsserter withPrimitiveProperty(final AssertionCallback<Integer> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getPrimitiveProperty())));
     }
     
-    public ExampleTypeAsserter withThird(final AssertionCallback<Boolean> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isThird())));
+    public ExampleTypeAsserter withPrimitiveBooleanProperty(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isPrimitiveBooleanProperty())));
     }
     
-    public ExampleTypeAsserter withGetFourth(final AssertionCallback<Boolean> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetFourth())));
+    public ExampleTypeAsserter withGetRightBooleanMixProperty(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetRightBooleanMixProperty())));
     }
     
-    public ExampleTypeAsserter withIsFifth(final AssertionCallback<Boolean> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsFifth())));
+    public ExampleTypeAsserter withIsWrongPrimitiveBooleanProperty(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsWrongPrimitiveBooleanProperty())));
     }
     
-    public ExampleTypeAsserter withGetSixth(final AssertionCallback<Boolean> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetSixth())));
+    public ExampleTypeAsserter withGetWrongBooleanWrapperProperty(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.isGetWrongBooleanWrapperProperty())));
     }
     
-    public ExampleTypeAsserter withIsSeventh(final AssertionCallback<Boolean> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsSeventh())));
+    public ExampleTypeAsserter withIsRightBooleanWrapperProperty(final AssertionCallback<Boolean> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getIsRightBooleanWrapperProperty())));
     }
     
-    public ExampleTypeAsserter withEight(final AssertionCallback<int[]> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getEight())));
+    public ExampleTypeAsserter withPrimitiveArrayProperty(final AssertionCallback<int[]> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getPrimitiveArrayProperty())));
     }
     
-    public ExampleTypeAsserter withNinth(final AssertionCallback<String[]> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getNinth())));
+    public ExampleTypeAsserter withObjectArrayProperty(final AssertionCallback<String[]> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getObjectArrayProperty())));
     }
     
-    public ExampleTypeAsserter withTenth(final AssertionCallback<String[][]> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTenth())));
+    public ExampleTypeAsserter withMultidimensionalArrayProperty(final AssertionCallback<String[][]> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getMultidimensionalArrayProperty())));
     }
     
-    public ExampleTypeAsserter withTwelfth(final AssertionCallback<String> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTwelfth())));
+    public ExampleTypeAsserter withPackagePrivateProperty(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getPackagePrivateProperty())));
     }
     
-    public ExampleTypeAsserter withFifteenth(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
-        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFifteenth())));
+    public ExampleTypeAsserter withProtectedProperty(final AssertionCallback<String> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getProtectedProperty())));
+    }
+    
+    public ExampleTypeAsserter withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
     }
 
     public void assertToFirstFail() {
