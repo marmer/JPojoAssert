@@ -172,4 +172,31 @@ public class ExampleTypeAsserter{
             .and()
             .generatesSources(expectedOutput)
     }
+
+    @Test
+    fun `generated files only from different generators without an appropriate warning should raise a warning`() {
+        // Preparation
+        val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.SomeGeneratedType", """package some.pck;
+
+import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+
+import javax.annotation.processing.Generated;
+
+@Generated("some.unknown.Processor")
+public class SomeGeneratedType{}
+"""
+        )
+        // Preparation
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass))
+            .processedWith(AssertionGeneratorProcessor())
+            // Assertion
+            .compilesWithoutError()
+            .withWarningCount(1)
+            .withWarningContaining("No processor claimed any of these annotations: java.compiler/javax.annotation.processing.Generated")
+    }
 }
