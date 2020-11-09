@@ -23,6 +23,9 @@ public class JPojoAssertConfiguration{}
             "some.other.pck.ExampleType",
             """package some.other.pck;
 
+import java.util.List;
+import java.util.Map;
+
 public class ExampleType{
     // Object Type
     public String getFirst(){return null;}
@@ -54,8 +57,9 @@ public class ExampleType{
     protected String getThirteenth(){return null;}
     // private private properties shold not work
     private String getFourteenth(){return null;}
+    // Generics in Property
+    public Map<String, List<Integer>> getFifteenth(){return null;}
 
-    // TODO: marmer 08.11.2020 For Property: Generics
     // TODO: marmer 08.11.2020 For Property: static 
     // TODO: marmer 08.11.2020 For Property: abstract
     // TODO: marmer 08.11.2020 For Property: final
@@ -80,6 +84,8 @@ import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.processing.Generated;
 
 @Generated(
@@ -146,6 +152,10 @@ public class ExampleTypeAsserter{
     
     public ExampleTypeAsserter withTwelfth(final AssertionCallback<String> assertionCallback) {
         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getTwelfth())));
+    }
+    
+    public ExampleTypeAsserter withFifteenth(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
+        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFifteenth())));
     }
 
     public void assertToFirstFail() {
