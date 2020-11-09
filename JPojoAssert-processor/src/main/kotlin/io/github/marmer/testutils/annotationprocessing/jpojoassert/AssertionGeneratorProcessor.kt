@@ -17,21 +17,21 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) = super.init(processingEnvironment)
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
-        if (!roundEnvironment.processingOver()) {
-            if (set.contains<GenerateAsserter>()) {
-                roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
-                    .forEach {
-                        val baseType =
-                            processingEnv.elementUtils.getTypeElement(it.getAnnotation(GenerateAsserter::class.java).value)
-
-                        PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
-                    }
-                return true
-            }
-            return set.contains<Generated>() &&
-                    roundEnvironment.existsAnySelfGeneratedSource()
+        if (roundEnvironment.processingOver()) {
+            return false
         }
-        return false
+
+        return if (set.contains<GenerateAsserter>()) {
+            roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
+                .forEach {
+                    val baseType =
+                        processingEnv.elementUtils.getTypeElement(it.getAnnotation(GenerateAsserter::class.java).value)
+
+                    PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
+                }
+            true
+        } else set.contains<Generated>() &&
+                roundEnvironment.existsAnySelfGeneratedSource()
     }
 
     private fun RoundEnvironment.existsAnySelfGeneratedSource() =
