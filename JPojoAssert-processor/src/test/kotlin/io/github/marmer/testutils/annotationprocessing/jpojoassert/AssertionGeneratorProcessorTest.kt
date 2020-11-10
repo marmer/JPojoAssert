@@ -191,10 +191,9 @@ internal class AssertionGeneratorProcessorTest {
 import java.util.Map;
 
                 public abstract class ExampleType<T, E> {
-                    public Map<String, List<Integer>> getGenericProperty() {
-                        return null;
-                    }
-                //                    public final T getGenericFromTypeDefinitionProperty(){return null;}
+                    public Map<String, List<Integer>> getGenericProperty(){return null;}
+                    public final T getGenericFromTypeDefinitionProperty(){return null;}
+                    public final List<T> getGenericFromTypeDefinitionPropertyAsGeneric(){return null;}
                 }
                 """.trimIndent()
         )
@@ -236,6 +235,14 @@ import java.util.Map;
                 
                     public ExampleTypeAsserter<T, E> withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
                         return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
+                    }
+                
+                    public ExampleTypeAsserter<T, E> withGenericFromTypeDefinitionProperty(final AssertionCallback<T> assertionCallback) {
+                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericFromTypeDefinitionProperty())));
+                    }
+                
+                    public ExampleTypeAsserter<T, E> withGenericFromTypeDefinitionPropertyAsGeneric(final AssertionCallback<List<T>> assertionCallback) {
+                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericFromTypeDefinitionPropertyAsGeneric())));
                     }
                 
                     public void assertToFirstFail() {
