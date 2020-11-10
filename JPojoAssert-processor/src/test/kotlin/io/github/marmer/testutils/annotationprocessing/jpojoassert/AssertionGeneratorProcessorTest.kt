@@ -18,7 +18,7 @@ internal class AssertionGeneratorProcessorTest {
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
                 
                 @GenerateAsserter("some.other.pck.ExampleType")
-                public class JPojoAssertConfiguration{}
+                abstract class JPojoAssertConfiguration{}
                 """.trimIndent()
         )
         @Language("JAVA") val javaFileObject = JavaFileObjects.forSourceLines(
@@ -48,11 +48,8 @@ internal class AssertionGeneratorProcessorTest {
                     public final String getFinalProperty(){return null;}
                     
                     // TODO: marmer 08.11.2020 Type is Interface 
-                    // TODO: marmer 08.11.2020 Type is Abstract class
                     // TODO: marmer 08.11.2020 Type is Enum class
-                    // TODO: marmer 08.11.2020 Type is at least package private 
-                    // TODO: marmer 08.11.2020 Type with Generics 
-                    // TODO: marmer 08.11.2020 Type with wildcard generics 
+                    // TODO: marmer 10.11.2020 No generation for private types  
                     // TODO: marmer 08.11.2020 No Generation for self generated types 
                 
                 }""".trimIndent()
