@@ -47,7 +47,6 @@ internal class AssertionGeneratorProcessorTest {
                     public abstract String getAbstractProperty();
                     public final String getFinalProperty(){return null;}
                     
-                    // TODO: marmer 08.11.2020 Type is Interface 
                     // TODO: marmer 08.11.2020 Type is Enum class
                     // TODO: marmer 10.11.2020 No generation for private types  
                     // TODO: marmer 08.11.2020 No Generation for self generated types 
@@ -177,7 +176,7 @@ internal class AssertionGeneratorProcessorTest {
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
                 
                 @GenerateAsserter("some.other.pck.ExampleType")
-                public class JPojoAssertConfiguration{}
+                public interface JPojoAssertConfiguration{}
                 """.trimIndent()
         )
         @Language("JAVA") val javaFileObject = JavaFileObjects.forSourceLines(
@@ -189,10 +188,10 @@ internal class AssertionGeneratorProcessorTest {
                 import java.util.function.Consumer;
                 import java.lang.Runnable;
                 
-                public abstract class ExampleType<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String> & Runnable, D> {
-                    public Map<String, List<Integer>> getGenericProperty() {return null;}
-                    public final C getGenericFromTypeDefinitionProperty() {return null;}
-                    public final List<C> getGenericFromTypeDefinitionPropertyAsGeneric() {return null;}
+                public interface ExampleType<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String> & Runnable, D> {
+                    Map<String, List<Integer>> getGenericProperty();
+                    C getGenericFromTypeDefinitionProperty();
+                    List<C> getGenericFromTypeDefinitionPropertyAsGeneric();
                 }
                 """.trimIndent()
         )
