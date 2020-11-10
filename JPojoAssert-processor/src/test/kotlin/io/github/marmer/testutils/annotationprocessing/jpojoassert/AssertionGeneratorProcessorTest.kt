@@ -190,7 +190,7 @@ internal class AssertionGeneratorProcessorTest {
                 import java.util.List;
 import java.util.Map;
 
-                public abstract class ExampleType<T, E> {
+                public abstract class ExampleType<C, I, T> {
                     public Map<String, List<Integer>> getGenericProperty(){return null;}
                     public final T getGenericFromTypeDefinitionProperty(){return null;}
                     public final List<T> getGenericFromTypeDefinitionPropertyAsGeneric(){return null;}
@@ -214,35 +214,35 @@ import java.util.Map;
                 @Generated(
                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                         date = "$now")
-                public class ExampleTypeAsserter<T, E> {
-                    private final PojoAssertionBuilder<ExampleType<T, E>> pojoAssertionBuilder;
+                public class ExampleTypeAsserter<C, I, T> {
+                    private final PojoAssertionBuilder<ExampleType<C, I, T>> pojoAssertionBuilder;
                 
-                    private ExampleTypeAsserter(final ExampleType<T, E> base) {
-                        this(new PojoAssertionBuilder<ExampleType<T, E>>(base, Collections.emptyList(), "ExampleType"));
+                    private ExampleTypeAsserter(final ExampleType<C, I, T> base) {
+                        this(new PojoAssertionBuilder<ExampleType<C, I, T>>(base, Collections.emptyList(), "ExampleType"));
                     }
                 
-                    private ExampleTypeAsserter(final PojoAssertionBuilder<ExampleType<T, E>> pojoAssertionBuilder) {
+                    private ExampleTypeAsserter(final PojoAssertionBuilder<ExampleType<C, I, T>> pojoAssertionBuilder) {
                         this.pojoAssertionBuilder = pojoAssertionBuilder;
                     }
                 
-                    public static <T, E> ExampleTypeAsserter<T, E> prepareFor(final ExampleType<T, E> base) {
-                        return new ExampleTypeAsserter<T, E>(base);
+                    public static <C, I, T> ExampleTypeAsserter<C, I, T> prepareFor(final ExampleType<C, I, T> base) {
+                        return new ExampleTypeAsserter<C, I, T>(base);
                     }
                 
-                    public ExampleTypeAsserter<T, E> with(final AssertionCallback<ExampleType<T, E>> assertionCallback) {
-                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(assertionCallback));
+                    public ExampleTypeAsserter<C, I, T> with(final AssertionCallback<ExampleType<C, I, T>> assertionCallback) {
+                        return new ExampleTypeAsserter<C, I, T>(pojoAssertionBuilder.add(assertionCallback));
                     }
                 
-                    public ExampleTypeAsserter<T, E> withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
-                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
+                    public ExampleTypeAsserter<C, I, T> withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
+                        return new ExampleTypeAsserter<C, I, T>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
                     }
                 
-                    public ExampleTypeAsserter<T, E> withGenericFromTypeDefinitionProperty(final AssertionCallback<T> assertionCallback) {
-                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericFromTypeDefinitionProperty())));
+                    public ExampleTypeAsserter<C, I, T> withGenericFromTypeDefinitionProperty(final AssertionCallback<T> assertionCallback) {
+                        return new ExampleTypeAsserter<C, I, T>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericFromTypeDefinitionProperty())));
                     }
                 
-                    public ExampleTypeAsserter<T, E> withGenericFromTypeDefinitionPropertyAsGeneric(final AssertionCallback<List<T>> assertionCallback) {
-                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericFromTypeDefinitionPropertyAsGeneric())));
+                    public ExampleTypeAsserter<C, I, T> withGenericFromTypeDefinitionPropertyAsGeneric(final AssertionCallback<List<T>> assertionCallback) {
+                        return new ExampleTypeAsserter<C, I, T>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericFromTypeDefinitionPropertyAsGeneric())));
                     }
                 
                     public void assertToFirstFail() {
