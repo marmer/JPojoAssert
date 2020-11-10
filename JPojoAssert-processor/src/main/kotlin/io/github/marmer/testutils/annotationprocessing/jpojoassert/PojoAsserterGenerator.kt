@@ -108,10 +108,6 @@ class PojoAsserterGenerator(
         *(baseType.typeParameters.map { TypeVariableName.get(it) }.toTypedArray())
     )
 
-    private fun getGeneratedTypeNameWithEmptyParameters() =
-        ParameterizedTypeName.get(generatedTypeNameWithoutParameters())
-
-
     private fun generatedTypeNameWithoutParameters() =
         ClassName.get(baseType.packageElement.toString(), simpleAsserterName)
 
