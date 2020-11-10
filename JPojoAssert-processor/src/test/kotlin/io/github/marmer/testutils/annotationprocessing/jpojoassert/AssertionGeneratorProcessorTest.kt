@@ -255,9 +255,8 @@ import java.util.Map;
             .that(listOf(configurationClass, javaFileObject))
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
-            // TODO: marmer 10.11.2020 avoid warnings!
-//            .compilesWithoutWarnings()
-            .compilesWithoutError()
+            .compilesWithoutWarnings()
+//            .compilesWithoutError()
             .and()
             .generatesSources(expectedOutput)
     }
