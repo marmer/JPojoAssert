@@ -190,8 +190,9 @@ internal class AssertionGeneratorProcessorTest {
                 import java.util.List;
                 import java.util.Map;
                 import java.util.function.Consumer;
+                import java.lang.Runnable;
                 
-                public abstract class ExampleType<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String>, D> {
+                public abstract class ExampleType<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String> & Runnable, D> {
                     public Map<String, List<Integer>> getGenericProperty() {return null;}
                     public final C getGenericFromTypeDefinitionProperty() {return null;}
                     public final List<C> getGenericFromTypeDefinitionPropertyAsGeneric() {return null;}
@@ -207,6 +208,7 @@ internal class AssertionGeneratorProcessorTest {
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                 import java.lang.CharSequence;
                 import java.lang.Integer;
+                import java.lang.Runnable;
                 import java.lang.String;
                 import java.util.Collections;
                 import java.util.List;
@@ -217,7 +219,7 @@ internal class AssertionGeneratorProcessorTest {
                 @Generated(
                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                         date = "$now")
-                public class ExampleTypeAsserter<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String>, D> {
+                public class ExampleTypeAsserter<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String> & Runnable, D> {
                     private final PojoAssertionBuilder<ExampleType<A, B, C, D>> pojoAssertionBuilder;
                 
                     private ExampleTypeAsserter(final ExampleType<A, B, C, D> base) {
@@ -228,7 +230,7 @@ internal class AssertionGeneratorProcessorTest {
                         this.pojoAssertionBuilder = pojoAssertionBuilder;
                     }
                 
-                    public static <A extends CharSequence, B extends Consumer<A>, C extends Consumer<String>, D> ExampleTypeAsserter<A, B, C, D> prepareFor(final ExampleType<A, B, C, D> base) {
+                    public static <A extends CharSequence, B extends Consumer<A>, C extends Consumer<String> & Runnable, D> ExampleTypeAsserter<A, B, C, D> prepareFor(final ExampleType<A, B, C, D> base) {
                         return new ExampleTypeAsserter<A, B, C, D>(base);
                     }
                 
