@@ -3,6 +3,7 @@ package io.github.marmer.testutils.annotationprocessing.jpojoassert
 import com.google.common.truth.Truth
 import com.google.testing.compile.JavaFileObjects
 import com.google.testing.compile.JavaSourcesSubjectFactory
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
@@ -20,7 +21,7 @@ internal class AssertionGeneratorProcessorTest {
                 public class JPojoAssertConfiguration{}
                 """.trimIndent()
         )
-        val javaFileObject = JavaFileObjects.forSourceLines(
+        @Language("JAVA") val javaFileObject = JavaFileObjects.forSourceLines(
             "some.other.pck.ExampleType", """
                 package some.other.pck;
                 
@@ -43,7 +44,6 @@ internal class AssertionGeneratorProcessorTest {
                     String getPackagePrivateProperty(){return null;}
                     protected String getProtectedProperty(){return null;}
                     private String getPrivateProperty(){return null;}
-                    public Map<String, List<Integer>> getGenericProperty(){return null;}
                     public abstract String getAbstractProperty();
                     public final String getFinalProperty(){return null;}
                     
@@ -57,8 +57,9 @@ internal class AssertionGeneratorProcessorTest {
                 
                 }""".trimIndent()
         )
+
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
-        val expectedOutput = JavaFileObjects.forSourceString(
+        @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
             "some.other.pck.ExampleTypeAsserter", """
                 package some.other.pck;
                 
@@ -68,8 +69,6 @@ internal class AssertionGeneratorProcessorTest {
                 import java.lang.Integer;
                 import java.lang.String;
                 import java.util.Collections;
-                import java.util.List;
-                import java.util.Map;
                 import javax.annotation.processing.Generated;
                 
                 @Generated(
@@ -142,16 +141,98 @@ internal class AssertionGeneratorProcessorTest {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getProtectedProperty())));
                     }
                     
-                    public ExampleTypeAsserter withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
-                    }
-                
                     public ExampleTypeAsserter withAbstractProperty(final AssertionCallback<String> assertionCallback) {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getAbstractProperty())));
                     }
                     
                     public ExampleTypeAsserter withFinalProperty(final AssertionCallback<String> assertionCallback) {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getFinalProperty())));
+                    }
+                
+                    public void assertToFirstFail() {
+                        pojoAssertionBuilder.assertToFirstFail();
+                    }
+                
+                    public void assertAll() {
+                        pojoAssertionBuilder.assertAll();
+                    }
+                }""".trimIndent()
+        )
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, javaFileObject))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(expectedOutput)
+    }
+
+    @Test
+    fun `generation should work for generic types and properties too`() {
+        // Preparation
+        val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter("some.other.pck.ExampleType")
+                public class JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val javaFileObject = JavaFileObjects.forSourceLines(
+            "some.other.pck.ExampleType", """
+                package some.other.pck;
+                
+                import java.util.List;
+                import java.util.Map;
+                
+                public abstract class ExampleType{
+                    public Map<String, List<Integer>> getGenericProperty(){return null;}
+//                    public final T getGenericFromTypeDefinitionProperty(){return null;}
+                }""".trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.ExampleTypeAsserter", """
+                package some.other.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.lang.Integer;
+                import java.lang.String;
+                import java.util.Collections;
+                import java.util.List;
+                import java.util.Map;
+                import javax.annotation.processing.Generated;
+                
+                @Generated(
+                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                        date = "$now")
+                public class ExampleTypeAsserter{
+                    private final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder;
+                
+                    private ExampleTypeAsserter(final ExampleType base) {
+                        this(new PojoAssertionBuilder<ExampleType>(base, Collections.emptyList(), "ExampleType"));
+                    }
+                
+                    private ExampleTypeAsserter(final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder) {
+                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                    }
+                
+                    public static ExampleTypeAsserter prepareFor(final ExampleType base) {
+                        return new ExampleTypeAsserter(base);
+                    }
+                
+                    public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                    
+                    public ExampleTypeAsserter withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
                     }
                 
                     public void assertToFirstFail() {
