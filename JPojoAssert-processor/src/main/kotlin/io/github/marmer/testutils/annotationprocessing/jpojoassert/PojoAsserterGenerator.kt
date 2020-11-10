@@ -22,6 +22,7 @@ class PojoAsserterGenerator(
         TypeSpec.classBuilder(simpleAsserterName)
             .addModifiers(Modifier.PUBLIC)
             .addAnnotation(getGeneratedAnnotation())
+            .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
             .addField(getPojoAssertionBuilderField())
             .addMethods(getInitializers())
             .addMethods(getBaseAssertionMethods())
@@ -45,9 +46,10 @@ class PojoAsserterGenerator(
                         Modifier.FINAL
                     )
                     .addStatement(
-                        "return new $simpleAsserterName($builderFieldName.add(base -> assertionCallback.accept(base.${property.accessor})))"
+                        "return new \$T($builderFieldName.add(base -> assertionCallback.accept(base.${property.accessor})))",
+                        getGeneratedTypeName()
                     )
-                    .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+                    .returns(getGeneratedTypeName())
                     .build()
             }
 
@@ -60,9 +62,10 @@ class PojoAsserterGenerator(
                 Modifier.FINAL
             )
             .addStatement(
-                "return new $simpleAsserterName($builderFieldName.add(assertionCallback))"
+                "return new \$T($builderFieldName.add(assertionCallback))",
+                getGeneratedTypeName()
             )
-            .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+            .returns(getGeneratedTypeName())
             .build()
     )
 
@@ -90,10 +93,27 @@ class PojoAsserterGenerator(
 
     private fun getApiInitializer() = MethodSpec.methodBuilder("prepareFor")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+        .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
         .addParameter(baseType.typeName, "base", Modifier.FINAL)
-        .addStatement("return new \$L(base)", simpleAsserterName)
-        .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+        .addStatement("return new \$T(base)", getGeneratedTypeName())
+        .returns(getGeneratedTypeName())
         .build()
+
+    private fun getGeneratedTypeName() =
+        if (baseType.typeParameters.isEmpty()) generatedTypeNameWithoutParameters()
+        else getGeneratedTypeNameWithParameters()
+
+    private fun getGeneratedTypeNameWithParameters() = ParameterizedTypeName.get(
+        generatedTypeNameWithoutParameters(),
+        *(baseType.typeParameters.map { TypeVariableName.get(it) }.toTypedArray())
+    )
+
+    private fun getGeneratedTypeNameWithEmptyParameters() =
+        ParameterizedTypeName.get(generatedTypeNameWithoutParameters())
+
+
+    private fun generatedTypeNameWithoutParameters() =
+        ClassName.get(baseType.packageElement.toString(), simpleAsserterName)
 
     private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)

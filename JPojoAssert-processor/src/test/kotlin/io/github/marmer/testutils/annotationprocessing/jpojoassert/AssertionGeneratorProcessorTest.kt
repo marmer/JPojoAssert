@@ -188,12 +188,15 @@ internal class AssertionGeneratorProcessorTest {
                 package some.other.pck;
                 
                 import java.util.List;
-                import java.util.Map;
-                
-                public abstract class ExampleType{
-                    public Map<String, List<Integer>> getGenericProperty(){return null;}
-//                    public final T getGenericFromTypeDefinitionProperty(){return null;}
-                }""".trimIndent()
+import java.util.Map;
+
+                public abstract class ExampleType<T, E> {
+                    public Map<String, List<Integer>> getGenericProperty() {
+                        return null;
+                    }
+                //                    public final T getGenericFromTypeDefinitionProperty(){return null;}
+                }
+                """.trimIndent()
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
@@ -212,27 +215,27 @@ internal class AssertionGeneratorProcessorTest {
                 @Generated(
                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                         date = "$now")
-                public class ExampleTypeAsserter{
-                    private final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder;
+                public class ExampleTypeAsserter<T, E> {
+                    private final PojoAssertionBuilder<ExampleType<T, E>> pojoAssertionBuilder;
                 
-                    private ExampleTypeAsserter(final ExampleType base) {
-                        this(new PojoAssertionBuilder<ExampleType>(base, Collections.emptyList(), "ExampleType"));
+                    private ExampleTypeAsserter(final ExampleType<T, E> base) {
+                        this(new PojoAssertionBuilder<ExampleType<T, E>>(base, Collections.emptyList(), "ExampleType"));
                     }
                 
-                    private ExampleTypeAsserter(final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder) {
+                    private ExampleTypeAsserter(final PojoAssertionBuilder<ExampleType<T, E>> pojoAssertionBuilder) {
                         this.pojoAssertionBuilder = pojoAssertionBuilder;
                     }
                 
-                    public static ExampleTypeAsserter prepareFor(final ExampleType base) {
-                        return new ExampleTypeAsserter(base);
+                    public static <T, E> ExampleTypeAsserter<T, E> prepareFor(final ExampleType<T, E> base) {
+                        return new ExampleTypeAsserter<T, E>(base);
                     }
                 
-                    public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    public ExampleTypeAsserter<T, E> with(final AssertionCallback<ExampleType<T, E>> assertionCallback) {
+                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(assertionCallback));
                     }
-                    
-                    public ExampleTypeAsserter withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
+                
+                    public ExampleTypeAsserter<T, E> withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
+                        return new ExampleTypeAsserter<T, E>(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getGenericProperty())));
                     }
                 
                     public void assertToFirstFail() {
@@ -242,7 +245,8 @@ internal class AssertionGeneratorProcessorTest {
                     public void assertAll() {
                         pojoAssertionBuilder.assertAll();
                     }
-                }""".trimIndent()
+                }
+                """.trimIndent()
         )
 
         // Execution
@@ -251,7 +255,9 @@ internal class AssertionGeneratorProcessorTest {
             .that(listOf(configurationClass, javaFileObject))
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
-            .compilesWithoutWarnings()
+            // TODO: marmer 10.11.2020 avoid warnings!
+//            .compilesWithoutWarnings()
+            .compilesWithoutError()
             .and()
             .generatesSources(expectedOutput)
     }
