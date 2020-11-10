@@ -11,7 +11,7 @@ internal class AssertionGeneratorProcessorTest {
     @Test
     fun `simple asserters should be generated with a default configuration`() {
         // Preparation
-        val configurationClass = JavaFileObjects.forSourceLines(
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
             "some.pck.JPojoAssertConfiguration", """
                 package some.pck;
                 
@@ -173,7 +173,7 @@ internal class AssertionGeneratorProcessorTest {
     @Test
     fun `generation should work for generic types and properties too`() {
         // Preparation
-        val configurationClass = JavaFileObjects.forSourceLines(
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
             "some.pck.JPojoAssertConfiguration", """
                 package some.pck;
                 
