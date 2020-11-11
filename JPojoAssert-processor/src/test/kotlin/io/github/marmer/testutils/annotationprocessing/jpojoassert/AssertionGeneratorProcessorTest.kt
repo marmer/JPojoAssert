@@ -391,23 +391,24 @@ internal class AssertionGeneratorProcessorTest {
     @Test
     fun `generated files only from different generators without an appropriate warning should raise a warning`() {
         // Preparation
-        val configurationClass = JavaFileObjects.forSourceLines(
-            "some.pck.SomeGeneratedType", """package some.pck;
-
-import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
-
-import javax.annotation.processing.Generated;
-
-@Generated("some.unknown.Processor")
-public class SomeGeneratedType{}
-"""
+        @Language("JAVA") val fromOthersGeneratedType = JavaFileObjects.forSourceLines(
+            "some.pck.SomeGeneratedType", """
+            package some.pck;
+            
+            import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+            
+            import javax.annotation.processing.Generated;
+            
+            @Generated("some.unknown.Processor")
+            public class SomeGeneratedType{}
+            """.trimIndent()
         )
         // Preparation
 
         // Execution
         Truth.assert_()
             .about(JavaSourcesSubjectFactory.javaSources())
-            .that(listOf(configurationClass))
+            .that(listOf(fromOthersGeneratedType))
             .processedWith(AssertionGeneratorProcessor())
             // Assertion
             .compilesWithoutError()
