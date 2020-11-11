@@ -386,7 +386,33 @@ internal class AssertionGeneratorProcessorTest {
             .atColumn(13)
     }
 
-    // TODO: marmer 11.11.2020 Configured type does not exist
+    @Test
+    fun `if the configured type to generate does neither exist as type nore as package a warning should be given`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+            package some.pck;
+                            
+            import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+            
+            @GenerateAsserter("not.existing.TypeName")
+            public interface JPojoAssertConfiguration {}
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutError()
+            .withWarningContaining("Neither a type nor a type exists for 'not.existing.TypeName'")
+            .`in`(configurationClass)
+            .onLine(5)
+            .atColumn(19)
+    }
 
     @Test
     fun `generated files only from different generators without an appropriate warning should raise a warning`() {

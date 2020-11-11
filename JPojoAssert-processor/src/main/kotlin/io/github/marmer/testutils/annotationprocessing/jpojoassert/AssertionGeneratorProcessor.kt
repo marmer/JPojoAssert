@@ -29,13 +29,20 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
         return if (set.contains<GenerateAsserter>()) {
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
                 .forEach {
+                    val qualifiedTypeOrPackageName = it.getAnnotation(GenerateAsserter::class.java).value
+
                     val baseType =
-                        processingEnv.elementUtils.getTypeElement(it.getAnnotation(GenerateAsserter::class.java).value)
+                        processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName)
+
+                    if (baseType == null) {
+                        printSkipWarningBecauseOfNotExistingTypeConfigured(it, qualifiedTypeOrPackageName)
+                        return@forEach
+                    }
 
                     if (baseType.isAnnotatedWith(Generated::class.java)) {
                         PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
                     } else {
-                        printSkipBecauseOfSelfGenerationNoteFor(baseType)
+                        printSkipNoteBecauseOfSelfGenerationFor(baseType)
                     }
                 }
             true
@@ -43,7 +50,24 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
                 roundEnvironment.existsAnySelfGeneratedSource()
     }
 
-    private fun printSkipBecauseOfSelfGenerationNoteFor(baseType: TypeElement) {
+    private fun printSkipWarningBecauseOfNotExistingTypeConfigured(
+        configurationClass: Element,
+        qualifiedTypeOrPackageName: String
+    ) {
+        configurationClass.getAnnotationMirrors()
+            .filter { it.isTypeOf(GenerateAsserter::class) }
+            .forEach {
+                processingEnv.messager.printMessage(
+                    Diagnostic.Kind.MANDATORY_WARNING,
+                    "Neither a type nor a type exists for '$qualifiedTypeOrPackageName'",
+                    configurationClass,
+                    it,
+                    AnnotationMirrors.getAnnotationValue(it, "value")
+                )
+            }
+    }
+
+    private fun printSkipNoteBecauseOfSelfGenerationFor(baseType: TypeElement) {
         baseType.getAnnotationMirrors()
             .filter { it.isTypeOf(Generated::class) }
             .forEach {
