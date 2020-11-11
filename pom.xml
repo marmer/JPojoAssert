@@ -6,7 +6,7 @@
 
     <artifactId>JPojoAssert</artifactId>
     <groupId>io.github.marmer.testutils</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>JPojoAssert</name>
@@ -70,7 +70,7 @@
         <sonar.sources>src/main/java,src/main/kotlin</sonar.sources>
         <sonar.tests>src/test/java,src/test/kotlin</sonar.tests>
         <sonar.test.inclusions>**/*Test*/**</sonar.test.inclusions>
-        <sonar.exclusions>**/*Test*/**,**/JPojoAssert-Vision/**/*</sonar.exclusions>
+        <sonar.exclusions>**/*Test*/**</sonar.exclusions>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.kotlin.coveragePlugin>jacoco</sonar.kotlin.coveragePlugin>
         <sonar.coverage.jacoco.xmlReportPaths>
@@ -93,7 +93,6 @@
         <module>JPojoAssert-core</module>
         <module>JPojoAssert-processor</module>
         <module>JPojoAssert-end-to-end</module>
-        <module>JPojoAssert-Vision</module>
     </modules>
 
     <dependencyManagement>

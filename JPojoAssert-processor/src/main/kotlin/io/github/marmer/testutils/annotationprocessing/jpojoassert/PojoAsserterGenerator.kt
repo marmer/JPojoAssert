@@ -5,9 +5,11 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.annotation.processing.Generated
 import javax.annotation.processing.ProcessingEnvironment
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.PackageElement
-import javax.lang.model.element.TypeElement
+import javax.lang.model.element.*
+import javax.lang.model.type.PrimitiveType
+import javax.lang.model.type.TypeKind
+import javax.lang.model.type.TypeMirror
+
 
 class PojoAsserterGenerator(
     private val processingEnv: ProcessingEnvironment,
@@ -20,13 +22,36 @@ class PojoAsserterGenerator(
         TypeSpec.classBuilder(simpleAsserterName)
             .addModifiers(Modifier.PUBLIC)
             .addAnnotation(getGeneratedAnnotation())
+            .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
             .addField(getPojoAssertionBuilderField())
             .addMethods(getInitializers())
             .addMethods(getBaseAssertionMethods())
+            .addMethods(getPropertyAssertionMethods())
             .addMethods(getFinisherMethods())
             .build()
     ).build()
         .writeTo(processingEnv.filer)
+
+    private fun getPropertyAssertionMethods() =
+        baseType.properties
+            .map { property ->
+                MethodSpec.methodBuilder("with${property.name.capitalize()}")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(
+                        ParameterizedTypeName.get(
+                            ClassName.get(AssertionCallback::class.java),
+                            TypeName.get(property.boxedType)
+                        ),
+                        "assertionCallback",
+                        Modifier.FINAL
+                    )
+                    .addStatement(
+                        "return new \$T($builderFieldName.add(base -> assertionCallback.accept(base.${property.accessor})))",
+                        getGeneratedTypeName()
+                    )
+                    .returns(getGeneratedTypeName())
+                    .build()
+            }
 
     private fun getBaseAssertionMethods() = listOf(
         MethodSpec.methodBuilder("with")
@@ -37,9 +62,10 @@ class PojoAsserterGenerator(
                 Modifier.FINAL
             )
             .addStatement(
-                "return new $simpleAsserterName($builderFieldName.add(assertionCallback))"
+                "return new \$T($builderFieldName.add(assertionCallback))",
+                getGeneratedTypeName()
             )
-            .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+            .returns(getGeneratedTypeName())
             .build()
     )
 
@@ -48,14 +74,15 @@ class PojoAsserterGenerator(
         getSoftAssertMethod()
     )
 
-    private fun getHardAssertMethod() = MethodSpec.methodBuilder("assertHardly")
+
+    private fun getHardAssertMethod() = MethodSpec.methodBuilder("assertToFirstFail")
         .addModifiers(Modifier.PUBLIC)
-        .addStatement("$builderFieldName.assertHardly()")
+        .addStatement("$builderFieldName.assertToFirstFail()")
         .build()
 
-    private fun getSoftAssertMethod() = MethodSpec.methodBuilder("assertSoftly")
+    private fun getSoftAssertMethod() = MethodSpec.methodBuilder("assertAll")
         .addModifiers(Modifier.PUBLIC)
-        .addStatement("$builderFieldName.assertSoftly()")
+        .addStatement("$builderFieldName.assertAll()")
         .build()
 
     private fun getInitializers() = listOf(
@@ -64,12 +91,25 @@ class PojoAsserterGenerator(
         getApiInitializer()
     )
 
-    private fun getApiInitializer() = MethodSpec.methodBuilder("assertThat")
+    private fun getApiInitializer() = MethodSpec.methodBuilder("prepareFor")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+        .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
         .addParameter(baseType.typeName, "base", Modifier.FINAL)
-        .addStatement("return new \$L(base)", simpleAsserterName)
-        .returns(ClassName.get(baseType.packageElement.toString(), simpleAsserterName))
+        .addStatement("return new \$T(base)", getGeneratedTypeName())
+        .returns(getGeneratedTypeName())
         .build()
+
+    private fun getGeneratedTypeName() =
+        if (baseType.typeParameters.isEmpty()) generatedTypeNameWithoutParameters()
+        else getGeneratedTypeNameWithParameters()
+
+    private fun getGeneratedTypeNameWithParameters() = ParameterizedTypeName.get(
+        generatedTypeNameWithoutParameters(),
+        *(baseType.typeParameters.map { TypeVariableName.get(it) }.toTypedArray())
+    )
+
+    private fun generatedTypeNameWithoutParameters() =
+        ClassName.get(baseType.packageElement.toString(), simpleAsserterName)
 
     private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)
@@ -82,7 +122,6 @@ class PojoAsserterGenerator(
         )
         .build()
 
-
     private fun getBuilderConstructor() = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)
         .addParameter(getBuilderFieldType(), builderFieldName, Modifier.FINAL)
@@ -90,7 +129,6 @@ class PojoAsserterGenerator(
         .build()
 
     private val simpleAsserterName = "${baseType.simpleName}Asserter"
-
 
     private val builderFieldName = "pojoAssertionBuilder"
 
@@ -100,6 +138,7 @@ class PojoAsserterGenerator(
         Modifier.PRIVATE,
         Modifier.FINAL
     ).build()
+
 
     private fun getBuilderFieldType() = ParameterizedTypeName.get(
         ClassName.get(PojoAssertionBuilder::class.java),
@@ -116,4 +155,47 @@ class PojoAsserterGenerator(
 
     private val TypeElement.typeName: TypeName
         get() = TypeName.get(asType())
+
+    private val TypeElement.properties: List<Property>
+        get() = enclosedElements
+            .filter { it.isProperty }
+            .map { it as ExecutableElement }
+            .map {
+                Property(
+                    name = it.simpleName.withoutPropertyPrefix(),
+                    type = it.returnType,
+                    accessor = it.toString()
+                )
+            }
+
+    private val Property.boxedType: TypeMirror
+        get() =
+            if (type is PrimitiveType) processingEnv.typeUtils.boxedClass(type).asType()
+            else type
+
+    private fun Name.withoutPropertyPrefix() = toString()
+        .replaceFirst(Regex("^((get)|(is))"), "")
+        .decapitalize()
+
+    private val Element.isProperty
+        get() =
+            this is ExecutableElement &&
+                    !isPrivate &&
+                    hasPropertyPrefix() &&
+                    hasReturnType() &&
+                    hasNoParameters()
+
+    private fun Element.hasPropertyPrefix() =
+        simpleName.startsWith("get") || simpleName.startsWith("is")
+
+    private val Element.isPrivate: Boolean
+        get() = modifiers.contains(Modifier.PRIVATE)
+
+    private fun ExecutableElement.hasNoParameters() =
+        this.parameters.isEmpty()
+
+    private fun ExecutableElement.hasReturnType() =
+        returnType.kind != TypeKind.VOID
 }
+
+data class Property(val name: String, val type: TypeMirror, val accessor: String)
