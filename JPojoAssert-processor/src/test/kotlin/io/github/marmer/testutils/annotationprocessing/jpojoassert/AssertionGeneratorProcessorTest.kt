@@ -46,11 +46,6 @@ internal class AssertionGeneratorProcessorTest {
                     private String getPrivateProperty(){return null;}
                     public abstract String getAbstractProperty();
                     public final String getFinalProperty(){return null;}
-                    
-                    // TODO: marmer 08.11.2020 Type is Enum class
-                    // TODO: marmer 10.11.2020 No generation for private types  
-                    // TODO: marmer 08.11.2020 No Generation for self generated types 
-                
                 }""".trimIndent()
         )
 
@@ -264,10 +259,96 @@ internal class AssertionGeneratorProcessorTest {
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
             .compilesWithoutWarnings()
-//            .compilesWithoutError()
             .and()
             .generatesSources(expectedOutput)
     }
+
+    @Test
+    fun `generation shuold work for enums as well`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter("some.other.pck.ExampleType")
+                public interface JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val javaFileObject = JavaFileObjects.forSourceLines(
+            "some.other.pck.ExampleType", """
+                package some.other.pck;
+                
+                public enum ExampleType {
+                    ONE;
+                
+                    public String getSomeValue() { return null; }
+                }
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.ExampleTypeAsserter", """
+                package some.other.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.lang.String;
+                import java.util.Collections;
+                import javax.annotation.processing.Generated;
+                
+                @Generated(
+                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                        date = "$now")
+                public class ExampleTypeAsserter {
+                    private final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder;
+                
+                    private ExampleTypeAsserter(final ExampleType base) {
+                        this(new PojoAssertionBuilder<ExampleType>(base, Collections.emptyList(), "ExampleType"));
+                    }
+                
+                    private ExampleTypeAsserter(final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder) {
+                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                    }
+                
+                    public static ExampleTypeAsserter prepareFor(final ExampleType base) {
+                        return new ExampleTypeAsserter(base);
+                    }
+                
+                    public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                
+                    public ExampleTypeAsserter withSomeValue(final AssertionCallback<String> assertionCallback) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> assertionCallback.accept(base.getSomeValue())));
+                    }
+                
+                    public void assertToFirstFail() {
+                        pojoAssertionBuilder.assertToFirstFail();
+                    }
+                
+                    public void assertAll() {
+                        pojoAssertionBuilder.assertAll();
+                    }
+                }
+                """.trimIndent()
+        )
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, javaFileObject))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutError()
+//            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(expectedOutput)
+    }
+
+    // TODO: marmer 10.11.2020 No generation for private types
+    // TODO: marmer 08.11.2020 No Generation for self generated types
 
     @Test
     fun `generated files only from different generators without an appropriate warning should raise a warning`() {

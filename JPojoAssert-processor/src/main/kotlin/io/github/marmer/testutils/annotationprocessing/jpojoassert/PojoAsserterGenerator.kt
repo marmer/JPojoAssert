@@ -181,8 +181,12 @@ class PojoAsserterGenerator(
         get() =
             this is ExecutableElement &&
                     !isPrivate &&
+                    hasPropertyPrefix() &&
                     hasReturnType() &&
                     hasNoParameters()
+
+    private fun Element.hasPropertyPrefix() =
+        simpleName.startsWith("get") || simpleName.startsWith("is")
 
     private val Element.isPrivate: Boolean
         get() = modifiers.contains(Modifier.PRIVATE)
