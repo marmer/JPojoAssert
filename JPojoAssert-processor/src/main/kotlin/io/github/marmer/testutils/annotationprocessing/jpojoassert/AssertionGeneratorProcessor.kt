@@ -29,10 +29,8 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
         return if (set.contains<GenerateAsserter>()) {
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
                 .forEach {
-                    val annotation = it.getAnnotation(GenerateAsserter::class.java)
-                    val configuredTypeName = annotation.value
                     val baseType =
-                        processingEnv.elementUtils.getTypeElement(configuredTypeName)
+                        processingEnv.elementUtils.getTypeElement(it.getAnnotation(GenerateAsserter::class.java).value)
 
                     if (baseType.isAnnotatedWith(Generated::class.java)) {
                         PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
