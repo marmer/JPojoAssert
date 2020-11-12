@@ -160,7 +160,7 @@
                     <branchName>master</branchName>
                     <dryRun>true</dryRun>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <arguments>-Prelease</arguments>
+                    <releaseProfiles>release</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>
