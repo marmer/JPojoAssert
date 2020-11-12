@@ -491,6 +491,52 @@ internal class AssertionGeneratorProcessorTest {
     }
 
     @Test
+    fun `it should be possible to generate for Types configured more than once`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter({
+                        "some.other.pck.SomeType",
+                        "some.other.pck",
+                        "some.other.pck.SomeType",
+                        "some.other.pck"
+                })
+                public interface JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val someType = JavaFileObjects.forSourceLines(
+            "some.other.pck.SomeType", """
+                package some.other.pck;
+                
+                public interface SomeType {}
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val firstTypeOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.FirstTypeAsserter", getEmptyAsserterStubFor(now, "FirstType").trimIndent()
+        )
+
+        @Language("JAVA") val secondTypeOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.SecondTypeAsserter", getEmptyAsserterStubFor(now, "SecondType")
+        )
+
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, someType))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(firstTypeOutput, secondTypeOutput)
+    }
+
+    @Test
     fun `for each type within a given package an asserter should be generated`() {
         // Preparation
         @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
