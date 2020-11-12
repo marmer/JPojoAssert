@@ -11,7 +11,7 @@
 
     <name>JPojoAssert</name>
     <description>A tool to generate compilesafe and atomic assertions for beans, pojos, entities, models, classes,
-        objects... for all java testing frameworks, buildtools, IDE's
+        objects... for all java testing frameworks, buildtools, IDE's - Parent
     </description>
 
     <url>https://github.com/marmer/hamcrest-matcher-generator</url>

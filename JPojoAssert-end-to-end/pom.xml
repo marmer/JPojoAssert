@@ -14,7 +14,9 @@
     <artifactId>JPojoAssert-end-to-end</artifactId>
 
     <name>JPojoAssert-end-to-end</name>
-
+    <description>A tool to generate compilesafe and atomic assertions for beans, pojos, entities, models, classes,
+        objects... for all java testing frameworks, buildtools, IDE's - End to End Tests
+    </description>
     <dependencies>
         <dependency>
             <groupId>org.hamcrest</groupId>

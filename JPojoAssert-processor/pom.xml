@@ -14,7 +14,9 @@
     <artifactId>JPojoAssert-processor</artifactId>
 
     <name>JPojoAssert-processor</name>
-
+    <description>A tool to generate compilesafe and atomic assertions for beans, pojos, entities, models, classes,
+        objects... for all java testing frameworks, buildtools, IDE's - Annotation Processor
+    </description>
     <build>
         <plugins>
             <plugin>
