@@ -42,20 +42,29 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
                 generate(qualifiedTypeOrPackageName, configurationType)
             }
 
-    private fun generate(qualifiedTypeOrPackageName: String, it: Element) {
-        val baseType =
-            processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName)
+    private fun generate(qualifiedTypeOrPackageName: String, configurationType: Element) {
+        val baseType = getAllTypeElementsFor(qualifiedTypeOrPackageName)
 
-        if (baseType == null) {
-            printSkipWarningBecauseOfNotExistingTypeConfigured(it, qualifiedTypeOrPackageName)
-            return
-        }
-
-        if (baseType.isAnnotatedWith(Generated::class.java)) {
-            PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
+        if (baseType.isEmpty()) {
+            printSkipWarningBecauseOfNotExistingTypeConfigured(configurationType, qualifiedTypeOrPackageName)
         } else {
-            printSkipNoteBecauseOfSelfGenerationFor(baseType)
+            baseType.forEach {
+                if (it.isAnnotatedWith(Generated::class.java)) {
+                    PojoAsserterGenerator(processingEnv, it, timeProvider, javaClass.name).generate()
+                } else {
+                    printSkipNoteBecauseOfSelfGenerationFor(it)
+                }
+            }
         }
+    }
+
+    private fun getAllTypeElementsFor(qualifiedTypeOrPackageName: String): List<TypeElement> {
+        return (processingEnv.elementUtils
+            .getAllPackageElements(qualifiedTypeOrPackageName)
+            .flatMap { it.enclosedElements }
+            .map { it as TypeElement }
+                + processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName))
+            .filterNotNull()
     }
 
     private fun printSkipWarningBecauseOfNotExistingTypeConfigured(
