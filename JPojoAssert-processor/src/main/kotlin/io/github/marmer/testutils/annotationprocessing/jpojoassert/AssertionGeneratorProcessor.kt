@@ -34,36 +34,40 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
                 roundEnvironment.existsAnySelfGeneratedSource()
     }
 
-    private fun generate(configurationType: Element) =
-        configurationType
-            .getAnnotation(GenerateAsserter::class.java)
-            .value
-            .forEach { qualifiedTypeOrPackageName ->
-                generate(qualifiedTypeOrPackageName, configurationType)
-            }
-
-    private fun generate(qualifiedTypeOrPackageName: String, configurationType: Element) {
-        val baseType = getAllTypeElementsFor(qualifiedTypeOrPackageName)
-
-        if (baseType.isEmpty()) {
-            printSkipWarningBecauseOfNotExistingTypeConfigured(configurationType, qualifiedTypeOrPackageName)
-        } else {
-            baseType.forEach {
+    private fun generate(configurationType: Element) {
+        getAllTypeElementsFor(configurationType)
+            .forEach {
                 if (it.isAnnotatedWith(Generated::class.java)) {
                     PojoAsserterGenerator(processingEnv, it, timeProvider, javaClass.name).generate()
                 } else {
                     printSkipNoteBecauseOfSelfGenerationFor(it)
                 }
             }
-        }
     }
 
-    private fun getAllTypeElementsFor(qualifiedTypeOrPackageName: String): List<TypeElement> {
-        return processingEnv.elementUtils
-            .getAllPackageElements(qualifiedTypeOrPackageName)
+    private fun getAllTypeElementsFor(configurationType: Element): List<TypeElement> {
+        return configurationType
+            .getAnnotation(GenerateAsserter::class.java)
+            .value
+            .distinct()
+            .flatMap { getAllTypeElementsFor(it, configurationType) }
+            .distinct()
+    }
+
+    private fun getAllTypeElementsFor(
+        currentQualifiedTypeOrPackageName: String,
+        configurationType: Element
+    ): List<TypeElement> {
+        val typeElementsForName = processingEnv.elementUtils
+            .getAllPackageElements(currentQualifiedTypeOrPackageName)
             .flatMap { it.enclosedElements }
             .map { it as TypeElement }
-            .plus(processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName)).filterNotNull()
+            .plus(processingEnv.elementUtils.getTypeElement(currentQualifiedTypeOrPackageName)).filterNotNull()
+
+        if (typeElementsForName.isEmpty())
+            printSkipWarningBecauseOfNotExistingTypeConfigured(configurationType, currentQualifiedTypeOrPackageName)
+
+        return typeElementsForName
     }
 
     private fun printSkipWarningBecauseOfNotExistingTypeConfigured(

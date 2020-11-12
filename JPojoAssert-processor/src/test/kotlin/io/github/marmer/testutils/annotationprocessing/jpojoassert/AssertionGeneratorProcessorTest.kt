@@ -516,14 +516,9 @@ internal class AssertionGeneratorProcessorTest {
                 """.trimIndent()
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
-        @Language("JAVA") val firstTypeOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.FirstTypeAsserter", getEmptyAsserterStubFor(now, "FirstType").trimIndent()
+        @Language("JAVA") val someTypeOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.SomeTypeAsserter", getEmptyAsserterStubFor(now, "SomeType").trimIndent()
         )
-
-        @Language("JAVA") val secondTypeOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.SecondTypeAsserter", getEmptyAsserterStubFor(now, "SecondType")
-        )
-
 
         // Execution
         Truth.assert_()
@@ -533,7 +528,7 @@ internal class AssertionGeneratorProcessorTest {
             // Assertion
             .compilesWithoutWarnings()
             .and()
-            .generatesSources(firstTypeOutput, secondTypeOutput)
+            .generatesSources(someTypeOutput)
     }
 
     @Test
