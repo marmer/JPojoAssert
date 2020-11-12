@@ -34,11 +34,13 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
                 roundEnvironment.existsAnySelfGeneratedSource()
     }
 
-    private fun generate(it: Element) {
-        it.getAnnotation(GenerateAsserter::class.java).value.forEach { qualifiedTypeOrPackageName ->
-            generate(qualifiedTypeOrPackageName, it)
-        }
-    }
+    private fun generate(configurationType: Element) =
+        configurationType
+            .getAnnotation(GenerateAsserter::class.java)
+            .value
+            .forEach { qualifiedTypeOrPackageName ->
+                generate(qualifiedTypeOrPackageName, configurationType)
+            }
 
     private fun generate(qualifiedTypeOrPackageName: String, it: Element) {
         val baseType =
