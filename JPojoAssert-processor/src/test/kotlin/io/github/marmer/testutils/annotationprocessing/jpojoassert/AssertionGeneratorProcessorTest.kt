@@ -441,4 +441,94 @@ internal class AssertionGeneratorProcessorTest {
             .withWarningCount(1)
             .withWarningContaining("No processor claimed any of these annotations: java.compiler/javax.annotation.processing.Generated")
     }
+
+    @Test
+    fun `for each full qualified type should an asserter be generated`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter({"some.other.pck.FirstType","some.other.pck.SecondType"})
+                public interface JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val firstType = JavaFileObjects.forSourceLines(
+            "some.other.pck.FirstType", """
+                package some.other.pck;
+                
+                public interface FirstType {}
+                """.trimIndent()
+        )
+        @Language("JAVA") val secondType = JavaFileObjects.forSourceLines(
+            "some.other.pck.SecondType", """
+                package some.other.pck;
+                
+                public interface SecondType {}
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val firstTypeOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.FirstTypeAsserter", getEmptyAsserterStubFor(now, "FirstType").trimIndent()
+        )
+
+        @Language("JAVA") val secondTypeOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.SecondTypeAsserter", getEmptyAsserterStubFor(now, "SecondType")
+        )
+
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, firstType, secondType))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(firstTypeOutput, secondTypeOutput)
+    }
+
+    private fun getEmptyAsserterStubFor(now: LocalDateTime, typeName: String): String {
+        return """
+                    package some.other.pck;
+                    
+                    import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                    import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                    import java.util.Collections;
+                    import javax.annotation.processing.Generated;
+                    
+                    @Generated(
+                            value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                            date = "$now")
+                    public class ${typeName}Asserter {
+                        private final PojoAssertionBuilder<${typeName}> pojoAssertionBuilder;
+                    
+                        private ${typeName}Asserter(final ${typeName} base) {
+                            this(new PojoAssertionBuilder<${typeName}>(base, Collections.emptyList(), "${typeName}"));
+                        }
+                    
+                        private ${typeName}Asserter(final PojoAssertionBuilder<${typeName}> pojoAssertionBuilder) {
+                            this.pojoAssertionBuilder = pojoAssertionBuilder;
+                        }
+                    
+                        public static ${typeName}Asserter prepareFor(final ${typeName} base) {
+                            return new ${typeName}Asserter(base);
+                        }
+                    
+                        public ${typeName}Asserter with(final AssertionCallback<${typeName}> assertionCallback) {
+                            return new ${typeName}Asserter(pojoAssertionBuilder.add(assertionCallback));
+                        }
+                    
+                        public void assertToFirstFail() {
+                            pojoAssertionBuilder.assertToFirstFail();
+                        }
+                    
+                        public void assertAll() {
+                            pojoAssertionBuilder.assertAll();
+                        }
+                    }
+                    """.trimIndent()
+    }
 }

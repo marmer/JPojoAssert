@@ -7,6 +7,6 @@ package io.github.marmer.testutils.annotationprocessing.jpojoassert
  */
 annotation class GenerateAsserter(
     /** Package or full qualified Type name for which an asserter shall be generated */
-    val value: String
+    val value: Array<String>
 )
 

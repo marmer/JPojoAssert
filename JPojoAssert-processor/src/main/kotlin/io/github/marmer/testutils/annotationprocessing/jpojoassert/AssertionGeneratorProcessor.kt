@@ -28,26 +28,34 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
 
         return if (set.contains<GenerateAsserter>()) {
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
-                .forEach {
-                    val qualifiedTypeOrPackageName = it.getAnnotation(GenerateAsserter::class.java).value
-
-                    val baseType =
-                        processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName)
-
-                    if (baseType == null) {
-                        printSkipWarningBecauseOfNotExistingTypeConfigured(it, qualifiedTypeOrPackageName)
-                        return@forEach
-                    }
-
-                    if (baseType.isAnnotatedWith(Generated::class.java)) {
-                        PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
-                    } else {
-                        printSkipNoteBecauseOfSelfGenerationFor(baseType)
-                    }
-                }
+                .forEach { generate(it) }
             true
         } else set.contains<Generated>() &&
                 roundEnvironment.existsAnySelfGeneratedSource()
+    }
+
+    private fun generate(configurationType: Element) =
+        configurationType
+            .getAnnotation(GenerateAsserter::class.java)
+            .value
+            .forEach { qualifiedTypeOrPackageName ->
+                generate(qualifiedTypeOrPackageName, configurationType)
+            }
+
+    private fun generate(qualifiedTypeOrPackageName: String, it: Element) {
+        val baseType =
+            processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName)
+
+        if (baseType == null) {
+            printSkipWarningBecauseOfNotExistingTypeConfigured(it, qualifiedTypeOrPackageName)
+            return
+        }
+
+        if (baseType.isAnnotatedWith(Generated::class.java)) {
+            PojoAsserterGenerator(processingEnv, baseType, timeProvider, javaClass.name).generate()
+        } else {
+            printSkipNoteBecauseOfSelfGenerationFor(baseType)
+        }
     }
 
     private fun printSkipWarningBecauseOfNotExistingTypeConfigured(
