@@ -98,7 +98,6 @@
     <modules>
         <module>JPojoAssert-core</module>
         <module>JPojoAssert-processor</module>
-        <module>JPojoAssert-end-to-end</module>
     </modules>
 
     <dependencyManagement>
@@ -290,11 +289,16 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>dev</id>
             <modules>
-                <module>JPojoAssert-core</module>
-                <module>JPojoAssert-processor</module>
+                <module>JPojoAssert-end-to-end</module>
             </modules>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>
