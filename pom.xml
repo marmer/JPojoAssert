@@ -18,8 +18,9 @@
 
     <scm>
         <url>https://github.com/marmer/JPojoAssert</url>
-        <connection>https://github.com/marmer/JPojoAssert.git</connection>
-        <developerConnection>https://github.com/marmer/JPojoAssert.git</developerConnection>
+        <connection>scm:git:https://github.com/marmer/JPojoAssert.git</connection>
+        <developerConnection>scm:git:https://github.com/marmer/JPojoAssert.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <ciManagement>
@@ -145,6 +146,18 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <branchName>master</branchName>
+                    <dryRun>true</dryRun>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
