@@ -59,12 +59,11 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
     }
 
     private fun getAllTypeElementsFor(qualifiedTypeOrPackageName: String): List<TypeElement> {
-        return (processingEnv.elementUtils
+        return processingEnv.elementUtils
             .getAllPackageElements(qualifiedTypeOrPackageName)
             .flatMap { it.enclosedElements }
-            .map { it as TypeElement }
-                + processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName))
-            .filterNotNull()
+            .map { it as TypeElement } +
+                listOf(processingEnv.elementUtils.getTypeElement(qualifiedTypeOrPackageName)).filterNotNull()
     }
 
     private fun printSkipWarningBecauseOfNotExistingTypeConfigured(
