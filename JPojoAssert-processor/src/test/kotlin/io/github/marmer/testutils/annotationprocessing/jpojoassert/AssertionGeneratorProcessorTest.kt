@@ -441,4 +441,128 @@ internal class AssertionGeneratorProcessorTest {
             .withWarningCount(1)
             .withWarningContaining("No processor claimed any of these annotations: java.compiler/javax.annotation.processing.Generated")
     }
+
+    @Test
+    fun `for each full qualified type should an asserter be generated`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter({"some.other.pck.FirstType","some.other.pck.SecondType"})
+                public interface JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val firstType = JavaFileObjects.forSourceLines(
+            "some.other.pck.FirstType", """
+                package some.other.pck;
+                
+                public interface FirstType {}
+                """.trimIndent()
+        )
+        @Language("JAVA") val secondType = JavaFileObjects.forSourceLines(
+            "some.other.pck.SecondType", """
+                package some.other.pck;
+                
+                public interface SecondType {}
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val firstTypeOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.FirstTypeAsserter", """
+                package some.other.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.util.Collections;
+                import javax.annotation.processing.Generated;
+                
+                @Generated(
+                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                        date = "$now")
+                public class FirstTypeAsserter {
+                    private final PojoAssertionBuilder<FirstType> pojoAssertionBuilder;
+                
+                    private FirstTypeAsserter(final FirstType base) {
+                        this(new PojoAssertionBuilder<FirstType>(base, Collections.emptyList(), "FirstType"));
+                    }
+                
+                    private FirstTypeAsserter(final PojoAssertionBuilder<FirstType> pojoAssertionBuilder) {
+                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                    }
+                
+                    public static FirstTypeAsserter prepareFor(final FirstType base) {
+                        return new FirstTypeAsserter(base);
+                    }
+                
+                    public FirstTypeAsserter with(final AssertionCallback<FirstType> assertionCallback) {
+                        return new FirstTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                
+                    public void assertToFirstFail() {
+                        pojoAssertionBuilder.assertToFirstFail();
+                    }
+                
+                    public void assertAll() {
+                        pojoAssertionBuilder.assertAll();
+                    }
+                }
+                """.trimIndent()
+        )
+
+        @Language("JAVA") val secondTypeOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.SecondTypeAsserter", """
+                package some.other.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.util.Collections;
+                import javax.annotation.processing.Generated;
+                
+                @Generated(
+                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                        date = "$now")
+                public class SecondTypeAsserter {
+                    private final PojoAssertionBuilder<SecondType> pojoAssertionBuilder;
+                
+                    private SecondTypeAsserter(final SecondType base) {
+                        this(new PojoAssertionBuilder<SecondType>(base, Collections.emptyList(), "SecondType"));
+                    }
+                
+                    private SecondTypeAsserter(final PojoAssertionBuilder<SecondType> pojoAssertionBuilder) {
+                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                    }
+                
+                    public static SecondTypeAsserter prepareFor(final SecondType base) {
+                        return new SecondTypeAsserter(base);
+                    }
+                
+                    public SecondTypeAsserter with(final AssertionCallback<SecondType> assertionCallback) {
+                        return new SecondTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                
+                    public void assertToFirstFail() {
+                        pojoAssertionBuilder.assertToFirstFail();
+                    }
+                
+                    public void assertAll() {
+                        pojoAssertionBuilder.assertAll();
+                    }
+                }
+                """.trimIndent()
+        )
+
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, firstType, secondType))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(firstTypeOutput, secondTypeOutput)
+    }
 }
