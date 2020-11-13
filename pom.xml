@@ -294,6 +294,9 @@
         </profile>
         <profile>
             <id>release</id>
+            <properties>
+                <skipGpg>false</skipGpg>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -307,6 +310,7 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
+                                    <skip>${skipGpg}</skip>
                                     <useAgent>true</useAgent>
                                 </configuration>
                             </execution>
