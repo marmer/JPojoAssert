@@ -84,11 +84,6 @@
         <auto-service.version>1.0-rc7</auto-service.version>
     </properties>
 
-
-    <!-- TODO: marmer 12.11.2020 Hier!!! -->
-    <!--    https://github.com/qcastel/github-actions-maven-release ... könnte helfen. Fehlt nur das Hochzählen der Version-->
-    <!--    https://probot.github.io/apps/ Das auch-->
-
     <repositories>
         <repository>
             <id>mavenCentral</id>
