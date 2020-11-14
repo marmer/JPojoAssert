@@ -9,14 +9,27 @@
 [![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=sqale_rating)](https://sonarcloud.io/component_measures?id=io.github.marmer.testutils:JPojoAssert&metric=Maintainability)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=io.github.marmer.testutils:JPojoAssert&metric=reliability_rating)](https://sonarcloud.io/component_measures?id=io.github.marmer.testutils:JPojoAssert&metric=Reliability)
 
-JPojoAssert - (UNDER CONSTRUCTION)
+JPojoAssert
 ===========
 
-Vision: A library which generates compile safe assertions for Pojos, Beans, Models, Entities, Objects, Types, ... (whatever you want to call it) with properties in a fluent and typesafe and (optional) an atomic way and independently of a build tool, IDE or testingframework. (Should at least work with JUnit4, JUnit5 and TestNG).
+This library provides the generation of fluent, atomic assertion classes for pojos, beans, models, entities, or whatever you want to call your object (especially with properties). All this happens without the need to pollute the production code with annotations. And can be used as an adon for all java testing frameworks.
 
-Why does it work? It's a smiple Java annotation Processor powered by JavaPoet.
+Bonus: Because this library is an annotation processor, you can use it without any plugins for your IDE or build tool as long as annotation processing is supported (so even with plain javac) 
 
-Draft:
+Sample/Getting Started:
+-----------------------
+
+Att the following dependency to your pom
+```.xml
+        <dependency>
+            <artifactId>JPojoAssert-processor</artifactId>
+            <groupId>io.github.marmer.testutils</groupId>
+            <version>0.1.0</version>
+            <scope>test</scope>
+        </dependency>
+```
+
+Create some Types:
 ```java
         // Some possible Pojos, Beans, Models, Entities, Objects, Types, ...
         public class SomePojo{
@@ -31,6 +44,16 @@ Draft:
         }
 ```
 
+Configure the generation for the types:
+```.java
+@GenerateAsserter({
+        "io.github.marmer", //Package Configuration
+        "io.github.marmer.SomePojo" //Qualified type name configuration
+})
+class JPojoAssertConfiguration {}
+```
+
+Enjoy some readable compile safe assertions for your configured types:
 ```java
         // Sample Assertion related to "SomePojo"        
         SomePojoAsserter.prepareFor(pojo)

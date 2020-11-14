@@ -54,7 +54,3 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./mvnw -B sonar:sonar -am --projects "JPojoAssert-core,JPojoAssert-processor"
         if: success()
-
-      - name: Release
-        run: ./mvnw -B -DskipTests -DskipIT clean deploy -Prelease -DskipGpg=true
-        if: success()
