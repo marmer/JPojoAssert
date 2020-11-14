@@ -5,7 +5,7 @@
     <parent>
         <artifactId>JPojoAssert</artifactId>
         <groupId>io.github.marmer.testutils</groupId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -14,7 +14,9 @@
     <artifactId>JPojoAssert-core</artifactId>
 
     <name>JPojoAssert-core</name>
-
+    <description>A tool to generate compilesafe and atomic assertions for beans, pojos, entities, models, classes,
+        objects... for all java testing frameworks, buildtools, IDE's - Core
+    </description>
     <build>
         <plugins>
             <plugin>

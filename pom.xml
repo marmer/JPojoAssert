@@ -6,12 +6,12 @@
 
     <artifactId>JPojoAssert</artifactId>
     <groupId>io.github.marmer.testutils</groupId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <name>JPojoAssert</name>
     <description>A tool to generate compilesafe and atomic assertions for beans, pojos, entities, models, classes,
-        objects... for all java testing frameworks, buildtools, IDE's
+        objects... for all java testing frameworks, buildtools, IDE's - Parent
     </description>
 
     <url>https://github.com/marmer/hamcrest-matcher-generator</url>
@@ -89,12 +89,28 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
     </repositories>
     <modules>
         <module>JPojoAssert-core</module>
         <module>JPojoAssert-processor</module>
-        <module>JPojoAssert-end-to-end</module>
     </modules>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>mavenCentral</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
@@ -155,6 +171,7 @@
                     <branchName>master</branchName>
                     <dryRun>true</dryRun>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <releaseProfiles>release</releaseProfiles>
                 </configuration>
             </plugin>
         </plugins>
@@ -278,17 +295,30 @@
                         <sourceMap>true</sourceMap>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>1.4.10.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>dev</id>
             <modules>
-                <module>JPojoAssert-core</module>
-                <module>JPojoAssert-processor</module>
+                <module>JPojoAssert-end-to-end</module>
             </modules>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <skipGpg>false</skipGpg>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -302,6 +332,7 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
+                                    <skip>${skipGpg}</skip>
                                     <useAgent>true</useAgent>
                                 </configuration>
                             </execution>
@@ -320,16 +351,20 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <groupId>org.jetbrains.dokka</groupId>
+                        <artifactId>dokka-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>attach-javadocs</id>
+                                <phase>prepare-package</phase>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>dokka</goal>
+                                    <goal>javadoc</goal>
+                                    <goal>javadocJar</goal>
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>

@@ -10,6 +10,7 @@ class PojoAssertionBuilder<T>(
     private val heading: String = "Unexpected exceptions thrown"
 ) {
 
+    // FIXME: marmer 13.11.2020 Replace heading by something good
     fun add(assertionCallback: AssertionCallback<T>) =
         PojoAssertionBuilder(pojo, assertionCallbacks + { assertionCallback.accept(pojo) }, "What a good day to throw")
 

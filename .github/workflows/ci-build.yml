@@ -38,15 +38,19 @@ jobs:
         run: |
           mkdir -p JPojoAssert-processor/src/{main,test}/{java,kotlin}
           mkdir -p JPojoAssert-core/src/{main,test}/{java,kotlin}
+        if: success()
 
       - name: Build
         run: ./mvnw -B clean install -DskipTests
+        if: success()
 
       - name: Test
         run: ./mvnw -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.jacoco:jacoco-maven-plugin:report-aggregate
+        if: success()
 
       - name: Sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./mvnw -B sonar:sonar -am --projects "JPojoAssert-core,JPojoAssert-processor"
+        if: success()
