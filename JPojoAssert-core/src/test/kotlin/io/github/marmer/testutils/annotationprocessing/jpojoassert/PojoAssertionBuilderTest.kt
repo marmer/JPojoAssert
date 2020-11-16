@@ -14,6 +14,7 @@ internal class PojoAssertionBuilderTest {
 
     private data class Type1(val value: Int)
 
+
     @Test
     fun `exceptions within an assertion should throw an AssertionError at hard asserts`() {
         // Preparation
@@ -114,7 +115,7 @@ internal class PojoAssertionBuilderTest {
     }
 
     @Test
-    fun `on soft asserts only the first given failed assertion should be part of the output`() {
+    fun `on soft asserts all the given failed assertion should be part of the output`() {
         // Preparation
         val builder = PojoAssertionBuilder(Type1(42))
             .add { fail("first") }
@@ -137,7 +138,7 @@ internal class PojoAssertionBuilderTest {
     @Test
     fun `on hard asserts a given heading should be used for the assertion error`() {
         // Preparation
-        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "What a good day to throw")
+        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "Some nice Failure Heading")
             .add { fail("first") }
 
         // Execution
@@ -146,13 +147,13 @@ internal class PojoAssertionBuilderTest {
         }
 
         // Assertion
-        assertThat(result.message, containsString("What a good day to throw"))
+        assertThat(result.message, containsString("Some nice Failure Heading"))
     }
 
     @Test
     fun `on soft asserts a given heading should be used for the assertion error`() {
         // Preparation
-        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "What a good day to throw")
+        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "Some nice Failure Heading")
             .add { fail("first") }
 
         // Execution
@@ -161,7 +162,47 @@ internal class PojoAssertionBuilderTest {
         }
 
         // Assertion
-        assertThat(result.message, containsString("What a good day to throw"))
+        assertThat(result.message, containsString("Some nice Failure Heading"))
+    }
+
+    @Test
+    fun `on soft asserts if a postfix heading is given for a specifig assertion it should be added to the heading`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "Some nice Failure Heading")
+            .add("additional heading 1") { fail("first") }
+            .add("additional heading 2") { fail("second") }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) {
+            builder.assertAll()
+        }
+
+        // Assertion
+        assertAll(
+            { assertThat(result.message, containsString("Some nice Failure Heading")) },
+            { assertThat(result.message, containsString("additional heading 1")) },
+            { assertThat(result.message, containsString("additional heading 2")) }
+        )
+    }
+
+    @Test
+    fun `on hard asserts if a postfix heading is given for a specifig assertion it should be added to the heading`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "Some nice Failure Heading")
+            .add("additional heading 1") { fail("first") }
+            .add("additional heading 2") { fail("second") }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) {
+            builder.assertToFirstFail()
+        }
+
+        // Assertion
+        assertAll(
+            { assertThat(result.message, containsString("Some nice Failure Heading")) },
+            { assertThat(result.message, containsString("additional heading 1")) },
+            { assertThat(result.message, not(containsString("additional heading 2"))) }
+        )
     }
 
 }
