@@ -37,4 +37,28 @@ class SomePojoTest {
 
     }
 
+    @Test
+    @DisplayName("Type and property names withi error messages")
+    void assertThat_TypeAndPropertyNamesWithiErrorMessages() {
+        // Preparation
+
+        final var assertionError = assertThrows(AssertionError.class,
+                // Execution
+                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
+                })
+                        .with(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeX", it.getFirstName()))
+                        .with(it -> {
+                            throw new Exception("Fancy Exception");
+                        })
+                        .withFirstName(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeY", it))
+                        .withTitles(it -> assertThat(it, contains("Prof.", "Dr.")))
+                        .assertAll());
+        // Assertion
+        assertAll(
+                () -> assertThat(assertionError.toString(), containsString("SomePojo")),
+                () -> assertThat(assertionError.toString(), containsString("firstName")),
+                () -> assertThat(assertionError.toString(), containsString("titles"))
+        );
+    }
+
 }
