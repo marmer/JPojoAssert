@@ -1,6 +1,10 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import com.squareup.javapoet.*
+import com.squareup.javapoet.MethodSpec.methodBuilder
+import org.hamcrest.Matcher
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 import java.time.LocalDateTime
 import java.util.*
 import javax.annotation.processing.Generated
@@ -34,28 +38,55 @@ class PojoAsserterGenerator(
 
     private fun getPropertyAssertionMethods() =
         baseType.properties
-            .map { property ->
-                MethodSpec.methodBuilder("with${property.name.capitalize()}")
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(
-                        ParameterizedTypeName.get(
-                            ClassName.get(AssertionCallback::class.java),
-                            TypeName.get(property.boxedType)
-                        ),
-                        "assertionCallback",
-                        Modifier.FINAL
-                    )
-                    .addStatement(
-                        "return new \$T($builderFieldName.add(\$S, base -> assertionCallback.accept(base.${property.accessor})))",
-                        getGeneratedTypeName(),
-                        property.name
-                    )
-                    .returns(getGeneratedTypeName())
-                    .build()
+            .flatMap { property ->
+                listOf(
+                    getPlainAssertionMethodFor(property),
+                    getMatcherAssertionMethodFor(property)
+                )
             }
 
+    private fun getPlainAssertionMethodFor(property: Property) =
+        methodBuilder("with${property.name.capitalize()}")
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(
+                ParameterizedTypeName.get(
+                    ClassName.get(AssertionCallback::class.java),
+                    TypeName.get(property.boxedType)
+                ),
+                "assertionCallback",
+                Modifier.FINAL
+            )
+            .addStatement(
+                "return new \$T($builderFieldName.add(\$S, base -> assertionCallback.accept(base.${property.accessor})))",
+                getGeneratedTypeName(),
+                property.name
+            )
+            .returns(getGeneratedTypeName())
+            .build()
+
+    private fun getMatcherAssertionMethodFor(property: Property) =
+        methodBuilder("has${property.name.capitalize()}")
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(
+                ParameterizedTypeName.get(
+                    ClassName.get(Matcher::class.java),
+                    WildcardTypeName.supertypeOf(TypeName.get(property.boxedType))
+                ),
+                "matcher",
+                Modifier.FINAL
+            )
+            .addStatement(
+                "return new \$T($builderFieldName.add(base -> \$T.assertThat(base, \$T.hasProperty(\$S, matcher))))",
+                getGeneratedTypeName(),
+                MatcherAssert::class.java,
+                Matchers::class.java,
+                property.name
+            )
+            .returns(getGeneratedTypeName())
+            .build()
+
     private fun getBaseAssertionMethods() = listOf(
-        MethodSpec.methodBuilder("with")
+        methodBuilder("with")
             .addModifiers(Modifier.PUBLIC)
             .addParameter(
                 ParameterizedTypeName.get(ClassName.get(AssertionCallback::class.java), baseType.typeName),
@@ -76,12 +107,12 @@ class PojoAsserterGenerator(
     )
 
 
-    private fun getHardAssertMethod() = MethodSpec.methodBuilder("assertToFirstFail")
+    private fun getHardAssertMethod() = methodBuilder("assertToFirstFail")
         .addModifiers(Modifier.PUBLIC)
         .addStatement("$builderFieldName.assertToFirstFail()")
         .build()
 
-    private fun getSoftAssertMethod() = MethodSpec.methodBuilder("assertAll")
+    private fun getSoftAssertMethod() = methodBuilder("assertAll")
         .addModifiers(Modifier.PUBLIC)
         .addStatement("$builderFieldName.assertAll()")
         .build()
@@ -92,7 +123,7 @@ class PojoAsserterGenerator(
         getApiInitializer()
     )
 
-    private fun getApiInitializer() = MethodSpec.methodBuilder("prepareFor")
+    private fun getApiInitializer() = methodBuilder("prepareFor")
         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
         .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
         .addParameter(baseType.typeName, "base", Modifier.FINAL)
