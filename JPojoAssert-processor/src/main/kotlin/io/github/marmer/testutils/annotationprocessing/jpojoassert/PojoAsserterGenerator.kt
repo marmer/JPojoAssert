@@ -46,8 +46,9 @@ class PojoAsserterGenerator(
                         Modifier.FINAL
                     )
                     .addStatement(
-                        "return new \$T($builderFieldName.add(base -> assertionCallback.accept(base.${property.accessor})))",
-                        getGeneratedTypeName()
+                        "return new \$T($builderFieldName.add(\$S, base -> assertionCallback.accept(base.${property.accessor})))",
+                        getGeneratedTypeName(),
+                        property.name
                     )
                     .returns(getGeneratedTypeName())
                     .build()

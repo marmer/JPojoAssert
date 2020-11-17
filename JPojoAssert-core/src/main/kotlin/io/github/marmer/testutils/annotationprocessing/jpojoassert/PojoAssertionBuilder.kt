@@ -12,8 +12,8 @@ class PojoAssertionBuilder<T>(
     private val heading: String = "Unexpected exceptions thrown"
 ) {
 
-    fun add(assertionCallback: AssertionCallback<T>) = add("", assertionCallback)
-    fun add(additionalHeading: String, assertionCallback: AssertionCallback<T>) =
+    @JvmOverloads
+    fun add(additionalHeading: String = "", assertionCallback: AssertionCallback<T>) =
         PojoAssertionBuilder(
             pojo,
             assertionConfigurations + AssertionConfiguration({ assertionCallback.accept(pojo) }, additionalHeading),

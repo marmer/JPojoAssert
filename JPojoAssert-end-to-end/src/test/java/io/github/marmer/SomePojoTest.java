@@ -51,7 +51,7 @@ class SomePojoTest {
                             throw new Exception("Fancy Exception");
                         })
                         .withFirstName(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeY", it))
-                        .withTitles(it -> assertThat(it, contains("Prof.", "Dr.")))
+                        .withTitles(it -> assertThat(it, contains("Prof.", "Dr.", "Dr.")))
                         .assertAll());
         // Assertion
         assertAll(
