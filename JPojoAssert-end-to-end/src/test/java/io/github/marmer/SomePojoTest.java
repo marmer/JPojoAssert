@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class SomePojoTest {
     @Test
     @DisplayName("Simple assertions")
-    void assertThat_SimpleAssertions() {
+    void simpleAssertions() {
         // Preparation
 
         final var assertionError = assertThrows(AssertionError.class,
@@ -39,9 +39,8 @@ class SomePojoTest {
 
     @Test
     @DisplayName("Type and property names withi error messages")
-    void assertThat_TypeAndPropertyNamesWithiErrorMessages() {
+    void typeAndPropertyNamesWithiErrorMessages() {
         // Preparation
-
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
                 () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
@@ -58,6 +57,23 @@ class SomePojoTest {
                 () -> assertThat(assertionError.toString(), containsString("SomePojo")),
                 () -> assertThat(assertionError.toString(), containsString("firstName")),
                 () -> assertThat(assertionError.toString(), containsString("titles"))
+        );
+    }
+
+    @Test
+    @DisplayName("Convenience property comparison methods should work as expected")
+    void conveniencePropertyComparisonMethodsShouldWorkAsExpected() {
+        // Preparation
+        final var assertionError = assertThrows(AssertionError.class,
+                // Execution
+                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
+                })
+                        .hasTitles(contains("Prof."))
+                        .assertAll());
+        // Assertion
+        assertAll(
+                () -> assertThat(assertionError.toString(), containsString("Dr.")),
+                () -> assertThat(assertionError.toString(), containsString("Prof."))
         );
     }
 
