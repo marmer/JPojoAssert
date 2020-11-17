@@ -64,7 +64,7 @@ Enjoy some readable compile safe assertions for your configured types:
             .hasFirstName() // Check whether the passed pojo has a property
 //Still Work in Progress
             .hasFirstName("Some value") // Equals Check for the value of the related property of the pojo
-//Still Work in Progress
+            
             .withFirstName(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo
 //Still Work in Progress
             .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
