@@ -4,38 +4,48 @@ import org.opentest4j.MultipleFailuresError
 
 private typealias LocalAssertionCallback = (() -> Unit)
 
+data class AssertionConfiguration(val assertionCallback: LocalAssertionCallback, val additionalHeading: String)
+
 class PojoAssertionBuilder<T>(
     private val pojo: T,
-    private val assertionCallbacks: List<LocalAssertionCallback> = emptyList(),
+    private val assertionConfigurations: List<AssertionConfiguration> = emptyList(),
     private val heading: String = "Unexpected exceptions thrown"
 ) {
 
-    // FIXME: marmer 13.11.2020 Replace heading by something good
-    fun add(assertionCallback: AssertionCallback<T>) =
-        PojoAssertionBuilder(pojo, assertionCallbacks + { assertionCallback.accept(pojo) }, "What a good day to throw")
+    @JvmOverloads
+    fun add(additionalHeading: String = "", assertionCallback: AssertionCallback<T>) =
+        PojoAssertionBuilder(
+            pojo,
+            assertionConfigurations + AssertionConfiguration({ assertionCallback.accept(pojo) }, additionalHeading),
+            heading
+        )
 
     fun assertToFirstFail() =
-        assertionCallbacks.forEach { callback ->
-            callback.toThrownExceptionOrNull()
+        assertionConfigurations.forEach { assertionConfiguration ->
+            assertionConfiguration.toThrownExceptionOrNull()
                 .let {
-                    if (it != null) throw MultipleFailuresError(heading, listOf(it))
+                    if (it != null) throw MultipleFailuresError(
+                        heading,
+                        listOf(it)
+                    )
                 }
         }
 
-    fun assertAll() =
-        with(assertionCallbacks.map {
+    fun assertAll() {
+        with(assertionConfigurations.map {
             it.toThrownExceptionOrNull()
         }.filterNotNull()) {
             if (isNotEmpty()) throw MultipleFailuresError(heading, this)
         }
+    }
 
-    private fun LocalAssertionCallback.toThrownExceptionOrNull() =
+    private fun AssertionConfiguration.toThrownExceptionOrNull() =
         try {
-            this()
+            assertionCallback()
             null
         } catch (e: Exception) {
-            e
+            java.lang.AssertionError(additionalHeading + ": " + e.message, e)
         } catch (e: AssertionError) {
-            e
+            java.lang.AssertionError(additionalHeading + ": " + e.message, e)
         }
 }
