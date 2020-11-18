@@ -24,7 +24,7 @@ Att the following dependency to your pom
         <dependency>
             <artifactId>JPojoAssert-processor</artifactId>
             <groupId>io.github.marmer.testutils</groupId>
-            <version>0.1.0</version>
+            <version>${JPojoAssert.version}</version>
             <scope>test</scope>
         </dependency>
 ```
@@ -73,3 +73,17 @@ Enjoy some readable compile safe assertions for your configured types:
 
             .assertAll() // Soft assertion for an atomic result (you could also use assertToFirstFail() to fail fast)
 ```
+
+
+Changelog
+---------
+### 0.2.1
+Fix: Interopt with Java
+Fix: Changelog added
+Fix: generic version in Readme sample dependency
+### 0.2.0
+Feature: Generation of convenience methods for properties with hamcrest matchers
+### 0.1.1
+Fix: Property names in error messages
+### 0.1.0
+Feature: Simple generation of Asserter classes
