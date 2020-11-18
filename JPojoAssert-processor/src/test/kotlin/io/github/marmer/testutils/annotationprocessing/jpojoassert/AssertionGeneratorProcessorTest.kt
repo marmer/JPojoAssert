@@ -482,13 +482,11 @@ internal class AssertionGeneratorProcessorTest {
             public interface JPojoAssertConfiguration {}
                 """.trimIndent()
         )
-        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
-
         // Execution
         Truth.assert_()
             .about(JavaSourcesSubjectFactory.javaSources())
             .that(listOf(configurationClass))
-            .processedWith(AssertionGeneratorProcessor { now })
+            .processedWith(AssertionGeneratorProcessor())
             // Assertion
             .compilesWithoutError()
             .withWarningContaining("Neither a type nor a type exists for 'not.existing.TypeName'")

@@ -1,8 +1,9 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
-import com.google.auto.service.AutoService
 import java.time.LocalDateTime
-import javax.annotation.processing.*
+import javax.annotation.processing.Generated
+import javax.annotation.processing.ProcessingEnvironment
+import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -11,17 +12,12 @@ import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 import kotlin.reflect.KClass
 
-@SupportedAnnotationTypes(
-    "io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter",
-    "javax.annotation.processing.Generated"
-)
-@AutoService(Processor::class)
-class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime = LocalDateTime::now) :
-    AbstractProcessor() {
-
-    @Synchronized
-    override fun init(processingEnvironment: ProcessingEnvironment) = super.init(processingEnvironment)
-    override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
+class AssertionGeneratorProcessorWorker(
+    private val timeProvider: () -> LocalDateTime,
+    private val processingEnv: ProcessingEnvironment,
+    private val generatorName: String
+) {
+    fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
         if (roundEnvironment.processingOver()) {
             return false
         }
@@ -38,7 +34,7 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
         getAllTypeElementsFor(configurationType)
             .forEach {
                 if (it.isAnnotatedWith(Generated::class.java)) {
-                    PojoAsserterGenerator(processingEnv, it, timeProvider, javaClass.name).generate()
+                    PojoAsserterGenerator(processingEnv, it, timeProvider, generatorName).generate()
                 } else {
                     printSkipNoteBecauseOfSelfGenerationFor(it)
                 }
@@ -112,10 +108,9 @@ class AssertionGeneratorProcessor(private val timeProvider: () -> LocalDateTime 
 
     private fun RoundEnvironment.existsAnySelfGeneratedSource() =
         getElementsAnnotatedWith(Generated::class.java)
-            .any { it.getAnnotation(Generated::class.java).value.contains(this@AssertionGeneratorProcessor.javaClass.name) }
+            .any { it.getAnnotation(Generated::class.java).value.contains(generatorName) }
 
-
-    override fun getSupportedSourceVersion() = SourceVersion.latestSupported()
+    fun getSupportedSourceVersion() = SourceVersion.latestSupported()
 }
 
 private fun AnnotationMirror.isTypeOf(type: KClass<out Annotation>) =
