@@ -69,11 +69,14 @@ class SomePojoTest {
                 () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
                 })
                         .hasTitles(contains("Prof."))
+                        .hasFirstName("Holge")
                         .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("Dr.")),
-                () -> assertThat(assertionError.toString(), containsString("Prof."))
+                () -> assertThat(assertionError.toString(), containsString("Prof.")),
+                () -> assertThat(assertionError.toString(), containsString("Helge")),
+                () -> assertThat(assertionError.toString(), containsString("Holge"))
         );
     }
 

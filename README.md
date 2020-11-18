@@ -77,6 +77,8 @@ Enjoy some readable compile safe assertions for your configured types:
 
 Changelog
 ---------
+### 0.3.0
+Feature: ability to assert for equality of property values
 ### 0.2.1
 Fix: Interopt with Java
 Fix: Changelog added
