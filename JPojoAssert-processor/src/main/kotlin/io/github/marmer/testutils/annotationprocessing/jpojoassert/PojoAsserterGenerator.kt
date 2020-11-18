@@ -41,6 +41,7 @@ class PojoAsserterGenerator(
             .flatMap { property ->
                 listOf(
                     getPlainAssertionMethodFor(property),
+                    getEqualAssertionMethodFor(property),
                     getMatcherAssertionMethodFor(property)
                 )
             }
@@ -60,6 +61,21 @@ class PojoAsserterGenerator(
                 "return new \$T($builderFieldName.add(\$S, base -> assertionCallback.accept(base.${property.accessor})))",
                 getGeneratedTypeName(),
                 property.name
+            )
+            .returns(getGeneratedTypeName())
+            .build()
+
+    private fun getEqualAssertionMethodFor(property: Property) =
+        methodBuilder("has${property.name.capitalize()}")
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(
+                TypeName.get(property.boxedType),
+                "value",
+                Modifier.FINAL
+            )
+            .addStatement(
+                "return has${property.name.capitalize()}(\$T.equalTo(value))",
+                Matchers::class.java,
             )
             .returns(getGeneratedTypeName())
             .build()

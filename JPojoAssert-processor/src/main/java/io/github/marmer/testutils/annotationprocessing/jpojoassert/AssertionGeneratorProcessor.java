@@ -40,6 +40,6 @@ public class AssertionGeneratorProcessor extends AbstractProcessor {
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
+        return this.worker.getSupportedSourceVersion();
     }
 }
