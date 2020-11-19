@@ -58,14 +58,12 @@ Enjoy some readable compile safe assertions for your configured types:
         // Sample Assertion related to "SomePojo"        
         SomePojoAsserter.prepareFor(pojo)
             .with( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth)
-            .withFirstName(it -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth) 
+            .withFirstName(it -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth)
+            .hasFirstName("Some value") // Equals Check for the value of the related property of the pojo            
+            .withFirstName(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo 
 
 //Still Work in Progress
             .hasFirstName() // Check whether the passed pojo has a property
-//Still Work in Progress
-            .hasFirstName("Some value") // Equals Check for the value of the related property of the pojo
-            
-            .withFirstName(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo
 //Still Work in Progress
             .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
 //Still Work in Progress
@@ -78,14 +76,23 @@ Enjoy some readable compile safe assertions for your configured types:
 Changelog
 ---------
 ### 0.3.0
-Feature: ability to assert for equality of property values
+Feature: ability to assert for equality of property values e.g.: 
+```.java
+ asserter.withFirstName("Some value")
+```
 ### 0.2.1
 Fix: Interopt with Java
 Fix: Changelog added
 Fix: generic version in Readme sample dependency
 ### 0.2.0
-Feature: Generation of convenience methods for properties with hamcrest matchers
+Feature: Generation of convenience methods for properties with hamcrest matchers e.g.:
+```.java 
+asserter.withFirstName(equalTo("Some value")))
+```
 ### 0.1.1
 Fix: Property names in error messages
 ### 0.1.0
-Feature: Simple generation of Asserter classes
+Feature: Simple generation of Asserter classes e.g.:
+ ```.java 
+ SomePojoAsserter.prepareFor(pojo).with( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth))
+```
