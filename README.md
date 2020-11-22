@@ -75,6 +75,9 @@ Enjoy some readable compile safe assertions for your configured types:
 
 Changelog
 ---------
+### 0.4.0
+Feature: Generation inherited properties
+
 ### 0.3.0
 Feature: ability to assert for equality of property values e.g.: 
 ```.java
