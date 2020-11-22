@@ -218,7 +218,7 @@ class PojoAsserterGenerator(
             }
 
     private val TypeElement.transitiveElements: List<Element>
-        get() = if (superclass.kind != TypeKind.NONE && kind != ElementKind.ENUM) // Enum check avoid
+        get() = if (superclass.kind != TypeKind.NONE && kind != ElementKind.ENUM)
             enclosedElements +
                     superclass.asTypeElement().transitiveElements +
                     interfaces.flatMap { it.asTypeElement().transitiveElements }
