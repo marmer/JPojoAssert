@@ -205,8 +205,9 @@ class PojoAsserterGenerator(
         get() = TypeName.get(asType())
 
     private val TypeElement.properties: List<Property>
-        get() = enclosedElements
+        get() = transitiveElements
             .filter { it.isProperty }
+            .distinctBy { it.simpleName }
             .map { it as ExecutableElement }
             .map {
                 Property(
@@ -215,6 +216,18 @@ class PojoAsserterGenerator(
                     accessor = it.toString()
                 )
             }
+
+    private val TypeElement.transitiveElements: List<Element>
+        get() = if (superclass.kind != TypeKind.NONE && kind != ElementKind.ENUM)
+            enclosedElements +
+                    superclass.asTypeElement().transitiveElements +
+                    interfaces.flatMap { it.asTypeElement().transitiveElements }
+        else
+            enclosedElements +
+                    interfaces.flatMap { it.asTypeElement().transitiveElements }
+
+    private fun TypeMirror.asTypeElement() =
+        (processingEnv.typeUtils.asElement(this) as TypeElement)
 
     private val Property.boxedType: TypeMirror
         get() =

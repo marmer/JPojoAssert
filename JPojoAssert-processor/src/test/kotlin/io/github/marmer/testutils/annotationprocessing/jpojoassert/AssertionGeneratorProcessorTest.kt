@@ -57,6 +57,7 @@ internal class AssertionGeneratorProcessorTest {
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                 import java.lang.Boolean;
+                import java.lang.Class;
                 import java.lang.Integer;
                 import java.lang.String;
                 import java.util.Collections;
@@ -86,175 +87,24 @@ internal class AssertionGeneratorProcessorTest {
                     public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
                     }
+                    """.trimIndent() +
+                    propertyMethodsFor("ExampleType", "objectProperty", "String") +
+                    propertyMethodsFor("ExampleType", "primitiveProperty", "Integer") +
+                    propertyMethodsFor("ExampleType", "primitiveBooleanProperty", "Boolean", "is", "") +
+                    propertyMethodsFor("ExampleType", "getRightBooleanMixProperty", "Boolean", "is", "") +
+                    propertyMethodsFor("ExampleType", "isWrongPrimitiveBooleanProperty", "Boolean") +
+                    propertyMethodsFor("ExampleType", "getWrongBooleanWrapperProperty", "Boolean", "is", "") +
+                    propertyMethodsFor("ExampleType", "isRightBooleanWrapperProperty", "Boolean") +
+                    propertyMethodsFor("ExampleType", "primitiveArrayProperty", "int[]") +
+                    propertyMethodsFor("ExampleType", "objectArrayProperty", "String[]") +
+                    propertyMethodsFor("ExampleType", "multidimensionalArrayProperty", "String[][]") +
+                    propertyMethodsFor("ExampleType", "packagePrivateProperty", "String") +
+                    propertyMethodsFor("ExampleType", "protectedProperty", "String") +
+                    propertyMethodsFor("ExampleType", "abstractProperty", "String") +
+                    propertyMethodsFor("ExampleType", "finalProperty", "String") +
+                    propertyMethodsFor("ExampleType", "class", "Class<?>") +
+                    """
                     
-                    public ExampleTypeAsserter withObjectProperty(final AssertionCallback<String> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("objectProperty", base -> assertionCallback.accept(base.getObjectProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasObjectProperty(final String value) {
-                        return hasObjectProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasObjectProperty(final Matcher<? super String> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("objectProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withPrimitiveProperty(final AssertionCallback<Integer> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("primitiveProperty", base -> assertionCallback.accept(base.getPrimitiveProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasPrimitiveProperty(final Integer value) {
-                        return hasPrimitiveProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasPrimitiveProperty(final Matcher<? super Integer> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("primitiveProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withPrimitiveBooleanProperty(final AssertionCallback<Boolean> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("primitiveBooleanProperty", base -> assertionCallback.accept(base.isPrimitiveBooleanProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasPrimitiveBooleanProperty(final Boolean value) {
-                        return hasPrimitiveBooleanProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasPrimitiveBooleanProperty(final Matcher<? super Boolean> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("primitiveBooleanProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withGetRightBooleanMixProperty(final AssertionCallback<Boolean> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("getRightBooleanMixProperty", base -> assertionCallback.accept(base.isGetRightBooleanMixProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasGetRightBooleanMixProperty(final Boolean value) {
-                        return hasGetRightBooleanMixProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasGetRightBooleanMixProperty(final Matcher<? super Boolean> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("getRightBooleanMixProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withIsWrongPrimitiveBooleanProperty(final AssertionCallback<Boolean> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("isWrongPrimitiveBooleanProperty", base -> assertionCallback.accept(base.getIsWrongPrimitiveBooleanProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasIsWrongPrimitiveBooleanProperty(final Boolean value) {
-                        return hasIsWrongPrimitiveBooleanProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasIsWrongPrimitiveBooleanProperty(final Matcher<? super Boolean> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("isWrongPrimitiveBooleanProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withGetWrongBooleanWrapperProperty(final AssertionCallback<Boolean> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("getWrongBooleanWrapperProperty", base -> assertionCallback.accept(base.isGetWrongBooleanWrapperProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasGetWrongBooleanWrapperProperty(final Boolean value) {
-                        return hasGetWrongBooleanWrapperProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasGetWrongBooleanWrapperProperty(final Matcher<? super Boolean> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("getWrongBooleanWrapperProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withIsRightBooleanWrapperProperty(final AssertionCallback<Boolean> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("isRightBooleanWrapperProperty", base -> assertionCallback.accept(base.getIsRightBooleanWrapperProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasIsRightBooleanWrapperProperty(final Boolean value) {
-                        return hasIsRightBooleanWrapperProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasIsRightBooleanWrapperProperty(final Matcher<? super Boolean> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("isRightBooleanWrapperProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withPrimitiveArrayProperty(final AssertionCallback<int[]> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("primitiveArrayProperty", base -> assertionCallback.accept(base.getPrimitiveArrayProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasPrimitiveArrayProperty(final int[] value) {
-                        return hasPrimitiveArrayProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasPrimitiveArrayProperty(final Matcher<? super int[]> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("primitiveArrayProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withObjectArrayProperty(final AssertionCallback<String[]> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("objectArrayProperty", base -> assertionCallback.accept(base.getObjectArrayProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasObjectArrayProperty(final String[] value) {
-                        return hasObjectArrayProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasObjectArrayProperty(final Matcher<? super String[]> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("objectArrayProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withMultidimensionalArrayProperty(final AssertionCallback<String[][]> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("multidimensionalArrayProperty", base -> assertionCallback.accept(base.getMultidimensionalArrayProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasMultidimensionalArrayProperty(final String[][] value) {
-                        return hasMultidimensionalArrayProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasMultidimensionalArrayProperty(final Matcher<? super String[][]> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("multidimensionalArrayProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withPackagePrivateProperty(final AssertionCallback<String> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("packagePrivateProperty", base -> assertionCallback.accept(base.getPackagePrivateProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasPackagePrivateProperty(final String value) {
-                        return hasPackagePrivateProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasPackagePrivateProperty(final Matcher<? super String> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("packagePrivateProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withProtectedProperty(final AssertionCallback<String> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("protectedProperty", base -> assertionCallback.accept(base.getProtectedProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasProtectedProperty(final String value) {
-                        return hasProtectedProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasProtectedProperty(final Matcher<? super String> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("protectedProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withAbstractProperty(final AssertionCallback<String> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("abstractProperty", base -> assertionCallback.accept(base.getAbstractProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasAbstractProperty(final String value) {
-                        return hasAbstractProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasAbstractProperty(final Matcher<? super String> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("abstractProperty", matcher))));
-                    }
-                    
-                    public ExampleTypeAsserter withFinalProperty(final AssertionCallback<String> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("finalProperty", base -> assertionCallback.accept(base.getFinalProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter hasFinalProperty(final String value) {
-                        return hasFinalProperty(Matchers.equalTo(value));
-                    }
-                    
-                    public ExampleTypeAsserter hasFinalProperty(final Matcher<? super String> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("finalProperty", matcher))));
-                    }
-                
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
                     }
@@ -275,6 +125,26 @@ internal class AssertionGeneratorProcessorTest {
             .and()
             .generatesSources(expectedOutput)
     }
+
+    private fun propertyMethodsFor(
+        baseTypeName: String,
+        propertyName: String,
+        propertyType: String,
+        accessorPrefix: String = "get",
+        generics: String = ""
+    ) = """
+                    public ${baseTypeName}Asserter${generics} with${propertyName.capitalize()}(final AssertionCallback<${propertyType}> assertionCallback) {
+                        return new ${baseTypeName}Asserter${generics}(pojoAssertionBuilder.add("${propertyName}", base -> assertionCallback.accept(base.${accessorPrefix}${propertyName.capitalize()}())));
+                    }
+                    
+                    public ${baseTypeName}Asserter${generics} has${propertyName.capitalize()}(final ${propertyType} value) {
+                        return has${propertyName.capitalize()}(Matchers.equalTo(value));
+                    }
+                    
+                    public ${baseTypeName}Asserter${generics} has${propertyName.capitalize()}(final Matcher<? super ${propertyType}> matcher) {
+                        return new ${baseTypeName}Asserter${generics}(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("${propertyName}", matcher))));
+                    }
+    """.trimIndent()
 
     @Test
     fun `generation should work for generic types and properties too`() {
@@ -312,7 +182,6 @@ internal class AssertionGeneratorProcessorTest {
                 
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
-
                 import java.lang.CharSequence;
                 import java.lang.Integer;
                 import java.lang.Runnable;
@@ -347,43 +216,26 @@ internal class AssertionGeneratorProcessorTest {
                     public ExampleTypeAsserter<A, B, C, D> with(final AssertionCallback<ExampleType<A, B, C, D>> assertionCallback) {
                         return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(assertionCallback));
                     }
-                
-                    public ExampleTypeAsserter<A, B, C, D> withGenericProperty(final AssertionCallback<Map<String, List<Integer>>> assertionCallback) {
-                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add("genericProperty", base -> assertionCallback.accept(base.getGenericProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter<A, B, C, D> hasGenericProperty(final Map<String, List<Integer>> value) {
-                        return hasGenericProperty(Matchers.equalTo(value))
-                    }
-                    
-                    public ExampleTypeAsserter<A, B, C, D> hasGenericProperty(final Matcher<? super Map<String, List<Integer>>> matcher) {
-                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("genericProperty",matcher))));
-                    }
-                
-                    public ExampleTypeAsserter<A, B, C, D> withGenericFromTypeDefinitionProperty(final AssertionCallback<C> assertionCallback) {
-                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add("genericFromTypeDefinitionProperty", base -> assertionCallback.accept(base.getGenericFromTypeDefinitionProperty())));
-                    }
-                    
-                    public ExampleTypeAsserter<A, B, C, D> hasGenericFromTypeDefinitionProperty(final C value) {
-                        return hasGenericFromTypeDefinitionProperty(Matchers.equalTo(value))
-                    }
-                    
-                    public ExampleTypeAsserter<A, B, C, D> hasGenericFromTypeDefinitionProperty(final Matcher<? super C> matcher) {
-                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("genericFromTypeDefinitionProperty",matcher))));
-                    }
-                
-                    public ExampleTypeAsserter<A, B, C, D> withGenericFromTypeDefinitionPropertyAsGeneric(final AssertionCallback<List<C>> assertionCallback) {
-                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add("genericFromTypeDefinitionPropertyAsGeneric", base -> assertionCallback.accept(base.getGenericFromTypeDefinitionPropertyAsGeneric())));
-                    }
-                    
-                    public ExampleTypeAsserter<A, B, C, D> hasGenericFromTypeDefinitionPropertyAsGeneric(final List<C> value) {
-                        return hasGenericFromTypeDefinitionPropertyAsGeneric(Matchers.equalTo(value))
-                    }
-                    
-                    public ExampleTypeAsserter<A, B, C, D> hasGenericFromTypeDefinitionPropertyAsGeneric(final Matcher<? super List<C>> matcher) {
-                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("genericFromTypeDefinitionPropertyAsGeneric",matcher))));
-                    }
-                
+                    """ +
+                    propertyMethodsFor(
+                        "ExampleType",
+                        "genericProperty",
+                        "Map<String, List<Integer>>",
+                        generics = "<A, B, C, D>"
+                    ) +
+                    propertyMethodsFor(
+                        "ExampleType",
+                        "genericFromTypeDefinitionProperty",
+                        "C",
+                        generics = "<A, B, C, D>"
+                    ) +
+                    propertyMethodsFor(
+                        "ExampleType",
+                        "genericFromTypeDefinitionPropertyAsGeneric",
+                        "List<C>",
+                        generics = "<A, B, C, D>"
+                    ) +
+                    """
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
                     }
@@ -466,18 +318,9 @@ internal class AssertionGeneratorProcessorTest {
                     public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
                     }
-                
-                    public ExampleTypeAsserter withSomeValue(final AssertionCallback<String> assertionCallback) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("someValue", base -> assertionCallback.accept(base.getSomeValue())));
-                    }
-                
-                    public ExampleTypeAsserter hasSomeValue(final String value) {
-                        return hasSomeValue(Matchers.equalTo(value));
-                    }
-                
-                    public ExampleTypeAsserter hasSomeValue(final Matcher<? super String> matcher) {
-                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("someValue", matcher))));
-                    }
+                    """ +
+                    propertyMethodsFor("ExampleType", "someValue", "String") +
+                    """
                 
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
@@ -494,6 +337,136 @@ internal class AssertionGeneratorProcessorTest {
         Truth.assert_()
             .about(JavaSourcesSubjectFactory.javaSources())
             .that(listOf(configurationClass, javaFileObject))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(expectedOutput)
+    }
+
+    @Test
+    fun `generation should work for transitive inherited properties`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter("some.other.pck.ChildType")
+                public interface JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val childType = JavaFileObjects.forSourceLines(
+            "some.other.pck.ChildType", """
+                package some.other.pck;
+                
+                public abstract class ChildType extends DirectParentClass implements DirectParentInterface{
+                    public String getChildOnlyProperty(){ return null; }
+                    public String getChildAndParentPropertyWithDifferentReturnTypes(){ return null; }
+                }
+                """.trimIndent()
+        )
+        @Language("JAVA") val directParentInterface = JavaFileObjects.forSourceLines(
+            "some.other.pck.DirectParentInterface", """
+                package some.other.pck;
+                
+                public interface DirectParentInterface extends IndirectParentInterface{
+                    CharSequence getChildAndParentPropertyWithDifferentReturnTypes();
+                    String getDirectInterfaceParentProperty();
+                }
+                """.trimIndent()
+        )
+        @Language("JAVA") val indirectParentInterface = JavaFileObjects.forSourceLines(
+            "some.other.pck.IndirectParentInterface", """
+                package some.other.pck;
+                
+                public interface IndirectParentInterface {
+                    String getIndirectInterfaceParentProperty();
+                }
+                """.trimIndent()
+        )
+        @Language("JAVA") val directParentClass = JavaFileObjects.forSourceLines(
+            "some.other.pck.DirectParentClass", """
+                package some.other.pck;
+                
+                public class DirectParentClass {
+                    protected String getDirectParentClassProperty(){ return null; }
+                }
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.ChildTypeAsserter", """
+                package some.other.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.lang.Class;                
+                import java.lang.String;
+                import java.util.Collections;
+                import javax.annotation.processing.Generated;
+                import org.hamcrest.Matcher;
+                import org.hamcrest.MatcherAssert;
+                import org.hamcrest.Matchers;
+                
+                @Generated(
+                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                        date = "$now")
+                public class ChildTypeAsserter {
+                    private final PojoAssertionBuilder<ChildType> pojoAssertionBuilder;
+                
+                    private ChildTypeAsserter(final ChildType base) {
+                        this(new PojoAssertionBuilder<ChildType>(base, Collections.emptyList(), "ChildType"));
+                    }
+                
+                    private ChildTypeAsserter(final PojoAssertionBuilder<ChildType> pojoAssertionBuilder) {
+                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                    }
+                
+                    public static ChildTypeAsserter prepareFor(final ChildType base) {
+                        return new ChildTypeAsserter(base);
+                    }
+                
+                    public ChildTypeAsserter with(final AssertionCallback<ChildType> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                    """ +
+                    propertyMethodsFor("ChildType", "childOnlyProperty", "String") +
+                    propertyMethodsFor(
+                        "ChildType",
+                        "childAndParentPropertyWithDifferentReturnTypes",
+                        "String",
+                        generics = ""
+                    ) +
+                    propertyMethodsFor("ChildType", "directParentClassProperty", "String") +
+                    propertyMethodsFor("ChildType", "class", "Class<?>") +
+                    propertyMethodsFor("ChildType", "directInterfaceParentProperty", "String") +
+                    propertyMethodsFor("ChildType", "indirectInterfaceParentProperty", "String") +
+                    """
+                    public void assertToFirstFail() {
+                        pojoAssertionBuilder.assertToFirstFail();
+                    }
+                
+                    public void assertAll() {
+                        pojoAssertionBuilder.assertAll();
+                    }
+                }
+                """.trimIndent()
+        )
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(
+                listOf(
+                    configurationClass,
+                    childType,
+                    directParentInterface,
+                    indirectParentInterface,
+                    directParentClass
+                )
+            )
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
             .compilesWithoutWarnings()

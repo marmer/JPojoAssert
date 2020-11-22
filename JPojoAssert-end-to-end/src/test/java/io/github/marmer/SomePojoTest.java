@@ -70,6 +70,7 @@ class SomePojoTest {
                 })
                         .hasTitles(contains("Prof."))
                         .hasFirstName("Holge")
+                        .hasClass(SomePojo.class)
                         .assertAll());
         // Assertion
         assertAll(
