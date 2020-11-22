@@ -254,6 +254,18 @@ internal class AssertionGeneratorProcessorTest {
                     public ExampleTypeAsserter hasFinalProperty(final Matcher<? super String> matcher) {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("finalProperty", matcher))));
                     }
+                    
+                    public ExampleTypeAsserter withClass(final AssertionCallback<Class<?>> assertionCallback) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getFinalProperty())));
+                    }
+                    
+                    public ExampleTypeAsserter hasClass(final Class<?> value) {
+                        return hasClass(Matchers.equalTo(value));
+                    }
+                    
+                    public ExampleTypeAsserter hasClass(final Matcher<? super Class<?>> matcher) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("class", matcher))));
+                    }
                 
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
@@ -383,6 +395,18 @@ internal class AssertionGeneratorProcessorTest {
                     public ExampleTypeAsserter<A, B, C, D> hasGenericFromTypeDefinitionPropertyAsGeneric(final Matcher<? super List<C>> matcher) {
                         return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("genericFromTypeDefinitionPropertyAsGeneric",matcher))));
                     }
+                    
+                    public ExampleTypeAsserter<A, B, C, D> withClass(final AssertionCallback<List<Class<?>>> assertionCallback) {
+                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getGenericFromTypeDefinitionPropertyAsGeneric())));
+                    }
+                    
+                    public ExampleTypeAsserter<A, B, C, D> hasClass(final Class<?> value) {
+                        return hasClass(Matchers.equalTo(value));
+                    }
+                    
+                    public ExampleTypeAsserter<A, B, C, D> hasClass(final Matcher<? super Class<?>> matcher) {
+                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("class", matcher))));
+                    }
                 
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
@@ -479,6 +503,17 @@ internal class AssertionGeneratorProcessorTest {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("someValue", matcher))));
                     }
                 
+                    public ExampleTypeAsserter withClass(final AssertionCallback<Class<?>> assertionCallback) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add("someValue", base -> assertionCallback.accept(base.getClass())));
+                    }
+                
+                    public ExampleTypeAsserter hasClass(final Class<?> value) {
+                        return hasClass(Matchers.equalTo(value));
+                    }
+                    
+                    public ExampleTypeAsserter hasClass(final Matcher<? super Class<?>> matcher) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("class", matcher))));
+                    }
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
                     }
@@ -494,6 +529,195 @@ internal class AssertionGeneratorProcessorTest {
         Truth.assert_()
             .about(JavaSourcesSubjectFactory.javaSources())
             .that(listOf(configurationClass, javaFileObject))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(expectedOutput)
+    }
+
+    @Test
+    fun `generation should work for transitive inherited properties`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter("some.other.pck.ChildType")
+                public interface JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val childType = JavaFileObjects.forSourceLines(
+            "some.other.pck.ChildType", """
+                package some.other.pck;
+                
+                public interface ChildType {
+                    String getChildOnlyProperty();
+                    String getChildAndParentPropertyWithDifferentReturnTypes();
+                }
+                """.trimIndent()
+        )
+        @Language("JAVA") val directParentInterface = JavaFileObjects.forSourceLines(
+            "some.other.pck.DirectParentInterface", """
+                package some.other.pck;
+                
+                public interface DirectParentInterface {
+                    CharSequence getChildAndParentPropertyWithDifferentReturnTypes();
+                    String getDirectInterfaceParentProperty();
+                }
+                """.trimIndent()
+        )
+        @Language("JAVA") val indirectParentInterface = JavaFileObjects.forSourceLines(
+            "some.other.pck.IndirectParentInterface", """
+                package some.other.pck;
+                
+                public interface IndirectParentInterface {
+                    String getIndirectInterfaceParentProperty();
+                }
+                """.trimIndent()
+        )
+        @Language("JAVA") val directParentClass = JavaFileObjects.forSourceLines(
+            "some.other.pck.DirectParentClass", """
+                package some.other.pck;
+                
+                public interface DirectParentClass {
+                    String getDirectParentClassProperty();
+                }
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.ChildTypeAsserter", """
+                package some.other.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                
+                import java.lang.String;
+                import java.util.Collections;
+                import javax.annotation.processing.Generated;
+                import org.hamcrest.Matcher;
+                import org.hamcrest.MatcherAssert;
+                import org.hamcrest.Matchers;
+                
+                @Generated(
+                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                        date = "$now")
+                public class ChildTypeAsserter {
+                    private final PojoAssertionBuilder<ChildType> pojoAssertionBuilder;
+                
+                    private ChildTypeAsserter(final ChildType base) {
+                        this(new PojoAssertionBuilder<ChildType>(base, Collections.emptyList(), "ChildType"));
+                    }
+                
+                    private ChildTypeAsserter(final PojoAssertionBuilder<ChildType> pojoAssertionBuilder) {
+                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                    }
+                
+                    public static ChildTypeAsserter prepareFor(final ChildType base) {
+                        return new ChildTypeAsserter(base);
+                    }
+                
+                    public ChildTypeAsserter with(final AssertionCallback<ChildType> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+
+                    public ChildTypeAsserter withChildOnlyProperty(final AssertionCallback<String> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add("childOnlyProperty", base -> assertionCallback.accept(base.getChildOnlyProperty())));
+                    }
+
+                    public ChildTypeAsserter hasChildOnlyProperty(final String value) {
+                        return hasChildOnlyProperty(Matchers.equalTo(value));
+                    }
+
+                    public ChildTypeAsserter hasChildOnlyProperty(final Matcher<? super String> matcher) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("childOnlyProperty", matcher))));
+                    }
+
+                    public ChildTypeAsserter withChildAndParentPropertyWithDifferentReturnTypes(final AssertionCallback<String> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add("childAndParentPropertyWithDifferentReturnTypes", base -> assertionCallback.accept(base.getChildAndParentPropertyWithDifferentReturnTypes())));
+                    }
+
+                    public ChildTypeAsserter hasChildAndParentPropertyWithDifferentReturnTypes(final String value) {
+                        return hasChildAndParentPropertyWithDifferentReturnTypes(Matchers.equalTo(value));
+                    }
+
+                    public ChildTypeAsserter hasChildAndParentPropertyWithDifferentReturnTypes(final Matcher<? super String> matcher) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("childAndParentPropertyWithDifferentReturnTypes", matcher))));
+                    }
+                    
+                    public ChildTypeAsserter withDirectInterfaceParentProperty(final AssertionCallback<String> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add("directInterfaceParentProperty", base -> assertionCallback.accept(base.getDirectInterfaceParentProperty())));
+                    }
+
+                    public ChildTypeAsserter hasDirectInterfaceParentProperty(final String value) {
+                        return hasDirectInterfaceParentProperty(Matchers.equalTo(value));
+                    }
+
+                    public ChildTypeAsserter hasDirectInterfaceParentProperty(final Matcher<? super String> matcher) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("directInterfaceParentProperty", matcher))));
+                    }
+                    
+                    public ChildTypeAsserter withIndirectInterfaceParentProperty(final AssertionCallback<String> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add("indirectInterfaceParentProperty", base -> assertionCallback.accept(base.getIndirectInterfaceParentProperty())));
+                    }
+
+                    public ChildTypeAsserter hasIndirectInterfaceParentProperty(final String value) {
+                        return hasIndirectInterfaceParentProperty(Matchers.equalTo(value));
+                    }
+
+                    public ChildTypeAsserter hasIndirectInterfaceParentProperty(final Matcher<? super String> matcher) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("indirectInterfaceParentProperty", matcher))));
+                    }
+                    
+                    public ChildTypeAsserter withDirectParentClassProperty(final AssertionCallback<String> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add("directParentClassProperty", base -> assertionCallback.accept(base.getDirectParentClassProperty())));
+                    }
+
+                    public ChildTypeAsserter hasDirectParentClassProperty(final String value) {
+                        return hasDirectParentClassProperty(Matchers.equalTo(value));
+                    }
+
+                    public ChildTypeAsserter hasDirectParentClassProperty(final Matcher<? super String> matcher) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("directParentClassProperty", matcher))));
+                    }
+                
+                    public ChildTypeAsserter withClass(final AssertionCallback<Class<?>> assertionCallback) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                    }
+                
+                    public ChildTypeAsserter hasClass(final Class<?> value) {
+                        return hasClass(Matchers.equalTo(value));
+                    }
+                    
+                    public ChildTypeAsserter hasClass(final Matcher<? super Class<?>> matcher) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("class", matcher))));
+                    }
+                    public void assertToFirstFail() {
+                        pojoAssertionBuilder.assertToFirstFail();
+                    }
+                
+                    public void assertAll() {
+                        pojoAssertionBuilder.assertAll();
+                    }
+                }
+                """.trimIndent()
+        )
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(
+                listOf(
+                    configurationClass,
+                    childType,
+                    directParentInterface,
+                    indirectParentInterface,
+                    directParentClass
+                )
+            )
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
             .compilesWithoutWarnings()
