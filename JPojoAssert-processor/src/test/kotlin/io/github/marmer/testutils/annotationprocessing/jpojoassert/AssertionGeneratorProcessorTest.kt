@@ -87,6 +87,10 @@ internal class AssertionGeneratorProcessorTest {
                     public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
                     }
+                    
+                    public ExampleTypeAsserter matches(final Matcher<? super ExampleType> matcher) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                    }
                     """.trimIndent() +
                     propertyMethodsFor("ExampleType", "objectProperty", "String") +
                     propertyMethodsFor("ExampleType", "primitiveProperty", "Integer") +
@@ -216,6 +220,10 @@ internal class AssertionGeneratorProcessorTest {
                     public ExampleTypeAsserter<A, B, C, D> with(final AssertionCallback<ExampleType<A, B, C, D>> assertionCallback) {
                         return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(assertionCallback));
                     }
+                    
+                    public ExampleTypeAsserter<A, B, C, D> matches(final Matcher<? super ExampleType<A, B, C, D>> matcher) {
+                        return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                    }
                     """ +
                     propertyMethodsFor(
                         "ExampleType",
@@ -317,6 +325,10 @@ internal class AssertionGeneratorProcessorTest {
                 
                     public ExampleTypeAsserter with(final AssertionCallback<ExampleType> assertionCallback) {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                    
+                    public ExampleTypeAsserter matches(final Matcher<? super ExampleType> matcher) {
+                        return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     """ +
                     propertyMethodsFor("ExampleType", "someValue", "String") +
@@ -430,6 +442,10 @@ internal class AssertionGeneratorProcessorTest {
                 
                     public ChildTypeAsserter with(final AssertionCallback<ChildType> assertionCallback) {
                         return new ChildTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                    
+                    public ChildTypeAsserter matches(final Matcher<? super ChildType> matcher) {
+                        return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     """ +
                     propertyMethodsFor("ChildType", "childOnlyProperty", "String") +
@@ -713,6 +729,8 @@ internal class AssertionGeneratorProcessorTest {
                     import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                     import java.util.Collections;
                     import javax.annotation.processing.Generated;
+                    import org.hamcrest.Matcher;
+                    import org.hamcrest.MatcherAssert;
                     
                     @Generated(
                             value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
@@ -736,6 +754,10 @@ internal class AssertionGeneratorProcessorTest {
                             return new ${typeName}Asserter(pojoAssertionBuilder.add(assertionCallback));
                         }
                     
+                        public ${typeName}Asserter matches(final Matcher<? super ${typeName}> matcher) {
+                            return new ${typeName}Asserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                        }
+                        
                         public void assertToFirstFail() {
                             pojoAssertionBuilder.assertToFirstFail();
                         }

@@ -114,7 +114,24 @@ class PojoAsserterGenerator(
                 getGeneratedTypeName()
             )
             .returns(getGeneratedTypeName())
-            .build()
+            .build(),
+        methodBuilder("matches")
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(
+                ParameterizedTypeName.get(
+                    ClassName.get(Matcher::class.java),
+                    WildcardTypeName.supertypeOf(baseType.typeName)
+                ),
+                "matcher",
+                Modifier.FINAL
+            )
+            .addStatement(
+                "return new \$T($builderFieldName.add(base -> \$T.assertThat(base, matcher)))",
+                getGeneratedTypeName(),
+                MatcherAssert::class.java
+            )
+            .returns(getGeneratedTypeName())
+            .build(),
     )
 
     private fun getFinisherMethods() = listOf(

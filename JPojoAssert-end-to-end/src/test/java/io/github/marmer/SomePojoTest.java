@@ -6,10 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SomePojoTest {
     @Test
@@ -21,11 +19,11 @@ class SomePojoTest {
                 // Execution
                 () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
                 })
-                        .with(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeX", it.getFirstName(), "firstName"))
+                        .with(it -> assertEquals("HelgeX", it.getFirstName(), "firstName"))
                         .with(it -> {
                             throw new Exception("Fancy Exception");
                         })
-                        .withFirstName(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeY", it))
+                        .withFirstName(it -> assertEquals("HelgeY", it))
                         .withTitles(it -> assertThat(it, contains("Prof.", "Dr.")))
                         .assertAll());
         // Assertion
@@ -45,18 +43,20 @@ class SomePojoTest {
                 // Execution
                 () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
                 })
-                        .with(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeX", it.getFirstName()))
+                        .with(it -> assertEquals("HelgeX", it.getFirstName()))
                         .with(it -> {
                             throw new Exception("Fancy Exception");
                         })
-                        .withFirstName(it -> org.junit.jupiter.api.Assertions.assertEquals("HelgeY", it))
+                        .withFirstName(it -> assertEquals("HelgeY", it))
+                        .matches(hasProperty("notExistingProp"))
                         .withTitles(it -> assertThat(it, contains("Prof.", "Dr.", "Dr.")))
                         .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("SomePojo")),
                 () -> assertThat(assertionError.toString(), containsString("firstName")),
-                () -> assertThat(assertionError.toString(), containsString("titles"))
+                () -> assertThat(assertionError.toString(), containsString("titles")),
+                () -> assertThat(assertionError.toString(), containsString("notExistingProp"))
         );
     }
 
