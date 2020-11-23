@@ -58,14 +58,13 @@ Enjoy some readable compile safe assertions for your configured types:
         // Sample Assertion related to "SomePojo"        
         SomePojoAsserter.prepareFor(pojo)
             .with( it -> assertThat(it, hasProperty("notExistingProperty")) )  // Custom assertion related to the pojo itself (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth)
+            .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
             .withFirstName(it -> assertThat(it, equalTo("Some value"))) // Custom assertion related to the property (Here you can do annything and assert in any way you want. E.g. use assertThat from Hamcrest, AssertJ or Truth)
             .hasFirstName("Some value") // Equals Check for the value of the related property of the pojo            
             .withFirstName(equalTo("Some value")) // Hamcrest check for the value of the related property of the pojo 
 
 //Still Work in Progress
             .hasFirstName() // Check whether the passed pojo has a property
-//Still Work in Progress
-            .matches(hasProperty("notExistingProperty")) //Ability to pass Hamcrest Matchers for the Pojo itself
 //Still Work in Progress
             .isInstanceOfSomePojo() // Optional Check whether it is an instance related to the Base Class the Asserter was created of
 
@@ -75,6 +74,12 @@ Enjoy some readable compile safe assertions for your configured types:
 
 Changelog
 ---------
+### 0.5.0
+Feature: Generation inherited properties 
+```.java
+ asserter.matches(hasProperty("notExistingProperty"))
+```
+
 ### 0.4.0
 Feature: Generation inherited properties
 
