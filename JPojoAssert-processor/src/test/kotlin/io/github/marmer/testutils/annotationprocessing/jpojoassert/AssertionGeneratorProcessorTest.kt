@@ -530,7 +530,7 @@ internal class AssertionGeneratorProcessorTest {
     }
 
     @Test
-    fun `if the configured type to generate does neither exist as type nore as package a warning should be given`() {
+    fun `if the configured type to generate does neither exist as type nor as package a warning should be given`() {
         // Preparation
         @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
             "some.pck.JPojoAssertConfiguration", """
@@ -556,7 +556,7 @@ internal class AssertionGeneratorProcessorTest {
     }
 
     @Test
-    fun `generated files only from different generators without an appropriate warning should raise a warning`() {
+    fun `not self generated files without a configuration should raise a warning because it's the default behavior`() {
         // Preparation
         @Language("JAVA") val fromOthersGeneratedType = JavaFileObjects.forSourceLines(
             "some.pck.SomeGeneratedType", """
@@ -581,6 +581,77 @@ internal class AssertionGeneratorProcessorTest {
             .compilesWithoutError()
             .withWarningCount(1)
             .withWarningContaining("No processor claimed any of these annotations: java.compiler/javax.annotation.processing.Generated")
+    }
+
+    @Test
+    fun `self generated files without a configuration don't need to raise a warning`() {
+        // Preparation
+        @Language("JAVA") val fromOthersGeneratedType = JavaFileObjects.forSourceLines(
+            "some.pck.SomeGeneratedType", """
+            package some.pck;
+            
+            import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+            
+            import javax.annotation.processing.Generated;
+            
+            @Generated("io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor")
+            public class SomeGeneratedType{}
+            """.trimIndent()
+        )
+        // Preparation
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(fromOthersGeneratedType))
+            .processedWith(AssertionGeneratorProcessor())
+            // Assertion
+            .compilesWithoutWarnings()
+    }
+
+    @Test
+    fun `generation should work for generated types from different generators`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+            package some.pck;
+                            
+            import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+            
+            @GenerateAsserter("some.other.pck.SomeGeneratedType")
+            public interface JPojoAssertConfiguration {}
+                """.trimIndent()
+        )
+        @Language("JAVA") val fromOthersGeneratedType = JavaFileObjects.forSourceLines(
+            "some.other.pck.SomeGeneratedType", """
+            package some.other.pck;
+            
+            import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+            
+            import javax.annotation.processing.Generated;
+            
+            @Generated("some.unknown.Processor")
+            public interface SomeGeneratedType{}
+            """.trimIndent()
+        )
+
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val output = JavaFileObjects.forSourceString(
+            "some.other.pck.SomeGeneratedTypeAsserter",
+            getEmptyAsserterStubForInterface(now, "SomeGeneratedType").trimIndent()
+        )
+
+        // Preparation
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, fromOthersGeneratedType))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(output)
     }
 
     @Test
@@ -612,11 +683,11 @@ internal class AssertionGeneratorProcessorTest {
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         @Language("JAVA") val firstTypeOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.FirstTypeAsserter", getEmptyAsserterStubFor(now, "FirstType").trimIndent()
+            "some.other.pck.FirstTypeAsserter", getEmptyAsserterStubForInterface(now, "FirstType").trimIndent()
         )
 
         @Language("JAVA") val secondTypeOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.SecondTypeAsserter", getEmptyAsserterStubFor(now, "SecondType")
+            "some.other.pck.SecondTypeAsserter", getEmptyAsserterStubForInterface(now, "SecondType")
         )
 
 
@@ -658,7 +729,7 @@ internal class AssertionGeneratorProcessorTest {
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         @Language("JAVA") val someTypeOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.SomeTypeAsserter", getEmptyAsserterStubFor(now, "SomeType").trimIndent()
+            "some.other.pck.SomeTypeAsserter", getEmptyAsserterStubForInterface(now, "SomeType").trimIndent()
         )
 
         // Execution
@@ -701,11 +772,11 @@ internal class AssertionGeneratorProcessorTest {
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         @Language("JAVA") val firstTypeOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.FirstTypeAsserter", getEmptyAsserterStubFor(now, "FirstType").trimIndent()
+            "some.other.pck.FirstTypeAsserter", getEmptyAsserterStubForInterface(now, "FirstType").trimIndent()
         )
 
         @Language("JAVA") val secondTypeOutput = JavaFileObjects.forSourceString(
-            "some.other.pck.SecondTypeAsserter", getEmptyAsserterStubFor(now, "SecondType")
+            "some.other.pck.SecondTypeAsserter", getEmptyAsserterStubForInterface(now, "SecondType")
         )
 
 
@@ -720,7 +791,7 @@ internal class AssertionGeneratorProcessorTest {
             .generatesSources(firstTypeOutput, secondTypeOutput)
     }
 
-    private fun getEmptyAsserterStubFor(now: LocalDateTime, typeName: String): String {
+    private fun getEmptyAsserterStubForInterface(now: LocalDateTime, typeName: String): String {
         return """
                     package some.other.pck;
                     
