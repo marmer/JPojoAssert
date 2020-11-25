@@ -6,7 +6,7 @@
 
     <artifactId>JPojoAssert</artifactId>
     <groupId>io.github.marmer.testutils</groupId>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <packaging>pom</packaging>
 
     <name>JPojoAssert</name>
@@ -14,7 +14,7 @@
         objects... for all java testing frameworks, buildtools, IDE's - Parent
     </description>
 
-    <url>https://github.com/marmer/hamcrest-matcher-generator</url>
+    <url>https://github.com/marmer/JPojoAssert</url>
 
     <scm>
         <url>https://github.com/marmer/JPojoAssert</url>

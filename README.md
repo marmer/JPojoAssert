@@ -74,6 +74,9 @@ Enjoy some readable compile safe assertions for your configured types:
 
 Changelog
 ---------
+### 0.5.2
+Fixed: Project Homepage
+
 ### 0.5.1
 Fixed: Asserters are generated for generated types as well (except for the self generated ones)
 
