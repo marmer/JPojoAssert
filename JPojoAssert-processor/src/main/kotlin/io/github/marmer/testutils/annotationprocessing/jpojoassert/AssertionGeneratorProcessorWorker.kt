@@ -6,7 +6,6 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
@@ -33,10 +32,10 @@ class AssertionGeneratorProcessorWorker(
     private fun generate(configurationType: Element) {
         getAllTypeElementsFor(configurationType)
             .forEach {
-                if (it.isAnnotatedWith(Generated::class.java)) {
-                    PojoAsserterGenerator(processingEnv, it, timeProvider, generatorName).generate()
-                } else {
+                if (it.isSelfGenerated()) {
                     printSkipNoteBecauseOfSelfGenerationFor(it)
+                } else {
+                    PojoAsserterGenerator(processingEnv, it, timeProvider, generatorName).generate()
                 }
             }
     }
@@ -70,7 +69,7 @@ class AssertionGeneratorProcessorWorker(
         configurationClass: Element,
         qualifiedTypeOrPackageName: String
     ) {
-        configurationClass.getAnnotationMirrors()
+        configurationClass.annotationMirrors
             .filter { it.isTypeOf(GenerateAsserter::class) }
             .forEach {
                 processingEnv.messager.printMessage(
@@ -83,17 +82,11 @@ class AssertionGeneratorProcessorWorker(
             }
     }
 
-    private fun AnnotationMirror.getAnnotationValueForField(fieldName: String): AnnotationValue? {
-        val elementValueKey = elementValues.keys.filter {
-            it.simpleName.contentEquals(
-                fieldName
-            )
-        }.first()
-        return elementValues.get(elementValueKey)
-    }
+    private fun AnnotationMirror.getAnnotationValueForField(fieldName: String) =
+        elementValues.get(elementValues.keys.first { it.simpleName.contentEquals(fieldName) })
 
     private fun printSkipNoteBecauseOfSelfGenerationFor(baseType: TypeElement) {
-        baseType.getAnnotationMirrors()
+        baseType.annotationMirrors
             .filter { it.isTypeOf(Generated::class) }
             .forEach {
                 processingEnv.messager.printMessage(
@@ -108,18 +101,20 @@ class AssertionGeneratorProcessorWorker(
 
     private fun RoundEnvironment.existsAnySelfGeneratedSource() =
         getElementsAnnotatedWith(Generated::class.java)
-            .any { it.getAnnotation(Generated::class.java).value.contains(generatorName) }
+            .any { it.isSelfGenerated() }
 
     fun getSupportedSourceVersion() = SourceVersion.latestSupported()
+
+    private fun Element.isSelfGenerated(): Boolean =
+        getAnnotation(Generated::class.java)
+            .let {
+                it != null && it.value.any { value -> value == generatorName }
+            }
+
 }
 
 private fun AnnotationMirror.isTypeOf(type: KClass<out Annotation>) =
     annotationType.asElement().toString() == type.qualifiedName
-
-
-private fun Element.isAnnotatedWith(annotationType: Class<out Annotation>) =
-    getAnnotation(annotationType) == null
-
 
 private inline fun <reified T> Set<TypeElement>.contains() =
     this.find { T::class.qualifiedName == it.qualifiedName.toString() } != null

@@ -4,7 +4,8 @@ import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsser
 
 @GenerateAsserter({
         "io.github.marmer",
-        "io.github.marmer.SomePojo"
+        "io.github.marmer.SomePojo",
+        "io.github.marmer.doublegeneration",
 })
 class JPojoAssertConfiguration {
 

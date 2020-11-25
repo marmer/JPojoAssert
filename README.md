@@ -74,6 +74,9 @@ Enjoy some readable compile safe assertions for your configured types:
 
 Changelog
 ---------
+### 0.5.1
+Fixed: Asserters are generated for generated types as well (except for the self generated ones)
+
 ### 0.5.0
 Feature: Generation inherited properties 
 ```.java
