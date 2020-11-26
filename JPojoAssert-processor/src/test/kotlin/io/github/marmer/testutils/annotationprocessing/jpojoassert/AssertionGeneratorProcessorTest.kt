@@ -791,6 +791,166 @@ internal class AssertionGeneratorProcessorTest {
             .generatesSources(firstTypeOutput, secondTypeOutput)
     }
 
+
+    // TODO: marmer 26.11.2020 generation for "container" class when the configuration points to full qualified nested type
+    // TODO: marmer 26.11.2020 care about the different modifiert (private package private public, static, non static)
+    // TODO: marmer 26.11.2020 care about the different Types (interfaces, classes)
+    // TODO: marmer 26.11.2020 a little more qualified headings?
+
+    @Test
+    fun `generation should work for nested types`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter({"some.other.pck"})
+                public interface JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+        @Language("JAVA") val containerType = JavaFileObjects.forSourceLines(
+            "some.other.pck.ContainerType", """
+                package some.other.pck;
+                
+                public interface ContainerType {
+                     interface DirectInnerType{
+                         interface TransitiveInnerType{}
+                     }
+                }
+                """.trimIndent()
+        )
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val output = JavaFileObjects.forSourceString(
+            "some.other.pck.ContainerTypeAsserter", """
+                        package some.other.pck;
+                        
+                        import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                        import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                        import java.util.Collections;
+                        import javax.annotation.processing.Generated;
+                        import org.hamcrest.Matcher;
+                        import org.hamcrest.MatcherAssert;
+                        
+                        @Generated(
+                                value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                                date = "$now")
+                        public class ContainerTypeAsserter {
+                            private final PojoAssertionBuilder<ContainerType> pojoAssertionBuilder;
+                        
+                            private ContainerTypeAsserter(final ContainerType base) {
+                                this(new PojoAssertionBuilder<ContainerType>(base, Collections.emptyList(), "ContainerType"));
+                            }
+                        
+                            private ContainerTypeAsserter(final PojoAssertionBuilder<ContainerType> pojoAssertionBuilder) {
+                                this.pojoAssertionBuilder = pojoAssertionBuilder;
+                            }
+                        
+                            public static ContainerTypeAsserter prepareFor(final ContainerType base) {
+                                return new ContainerTypeAsserter(base);
+                            }
+                        
+                            public ContainerTypeAsserter with(final AssertionCallback<ContainerType> assertionCallback) {
+                                return new ContainerTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                            }
+                        
+                            public ContainerTypeAsserter matches(final Matcher<? super ContainerType> matcher) {
+                                return new ContainerTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                            }
+                            
+                            public void assertToFirstFail() {
+                                pojoAssertionBuilder.assertToFirstFail();
+                            }
+                        
+                            public void assertAll() {
+                                pojoAssertionBuilder.assertAll();
+                            }
+
+                            @Generated(
+                                    value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                                    date = "now")
+                            public class DirectInnerTypeAsserter {
+                                private final PojoAssertionBuilder<DirectInnerType> pojoAssertionBuilder;
+
+                                private DirectInnerTypeAsserter(final DirectInnerType base) {
+                                    this(new PojoAssertionBuilder<DirectInnerType>(base, Collections.emptyList(), "DirectInnerType"));
+                                }
+
+                                private DirectInnerTypeAsserter(final PojoAssertionBuilder<DirectInnerType> pojoAssertionBuilder) {
+                                    this.pojoAssertionBuilder = pojoAssertionBuilder;
+                                }
+
+                                public static DirectInnerTypeAsserter prepareFor(final DirectInnerType base) {
+                                    return new DirectInnerTypeAsserter(base);
+                                }
+
+                                public DirectInnerTypeAsserter with(final AssertionCallback<DirectInnerType> assertionCallback) {
+                                    return new DirectInnerTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                                }
+
+                                public DirectInnerTypeAsserter matches(final Matcher<? super DirectInnerType> matcher) {
+                                    return new DirectInnerTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                                }
+
+                                public void assertToFirstFail() {
+                                    pojoAssertionBuilder.assertToFirstFail();
+                                }
+
+                                public void assertAll() {
+                                    pojoAssertionBuilder.assertAll();
+                                }
+
+                                @Generated(
+                                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                                        date = "now")
+                                public class TransitiveInnerTypeAsserter {
+                                    private final PojoAssertionBuilder<TransitiveInnerType> pojoAssertionBuilder;
+
+                                    private TransitiveInnerTypeAsserter(final TransitiveInnerType base) {
+                                        this(new PojoAssertionBuilder<TransitiveInnerType>(base, Collections.emptyList(), "TransitiveInnerType"));
+                                    }
+
+                                    private TransitiveInnerTypeAsserter(final PojoAssertionBuilder<TransitiveInnerType> pojoAssertionBuilder) {
+                                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                                    }
+
+                                    public static TransitiveInnerTypeAsserter prepareFor(final TransitiveInnerType base) {
+                                        return new TransitiveInnerTypeAsserter(base);
+                                    }
+
+                                    public TransitiveInnerTypeAsserter with(final AssertionCallback<TransitiveInnerType> assertionCallback) {
+                                        return new TransitiveInnerTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                                    }
+
+                                    public TransitiveInnerTypeAsserter matches(final Matcher<? super TransitiveInnerType> matcher) {
+                                        return new TransitiveInnerTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                                    }
+
+                                    public void assertToFirstFail() {
+                                        pojoAssertionBuilder.assertToFirstFail();
+                                    }
+
+                                    public void assertAll() {
+                                        pojoAssertionBuilder.assertAll();
+                                    }
+                                }
+                            }
+                        }
+                        """.trimIndent().trimIndent()
+        )
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, containerType))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(output)
+    }
+
     private fun getEmptyAsserterStubForInterface(now: LocalDateTime, typeName: String): String {
         return """
                     package some.other.pck;
