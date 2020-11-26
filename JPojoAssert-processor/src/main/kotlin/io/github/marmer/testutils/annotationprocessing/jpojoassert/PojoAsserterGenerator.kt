@@ -23,11 +23,12 @@ class PojoAsserterGenerator(
 ) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
-        generateTypeSpec()
+        getPreparedTypeSpecBuilder()
+            .build()
     ).build()
         .writeTo(processingEnv.filer)
 
-    private fun generateTypeSpec() = TypeSpec.classBuilder(simpleAsserterName)
+    private fun getPreparedTypeSpecBuilder() = TypeSpec.classBuilder(simpleAsserterName)
         .addOriginatingElement(baseType)
         .addModifiers(Modifier.PUBLIC)
         .addAnnotation(getGeneratedAnnotation())
@@ -38,12 +39,20 @@ class PojoAsserterGenerator(
         .addMethods(getPropertyAssertionMethods())
         .addMethods(getFinisherMethods())
         .addTypes(getInnerAsserters())
-        .build()
 
     private fun getInnerAsserters(): List<TypeSpec> =
         baseType.enclosedElements
             .filterIsInstance(TypeElement::class.java)
-            .map { PojoAsserterGenerator(processingEnv, it, generationTimeStamp, generationMarker).generateTypeSpec() }
+            .map {
+                PojoAsserterGenerator(
+                    processingEnv,
+                    it,
+                    generationTimeStamp,
+                    generationMarker
+                ).getPreparedTypeSpecBuilder()
+                    .addModifiers(Modifier.STATIC)
+                    .build()
+            }
 
     private fun getPropertyAssertionMethods() =
         baseType.properties
@@ -182,8 +191,9 @@ class PojoAsserterGenerator(
         *(baseType.typeParameters.map { TypeVariableName.get(it) }.toTypedArray())
     )
 
+    // TODO: marmer 26.11.2020 What about a bit more qualification like it's don within the parameters
     private fun generatedTypeNameWithoutParameters() =
-        ClassName.get(baseType.packageElement.toString(), simpleAsserterName)
+        ClassName.get("", simpleAsserterName)
 
     private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)
