@@ -23,18 +23,27 @@ class PojoAsserterGenerator(
 ) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
-        TypeSpec.classBuilder(simpleAsserterName)
-            .addModifiers(Modifier.PUBLIC)
-            .addAnnotation(getGeneratedAnnotation())
-            .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
-            .addField(getPojoAssertionBuilderField())
-            .addMethods(getInitializers())
-            .addMethods(getBaseAssertionMethods())
-            .addMethods(getPropertyAssertionMethods())
-            .addMethods(getFinisherMethods())
-            .build()
+        generateTypeSpec()
     ).build()
         .writeTo(processingEnv.filer)
+
+    private fun generateTypeSpec() = TypeSpec.classBuilder(simpleAsserterName)
+        .addOriginatingElement(baseType)
+        .addModifiers(Modifier.PUBLIC)
+        .addAnnotation(getGeneratedAnnotation())
+        .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
+        .addField(getPojoAssertionBuilderField())
+        .addMethods(getInitializers())
+        .addMethods(getBaseAssertionMethods())
+        .addMethods(getPropertyAssertionMethods())
+        .addMethods(getFinisherMethods())
+        .addTypes(getInnerAsserters())
+        .build()
+
+    private fun getInnerAsserters(): List<TypeSpec> =
+        baseType.enclosedElements
+            .filterIsInstance(TypeElement::class.java)
+            .map { PojoAsserterGenerator(processingEnv, it, generationTimeStamp, generationMarker).generateTypeSpec() }
 
     private fun getPropertyAssertionMethods() =
         baseType.properties
@@ -222,7 +231,7 @@ class PojoAsserterGenerator(
         get() = TypeName.get(asType())
 
     private val TypeElement.properties: List<Property>
-        get() = transitiveElements
+        get() = transitiveInheritedElements
             .filter { it.isProperty }
             .distinctBy { it.simpleName }
             .map { it as ExecutableElement }
@@ -234,14 +243,14 @@ class PojoAsserterGenerator(
                 )
             }
 
-    private val TypeElement.transitiveElements: List<Element>
+    private val TypeElement.transitiveInheritedElements: List<Element>
         get() = if (superclass.kind != TypeKind.NONE && kind != ElementKind.ENUM)
             enclosedElements +
-                    superclass.asTypeElement().transitiveElements +
-                    interfaces.flatMap { it.asTypeElement().transitiveElements }
+                    superclass.asTypeElement().transitiveInheritedElements +
+                    interfaces.flatMap { it.asTypeElement().transitiveInheritedElements }
         else
             enclosedElements +
-                    interfaces.flatMap { it.asTypeElement().transitiveElements }
+                    interfaces.flatMap { it.asTypeElement().transitiveInheritedElements }
 
     private fun TypeMirror.asTypeElement() =
         (processingEnv.typeUtils.asElement(this) as TypeElement)

@@ -904,27 +904,27 @@ internal class AssertionGeneratorProcessorTest {
                                 @Generated(
                                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                         date = "now")
-                                public class TransitiveInnerTypeAsserter {
-                                    private final PojoAssertionBuilder<TransitiveInnerType> pojoAssertionBuilder;
+                                public class ContainerTypeAsserter {
+                                    private final PojoAssertionBuilder<ContainerType> pojoAssertionBuilder;
 
-                                    private TransitiveInnerTypeAsserter(final TransitiveInnerType base) {
-                                        this(new PojoAssertionBuilder<TransitiveInnerType>(base, Collections.emptyList(), "TransitiveInnerType"));
+                                    private ContainerTypeAsserter(final ContainerType base) {
+                                        this(new PojoAssertionBuilder<ContainerType>(base, Collections.emptyList(), "ContainerType"));
                                     }
 
-                                    private TransitiveInnerTypeAsserter(final PojoAssertionBuilder<TransitiveInnerType> pojoAssertionBuilder) {
+                                    private ContainerTypeAsserter(final PojoAssertionBuilder<ContainerType> pojoAssertionBuilder) {
                                         this.pojoAssertionBuilder = pojoAssertionBuilder;
                                     }
 
-                                    public static TransitiveInnerTypeAsserter prepareFor(final TransitiveInnerType base) {
-                                        return new TransitiveInnerTypeAsserter(base);
+                                    public static ContainerTypeAsserter prepareFor(final ContainerType base) {
+                                        return new ContainerTypeAsserter(base);
                                     }
 
-                                    public TransitiveInnerTypeAsserter with(final AssertionCallback<TransitiveInnerType> assertionCallback) {
-                                        return new TransitiveInnerTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                                    public ContainerTypeAsserter with(final AssertionCallback<ContainerType> assertionCallback) {
+                                        return new ContainerTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
                                     }
 
-                                    public TransitiveInnerTypeAsserter matches(final Matcher<? super TransitiveInnerType> matcher) {
-                                        return new TransitiveInnerTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                                    public ContainerTypeAsserter matches(final Matcher<? super ContainerType> matcher) {
+                                        return new ContainerTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                                     }
 
                                     public void assertToFirstFail() {
