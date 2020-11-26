@@ -43,6 +43,7 @@ class PojoAsserterGenerator(
     private fun getInnerAsserters(): List<TypeSpec> =
         baseType.enclosedElements
             .filterIsInstance(TypeElement::class.java)
+            .filterNot { it.modifiers.contains(Modifier.PRIVATE) }
             .map {
                 PojoAsserterGenerator(
                     processingEnv,

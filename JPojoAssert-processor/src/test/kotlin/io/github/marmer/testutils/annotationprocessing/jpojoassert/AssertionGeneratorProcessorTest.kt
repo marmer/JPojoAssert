@@ -913,9 +913,6 @@ internal class AssertionGeneratorProcessorTest {
             .generatesSources(output)
     }
 
-    // TODO: marmer 26.11.2020 care about the different modifiert (private package private public, static, non static)
-    // TODO: marmer 26.11.2020 care about the different Types (interfaces, classes)
-
     @Test
     fun `generation should work for nested types`() {
         // Preparation
@@ -937,6 +934,16 @@ internal class AssertionGeneratorProcessorTest {
                      interface DirectInnerInterface{
                          interface TransitiveInnerType{}
                      }
+                     
+                     public enum InnerEnum{}
+                     
+                     public static class InnerPublicStaticClass{}
+                     
+                     static class InnerPackagePrivateStaticClass{}
+                     
+                     private static class InnerPrivateStaticClass{}
+                     
+                     public class InnerPublicClass{}
                 }
                 """.trimIndent()
         )
@@ -1071,6 +1078,186 @@ internal class AssertionGeneratorProcessorTest {
                                     }
                                 }
                             }
+
+                            @Generated(
+                                    value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                                    date = "$now")
+                            public static class InnerEnumAsserter {
+                                private final PojoAssertionBuilder<ContainerType.InnerEnum> pojoAssertionBuilder;
+
+                                private InnerEnumAsserter(final ContainerType.InnerEnum base) {
+                                    this(new PojoAssertionBuilder<ContainerType.InnerEnum>(base, Collections.emptyList(), "InnerEnum"));
+                                }
+
+                                private InnerEnumAsserter(final PojoAssertionBuilder<ContainerType.InnerEnum> pojoAssertionBuilder) {
+                                    this.pojoAssertionBuilder = pojoAssertionBuilder;
+                                }
+
+                                public static InnerEnumAsserter prepareFor(final ContainerType.InnerEnum base) {
+                                    return new InnerEnumAsserter(base);
+                                }
+
+                                public InnerEnumAsserter with(final AssertionCallback<ContainerType.InnerEnum> assertionCallback) {
+                                    return new InnerEnumAsserter(pojoAssertionBuilder.add(assertionCallback));
+                                }
+
+                                public InnerEnumAsserter matches(final Matcher<? super ContainerType.InnerEnum> matcher) {
+                                    return new InnerEnumAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                                }
+
+                                public void assertToFirstFail() {
+                                    pojoAssertionBuilder.assertToFirstFail();
+                                }
+
+                                public void assertAll() {
+                                    pojoAssertionBuilder.assertAll();
+                                }
+                            }
+
+                            @Generated(
+                                    value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                                    date = "$now")
+                            public static class InnerPublicStaticClassAsserter {
+                                private final PojoAssertionBuilder<ContainerType.InnerPublicStaticClass> pojoAssertionBuilder;
+
+                                private InnerPublicStaticClassAsserter(final ContainerType.InnerPublicStaticClass base) {
+                                    this(new PojoAssertionBuilder<ContainerType.InnerPublicStaticClass>(base, Collections.emptyList(), "InnerPublicStaticClass"));
+                                }
+
+                                private InnerPublicStaticClassAsserter(final PojoAssertionBuilder<ContainerType.InnerPublicStaticClass> pojoAssertionBuilder) {
+                                    this.pojoAssertionBuilder = pojoAssertionBuilder;
+                                }
+
+                                public static InnerPublicStaticClassAsserter prepareFor(final ContainerType.InnerPublicStaticClass base) {
+                                    return new InnerPublicStaticClassAsserter(base);
+                                }
+
+                                public InnerPublicStaticClassAsserter with(final AssertionCallback<ContainerType.InnerPublicStaticClass> assertionCallback) {
+                                    return new InnerPublicStaticClassAsserter(pojoAssertionBuilder.add(assertionCallback));
+                                }
+
+                                public InnerPublicStaticClassAsserter matches(final Matcher<? super ContainerType.InnerPublicStaticClass> matcher) {
+                                    return new InnerPublicStaticClassAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                                }
+
+                                public InnerPublicStaticClassAsserter withClass(
+                                        final AssertionCallback<Class<?>> assertionCallback) {
+                                    return new InnerPublicStaticClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                                }
+
+                                public InnerPublicStaticClassAsserter hasClass(final Class<?> value) {
+                                    return hasClass(Matchers.equalTo(value));
+                                }
+
+                                public InnerPublicStaticClassAsserter hasClass(final Matcher<? super Class<?>> matcher) {
+                                    return new InnerPublicStaticClassAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("class", matcher))));
+                                }
+
+                                public void assertToFirstFail() {
+                                    pojoAssertionBuilder.assertToFirstFail();
+                                }
+
+                                public void assertAll() {
+                                    pojoAssertionBuilder.assertAll();
+                                }
+                            }
+
+                            @Generated(
+                                    value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                                    date = "$now")
+                            public static class InnerPackagePrivateStaticClassAsserter {
+                                private final PojoAssertionBuilder<ContainerType.InnerPackagePrivateStaticClass> pojoAssertionBuilder;
+
+                                private InnerPackagePrivateStaticClassAsserter(final ContainerType.InnerPackagePrivateStaticClass base) {
+                                    this(new PojoAssertionBuilder<ContainerType.InnerPackagePrivateStaticClass>(base, Collections.emptyList(), "InnerPackagePrivateStaticClass"));
+                                }
+
+                                private InnerPackagePrivateStaticClassAsserter(final PojoAssertionBuilder<ContainerType.InnerPackagePrivateStaticClass> pojoAssertionBuilder) {
+                                    this.pojoAssertionBuilder = pojoAssertionBuilder;
+                                }
+
+                                public static InnerPackagePrivateStaticClassAsserter prepareFor(final ContainerType.InnerPackagePrivateStaticClass base) {
+                                    return new InnerPackagePrivateStaticClassAsserter(base);
+                                }
+
+                                public InnerPackagePrivateStaticClassAsserter with(final AssertionCallback<ContainerType.InnerPackagePrivateStaticClass> assertionCallback) {
+                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.add(assertionCallback));
+                                }
+
+                                public InnerPackagePrivateStaticClassAsserter matches(final Matcher<? super ContainerType.InnerPackagePrivateStaticClass> matcher) {
+                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                                }
+
+                                public InnerPackagePrivateStaticClassAsserter withClass(
+                                        final AssertionCallback<Class<?>> assertionCallback) {
+                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                                }
+
+                                public InnerPackagePrivateStaticClassAsserter hasClass(final Class<?> value) {
+                                    return hasClass(Matchers.equalTo(value));
+                                }
+
+                                public InnerPackagePrivateStaticClassAsserter hasClass(
+                                        final Matcher<? super Class<?>> matcher) {
+                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("class", matcher))));
+                                }
+
+                                public void assertToFirstFail() {
+                                    pojoAssertionBuilder.assertToFirstFail();
+                                }
+
+                                public void assertAll() {
+                                    pojoAssertionBuilder.assertAll();
+                                }
+                            }
+
+                            @Generated(
+                                    value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                                    date = "$now")
+                            public static class InnerPublicClassAsserter {
+                                private final PojoAssertionBuilder<ContainerType.InnerPublicClass> pojoAssertionBuilder;
+
+                                private InnerPublicClassAsserter(final ContainerType.InnerPublicClass base) {
+                                    this(new PojoAssertionBuilder<ContainerType.InnerPublicClass>(base, Collections.emptyList(), "InnerPublicClass"));
+                                }
+
+                                private InnerPublicClassAsserter(final PojoAssertionBuilder<ContainerType.InnerPublicClass> pojoAssertionBuilder) {
+                                    this.pojoAssertionBuilder = pojoAssertionBuilder;
+                                }
+
+                                public static InnerPublicClassAsserter prepareFor(final ContainerType.InnerPublicClass base) {
+                                    return new InnerPublicClassAsserter(base);
+                                }
+
+                                public InnerPublicClassAsserter with(final AssertionCallback<ContainerType.InnerPublicClass> assertionCallback) {
+                                    return new InnerPublicClassAsserter(pojoAssertionBuilder.add(assertionCallback));
+                                }
+
+                                public InnerPublicClassAsserter matches(final Matcher<? super ContainerType.InnerPublicClass> matcher) {
+                                    return new InnerPublicClassAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                                }
+
+                                public InnerPublicClassAsserter withClass(final AssertionCallback<Class<?>> assertionCallback) {
+                                    return new InnerPublicClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                                }
+
+                                public InnerPublicClassAsserter hasClass(final Class<?> value) {
+                                    return hasClass(Matchers.equalTo(value));
+                                }
+
+                                public InnerPublicClassAsserter hasClass(final Matcher<? super Class<?>> matcher) {
+                                    return new InnerPublicClassAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("class", matcher))));
+                                }
+
+                                public void assertToFirstFail() {
+                                    pojoAssertionBuilder.assertToFirstFail();
+                                }
+
+                                public void assertAll() {
+                                    pojoAssertionBuilder.assertAll();
+                                }
+                            }
+
                         }
                         """.trimIndent().trimIndent()
         )
