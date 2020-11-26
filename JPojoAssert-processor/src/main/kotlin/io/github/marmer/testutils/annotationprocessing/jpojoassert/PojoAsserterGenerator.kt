@@ -183,16 +183,15 @@ class PojoAsserterGenerator(
         .build()
 
     private fun getGeneratedTypeName() =
-        if (baseType.typeParameters.isEmpty()) generatedTypeNameWithoutParameters()
-        else getGeneratedTypeNameWithParameters()
+        if (baseType.typeParameters.isEmpty()) getSimpleAsserterClassName()
+        else getSimpleAsserterClassNameWithParameters()
 
-    private fun getGeneratedTypeNameWithParameters() = ParameterizedTypeName.get(
-        generatedTypeNameWithoutParameters(),
+    private fun getSimpleAsserterClassNameWithParameters() = ParameterizedTypeName.get(
+        getSimpleAsserterClassName(),
         *(baseType.typeParameters.map { TypeVariableName.get(it) }.toTypedArray())
     )
 
-    // TODO: marmer 26.11.2020 What about a bit more qualification like it's don within the parameters
-    private fun generatedTypeNameWithoutParameters() =
+    private fun getSimpleAsserterClassName() =
         ClassName.get("", simpleAsserterName)
 
     private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
