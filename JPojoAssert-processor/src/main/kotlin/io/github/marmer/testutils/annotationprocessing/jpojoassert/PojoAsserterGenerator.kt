@@ -23,18 +23,37 @@ class PojoAsserterGenerator(
 ) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
-        TypeSpec.classBuilder(simpleAsserterName)
-            .addModifiers(Modifier.PUBLIC)
-            .addAnnotation(getGeneratedAnnotation())
-            .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
-            .addField(getPojoAssertionBuilderField())
-            .addMethods(getInitializers())
-            .addMethods(getBaseAssertionMethods())
-            .addMethods(getPropertyAssertionMethods())
-            .addMethods(getFinisherMethods())
+        getPreparedTypeSpecBuilder()
             .build()
     ).build()
         .writeTo(processingEnv.filer)
+
+    private fun getPreparedTypeSpecBuilder() = TypeSpec.classBuilder(simpleAsserterName)
+        .addOriginatingElement(baseType)
+        .addModifiers(Modifier.PUBLIC)
+        .addAnnotation(getGeneratedAnnotation())
+        .addTypeVariables(baseType.typeParameters.map { TypeVariableName.get(it) })
+        .addField(getPojoAssertionBuilderField())
+        .addMethods(getInitializers())
+        .addMethods(getBaseAssertionMethods())
+        .addMethods(getPropertyAssertionMethods())
+        .addMethods(getFinisherMethods())
+        .addTypes(getInnerAsserters())
+
+    private fun getInnerAsserters(): List<TypeSpec> =
+        baseType.enclosedElements
+            .filterIsInstance(TypeElement::class.java)
+            .filterNot { it.modifiers.contains(Modifier.PRIVATE) }
+            .map {
+                PojoAsserterGenerator(
+                    processingEnv,
+                    it,
+                    generationTimeStamp,
+                    generationMarker
+                ).getPreparedTypeSpecBuilder()
+                    .addModifiers(Modifier.STATIC)
+                    .build()
+            }
 
     private fun getPropertyAssertionMethods() =
         baseType.properties
@@ -165,16 +184,16 @@ class PojoAsserterGenerator(
         .build()
 
     private fun getGeneratedTypeName() =
-        if (baseType.typeParameters.isEmpty()) generatedTypeNameWithoutParameters()
-        else getGeneratedTypeNameWithParameters()
+        if (baseType.typeParameters.isEmpty()) getSimpleAsserterClassName()
+        else getSimpleAsserterClassNameWithParameters()
 
-    private fun getGeneratedTypeNameWithParameters() = ParameterizedTypeName.get(
-        generatedTypeNameWithoutParameters(),
+    private fun getSimpleAsserterClassNameWithParameters() = ParameterizedTypeName.get(
+        getSimpleAsserterClassName(),
         *(baseType.typeParameters.map { TypeVariableName.get(it) }.toTypedArray())
     )
 
-    private fun generatedTypeNameWithoutParameters() =
-        ClassName.get(baseType.packageElement.toString(), simpleAsserterName)
+    private fun getSimpleAsserterClassName() =
+        ClassName.get("", simpleAsserterName)
 
     private fun getBaseTypeConstructor() = MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)
@@ -222,7 +241,7 @@ class PojoAsserterGenerator(
         get() = TypeName.get(asType())
 
     private val TypeElement.properties: List<Property>
-        get() = transitiveElements
+        get() = transitiveInheritedElements
             .filter { it.isProperty }
             .distinctBy { it.simpleName }
             .map { it as ExecutableElement }
@@ -234,14 +253,14 @@ class PojoAsserterGenerator(
                 )
             }
 
-    private val TypeElement.transitiveElements: List<Element>
+    private val TypeElement.transitiveInheritedElements: List<Element>
         get() = if (superclass.kind != TypeKind.NONE && kind != ElementKind.ENUM)
             enclosedElements +
-                    superclass.asTypeElement().transitiveElements +
-                    interfaces.flatMap { it.asTypeElement().transitiveElements }
+                    superclass.asTypeElement().transitiveInheritedElements +
+                    interfaces.flatMap { it.asTypeElement().transitiveInheritedElements }
         else
             enclosedElements +
-                    interfaces.flatMap { it.asTypeElement().transitiveElements }
+                    interfaces.flatMap { it.asTypeElement().transitiveInheritedElements }
 
     private fun TypeMirror.asTypeElement() =
         (processingEnv.typeUtils.asElement(this) as TypeElement)

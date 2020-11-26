@@ -71,9 +71,11 @@ Enjoy some readable compile safe assertions for your configured types:
             .assertAll() // Soft assertion for an atomic result (you could also use assertToFirstFail() to fail fast)
 ```
 
-
 Changelog
 ---------
+### 0.6.0
+Feature: Nested (inner) types can be handled now. Nested types will produce nested asserters if they are accessable somehow
+
 ### 0.5.2
 Fixed: Project Homepage
 

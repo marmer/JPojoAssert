@@ -5,7 +5,7 @@
     <parent>
         <artifactId>JPojoAssert</artifactId>
         <groupId>io.github.marmer.testutils</groupId>
-        <version>0.5.2</version>
+        <version>0.6.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -35,7 +35,7 @@
         <dependency>
             <artifactId>JPojoAssert-processor</artifactId>
             <groupId>io.github.marmer.testutils</groupId>
-            <version>0.5.2</version>
+            <version>0.6.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

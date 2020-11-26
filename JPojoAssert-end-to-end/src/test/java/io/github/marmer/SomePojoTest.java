@@ -1,5 +1,6 @@
 package io.github.marmer;
 
+import io.github.marmer.SomePojoAsserter.AdressAsserter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,24 @@ class SomePojoTest {
                 () -> assertThat(assertionError.toString(), containsString("HelgeY")),
                 () -> assertThat(assertionError.toString(), containsString("Fancy Exception"))
         );
+    }
 
+    @Test
+    @DisplayName("Nested types")
+    void NestedTypes() {
+        // Preparation
+
+        final var assertionError = assertThrows(AssertionError.class,
+                // Execution
+                () -> AdressAsserter.prepareFor(new SomePojo.Adress("Smurf Village"))
+                        .hasCity("Somewhere")
+                        .assertAll());
+        // Assertion
+        assertAll(
+                () -> assertThat(assertionError.toString(), containsString("Smurf Village")),
+                () -> assertThat(assertionError.toString(), containsString("Somewhere")),
+                () -> assertThat(assertionError.toString(), containsString("city"))
+        );
     }
 
     @Test

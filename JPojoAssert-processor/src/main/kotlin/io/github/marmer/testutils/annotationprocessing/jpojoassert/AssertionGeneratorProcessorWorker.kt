@@ -57,7 +57,13 @@ class AssertionGeneratorProcessorWorker(
             .getAllPackageElements(currentQualifiedTypeOrPackageName)
             .flatMap { it.enclosedElements }
             .map { it as TypeElement }
-            .plus(processingEnv.elementUtils.getTypeElement(currentQualifiedTypeOrPackageName)).filterNotNull()
+            .plus(
+                getHighestNestingType(
+                    processingEnv
+                        .elementUtils
+                        .getTypeElement(currentQualifiedTypeOrPackageName)
+                )
+            ).filterNotNull()
 
         if (typeElementsForName.isEmpty())
             printSkipWarningBecauseOfNotExistingTypeConfigured(configurationType, currentQualifiedTypeOrPackageName)
@@ -111,11 +117,17 @@ class AssertionGeneratorProcessorWorker(
                 it != null && it.value.any { value -> value == generatorName }
             }
 
+    private fun getHighestNestingType(typeElement: TypeElement?): TypeElement? =
+        if (typeElement != null && typeElement.enclosingElement is TypeElement)
+            getHighestNestingType(typeElement.enclosingElement as TypeElement)
+        else
+            typeElement
+
+    private fun AnnotationMirror.isTypeOf(type: KClass<out Annotation>) =
+        annotationType.asElement().toString() == type.qualifiedName
+
+    private inline fun <reified T> Set<TypeElement>.contains() =
+        this.find { T::class.qualifiedName == it.qualifiedName.toString() } != null
 }
 
-private fun AnnotationMirror.isTypeOf(type: KClass<out Annotation>) =
-    annotationType.asElement().toString() == type.qualifiedName
-
-private inline fun <reified T> Set<TypeElement>.contains() =
-    this.find { T::class.qualifiedName == it.qualifiedName.toString() } != null
 
