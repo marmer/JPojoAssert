@@ -20,6 +20,12 @@ class PojoAssertionBuilder<T>(
             heading
         )
 
+    // TODO: marmer 28.11.2020 Do something with the heading
+    // TODO: marmer 28.11.2020 implement!
+    @JvmOverloads
+    fun add(additionalHeading: String = "", pojoAsserter: PojoAsserter<*>): PojoAssertionBuilder<T> =
+        TODO("not implemented yet")
+
     override fun assertToFirstFail() =
         assertionConfigurations.forEach { assertionConfiguration ->
             assertionConfiguration.toThrownExceptionOrNull()
