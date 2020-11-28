@@ -55,6 +55,7 @@ internal class AssertionGeneratorProcessorTest {
                 package some.other.pck;
                 
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                 import java.lang.Boolean;
                 import java.lang.Class;
@@ -69,7 +70,7 @@ internal class AssertionGeneratorProcessorTest {
                 @Generated(
                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                         date = "$now")
-                public class ExampleTypeAsserter{
+                public class ExampleTypeAsserter implements PojoAsserter<ExampleType>{
                     private final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder;
                 
                     private ExampleTypeAsserter(final ExampleType base) {
@@ -92,22 +93,22 @@ internal class AssertionGeneratorProcessorTest {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     """.trimIndent() +
-                    propertyMethodsFor("ExampleType", "objectProperty", "String") +
-                    propertyMethodsFor("ExampleType", "primitiveProperty", "Integer") +
-                    propertyMethodsFor("ExampleType", "primitiveBooleanProperty", "Boolean", "is", "") +
-                    propertyMethodsFor("ExampleType", "getRightBooleanMixProperty", "Boolean", "is", "") +
-                    propertyMethodsFor("ExampleType", "isWrongPrimitiveBooleanProperty", "Boolean") +
-                    propertyMethodsFor("ExampleType", "getWrongBooleanWrapperProperty", "Boolean", "is", "") +
-                    propertyMethodsFor("ExampleType", "isRightBooleanWrapperProperty", "Boolean") +
-                    propertyMethodsFor("ExampleType", "primitiveArrayProperty", "int[]") +
-                    propertyMethodsFor("ExampleType", "objectArrayProperty", "String[]") +
-                    propertyMethodsFor("ExampleType", "multidimensionalArrayProperty", "String[][]") +
-                    propertyMethodsFor("ExampleType", "packagePrivateProperty", "String") +
-                    propertyMethodsFor("ExampleType", "protectedProperty", "String") +
-                    propertyMethodsFor("ExampleType", "abstractProperty", "String") +
-                    propertyMethodsFor("ExampleType", "finalProperty", "String") +
-                    propertyMethodsFor("ExampleType", "class", "Class<?>") +
-                    """
+            propertyMethodsFor("ExampleType", "objectProperty", "String") +
+            propertyMethodsFor("ExampleType", "primitiveProperty", "Integer") +
+            propertyMethodsFor("ExampleType", "primitiveBooleanProperty", "Boolean", "is", "") +
+            propertyMethodsFor("ExampleType", "getRightBooleanMixProperty", "Boolean", "is", "") +
+            propertyMethodsFor("ExampleType", "isWrongPrimitiveBooleanProperty", "Boolean") +
+            propertyMethodsFor("ExampleType", "getWrongBooleanWrapperProperty", "Boolean", "is", "") +
+            propertyMethodsFor("ExampleType", "isRightBooleanWrapperProperty", "Boolean") +
+            propertyMethodsFor("ExampleType", "primitiveArrayProperty", "int[]") +
+            propertyMethodsFor("ExampleType", "objectArrayProperty", "String[]") +
+            propertyMethodsFor("ExampleType", "multidimensionalArrayProperty", "String[][]") +
+            propertyMethodsFor("ExampleType", "packagePrivateProperty", "String") +
+            propertyMethodsFor("ExampleType", "protectedProperty", "String") +
+            propertyMethodsFor("ExampleType", "abstractProperty", "String") +
+            propertyMethodsFor("ExampleType", "finalProperty", "String") +
+            propertyMethodsFor("ExampleType", "class", "Class<?>") +
+            """
                     
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
@@ -185,6 +186,7 @@ internal class AssertionGeneratorProcessorTest {
                 package some.other.pck;
                 
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                 import java.lang.CharSequence;
                 import java.lang.Integer;
@@ -202,7 +204,7 @@ internal class AssertionGeneratorProcessorTest {
                 @Generated(
                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                         date = "$now")
-                public class ExampleTypeAsserter<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String> & Runnable, D> {
+                public class ExampleTypeAsserter<A extends CharSequence, B extends Consumer<A>, C extends Consumer<String> & Runnable, D> implements PojoAsserter<ExampleType<A, B, C, D>>{
                     private final PojoAssertionBuilder<ExampleType<A, B, C, D>> pojoAssertionBuilder;
                 
                     private ExampleTypeAsserter(final ExampleType<A, B, C, D> base) {
@@ -225,25 +227,25 @@ internal class AssertionGeneratorProcessorTest {
                         return new ExampleTypeAsserter<A, B, C, D>(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     """ +
-                    propertyMethodsFor(
-                        "ExampleType",
-                        "genericProperty",
-                        "Map<String, List<Integer>>",
-                        generics = "<A, B, C, D>"
-                    ) +
-                    propertyMethodsFor(
-                        "ExampleType",
-                        "genericFromTypeDefinitionProperty",
-                        "C",
-                        generics = "<A, B, C, D>"
-                    ) +
-                    propertyMethodsFor(
-                        "ExampleType",
-                        "genericFromTypeDefinitionPropertyAsGeneric",
-                        "List<C>",
-                        generics = "<A, B, C, D>"
-                    ) +
-                    """
+            propertyMethodsFor(
+                "ExampleType",
+                "genericProperty",
+                "Map<String, List<Integer>>",
+                generics = "<A, B, C, D>"
+            ) +
+            propertyMethodsFor(
+                "ExampleType",
+                "genericFromTypeDefinitionProperty",
+                "C",
+                generics = "<A, B, C, D>"
+            ) +
+            propertyMethodsFor(
+                "ExampleType",
+                "genericFromTypeDefinitionPropertyAsGeneric",
+                "List<C>",
+                generics = "<A, B, C, D>"
+            ) +
+            """
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
                     }
@@ -296,6 +298,7 @@ internal class AssertionGeneratorProcessorTest {
                 package some.other.pck;
                 
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                 
                 import java.lang.String;
@@ -308,7 +311,7 @@ internal class AssertionGeneratorProcessorTest {
                 @Generated(
                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                         date = "$now")
-                public class ExampleTypeAsserter {
+                public class ExampleTypeAsserter implements PojoAsserter<ExampleType> {
                     private final PojoAssertionBuilder<ExampleType> pojoAssertionBuilder;
                 
                     private ExampleTypeAsserter(final ExampleType base) {
@@ -331,8 +334,8 @@ internal class AssertionGeneratorProcessorTest {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     """ +
-                    propertyMethodsFor("ExampleType", "someValue", "String") +
-                    """
+            propertyMethodsFor("ExampleType", "someValue", "String") +
+            """
                 
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
@@ -413,6 +416,7 @@ internal class AssertionGeneratorProcessorTest {
                 package some.other.pck;
                 
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                 import java.lang.Class;                
                 import java.lang.String;
@@ -425,7 +429,7 @@ internal class AssertionGeneratorProcessorTest {
                 @Generated(
                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                         date = "$now")
-                public class ChildTypeAsserter {
+                public class ChildTypeAsserter implements PojoAsserter<ChildType>{
                     private final PojoAssertionBuilder<ChildType> pojoAssertionBuilder;
                 
                     private ChildTypeAsserter(final ChildType base) {
@@ -448,18 +452,18 @@ internal class AssertionGeneratorProcessorTest {
                         return new ChildTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     """ +
-                    propertyMethodsFor("ChildType", "childOnlyProperty", "String") +
-                    propertyMethodsFor(
-                        "ChildType",
-                        "childAndParentPropertyWithDifferentReturnTypes",
-                        "String",
-                        generics = ""
-                    ) +
-                    propertyMethodsFor("ChildType", "directParentClassProperty", "String") +
-                    propertyMethodsFor("ChildType", "class", "Class<?>") +
-                    propertyMethodsFor("ChildType", "directInterfaceParentProperty", "String") +
-                    propertyMethodsFor("ChildType", "indirectInterfaceParentProperty", "String") +
-                    """
+            propertyMethodsFor("ChildType", "childOnlyProperty", "String") +
+            propertyMethodsFor(
+                "ChildType",
+                "childAndParentPropertyWithDifferentReturnTypes",
+                "String",
+                generics = ""
+            ) +
+            propertyMethodsFor("ChildType", "directParentClassProperty", "String") +
+            propertyMethodsFor("ChildType", "class", "Class<?>") +
+            propertyMethodsFor("ChildType", "directInterfaceParentProperty", "String") +
+            propertyMethodsFor("ChildType", "indirectInterfaceParentProperty", "String") +
+            """
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
                     }
@@ -820,6 +824,7 @@ internal class AssertionGeneratorProcessorTest {
                         package some.other.pck;
                         
                         import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                        import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                         import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                         import java.util.Collections;
                         import javax.annotation.processing.Generated;
@@ -829,7 +834,7 @@ internal class AssertionGeneratorProcessorTest {
                         @Generated(
                                 value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                 date = "$now")
-                        public class ContainerTypeAsserter{
+                        public class ContainerTypeAsserter implements PojoAsserter<ContainerType>{
                             private final PojoAssertionBuilder<ContainerType> pojoAssertionBuilder;
                         
                             private ContainerTypeAsserter(final ContainerType base) {
@@ -863,7 +868,7 @@ internal class AssertionGeneratorProcessorTest {
                             @Generated(
                                     value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                     date = "$now")
-                            public static class DirectInnerTypeAsserter {
+                            public static class DirectInnerTypeAsserter implements PojoAsserter<ContainerType.DirectInnerType>{
                                 private final PojoAssertionBuilder<ContainerType.DirectInnerType> pojoAssertionBuilder;
 
                                 private DirectInnerTypeAsserter(final ContainerType.DirectInnerType base) {
@@ -938,6 +943,7 @@ internal class AssertionGeneratorProcessorTest {
                         package some.other.pck;
                         
                         import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                        import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                         import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                         import java.util.Collections;
                         import javax.annotation.processing.Generated;
@@ -947,7 +953,7 @@ internal class AssertionGeneratorProcessorTest {
                         @Generated(
                                 value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                 date = "$now")
-                        public class ContainerTypeAsserter<P> {
+                        public class ContainerTypeAsserter<P> implements PojoAsserter<ContainerType<P>> {
                             private final PojoAssertionBuilder<ContainerType<P>> pojoAssertionBuilder;
                         
                             private ContainerTypeAsserter(final ContainerType<P> base) {
@@ -981,7 +987,7 @@ internal class AssertionGeneratorProcessorTest {
                             @Generated(
                                     value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                     date = "$now")
-                            public static class DirectInnerTypeAsserter<C> {
+                            public static class DirectInnerTypeAsserter<C> implements PojoAsserter<ContainerType.DirectInnerType<C>>{
                                 private final PojoAssertionBuilder<ContainerType.DirectInnerType<C>> pojoAssertionBuilder;
 
                                 private DirectInnerTypeAsserter(final ContainerType.DirectInnerType<C> base) {
@@ -1063,10 +1069,11 @@ internal class AssertionGeneratorProcessorTest {
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         @Language("JAVA") val output = JavaFileObjects.forSourceString(
-                "some.other.pck.ContainerTypeAsserter", """
+            "some.other.pck.ContainerTypeAsserter", """
                         package some.other.pck;
                         
                         import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                        import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                         import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                         
                         import java.lang.Class;
@@ -1080,7 +1087,7 @@ internal class AssertionGeneratorProcessorTest {
                         @Generated(
                                 value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                 date = "$now")
-                        public class ContainerTypeAsserter {
+                        public class ContainerTypeAsserter implements PojoAsserter<ContainerType>{
                             private final PojoAssertionBuilder<ContainerType> pojoAssertionBuilder;
                         
                             private ContainerTypeAsserter(final ContainerType base) {
@@ -1126,7 +1133,7 @@ internal class AssertionGeneratorProcessorTest {
                             @Generated(
                                     value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                     date = "$now")
-                            public static class DirectInnerInterfaceAsserter {
+                            public static class DirectInnerInterfaceAsserter implements PojoAsserter<ContainerType.DirectInnerInterface> {
                                 private final PojoAssertionBuilder<ContainerType.DirectInnerInterface> pojoAssertionBuilder;
                         
                                 private DirectInnerInterfaceAsserter(final ContainerType.DirectInnerInterface base) {
@@ -1160,7 +1167,7 @@ internal class AssertionGeneratorProcessorTest {
                                 @Generated(
                                         value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                         date = "$now")
-                                public static class TransitiveInnerTypeAsserter {
+                                public static class TransitiveInnerTypeAsserter implements PojoAsserter<ContainerType.DirectInnerInterface.TransitiveInnerType> {
                                     private final PojoAssertionBuilder<ContainerType.DirectInnerInterface.TransitiveInnerType> pojoAssertionBuilder;
                         
                                     private TransitiveInnerTypeAsserter(final ContainerType.DirectInnerInterface.TransitiveInnerType base) {
@@ -1196,7 +1203,7 @@ internal class AssertionGeneratorProcessorTest {
                             @Generated(
                                     value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                     date = "$now")
-                            public static class InnerEnumAsserter {
+                            public static class InnerEnumAsserter implements PojoAsserter<ContainerType.InnerEnum>{
                                 private final PojoAssertionBuilder<ContainerType.InnerEnum> pojoAssertionBuilder;
 
                                 private InnerEnumAsserter(final ContainerType.InnerEnum base) {
@@ -1231,7 +1238,7 @@ internal class AssertionGeneratorProcessorTest {
                             @Generated(
                                     value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                     date = "$now")
-                            public static class InnerPublicStaticClassAsserter {
+                            public static class InnerPublicStaticClassAsserter implements PojoAsserter<ContainerType.InnerPublicStaticClass>{
                                 private final PojoAssertionBuilder<ContainerType.InnerPublicStaticClass> pojoAssertionBuilder;
 
                                 private InnerPublicStaticClassAsserter(final ContainerType.InnerPublicStaticClass base) {
@@ -1279,7 +1286,7 @@ internal class AssertionGeneratorProcessorTest {
                             @Generated(
                                     value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                     date = "$now")
-                            public static class InnerPackagePrivateStaticClassAsserter {
+                            public static class InnerPackagePrivateStaticClassAsserter implements PojoAsserter<ContainerType.InnerPackagePrivateStaticClass>{
                                 private final PojoAssertionBuilder<ContainerType.InnerPackagePrivateStaticClass> pojoAssertionBuilder;
 
                                 private InnerPackagePrivateStaticClassAsserter(final ContainerType.InnerPackagePrivateStaticClass base) {
@@ -1328,7 +1335,7 @@ internal class AssertionGeneratorProcessorTest {
                             @Generated(
                                     value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                                     date = "$now")
-                            public static class InnerPublicClassAsserter {
+                            public static class InnerPublicClassAsserter implements PojoAsserter<ContainerType.InnerPublicClass>{
                                 private final PojoAssertionBuilder<ContainerType.InnerPublicClass> pojoAssertionBuilder;
 
                                 private InnerPublicClassAsserter(final ContainerType.InnerPublicClass base) {
@@ -1392,6 +1399,7 @@ internal class AssertionGeneratorProcessorTest {
                     package some.other.pck;
                     
                     import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                    import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                     import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                     import java.util.Collections;
                     import javax.annotation.processing.Generated;
@@ -1401,7 +1409,7 @@ internal class AssertionGeneratorProcessorTest {
                     @Generated(
                             value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
                             date = "$now")
-                    public class ${typeName}Asserter {
+                    public class ${typeName}Asserter implements PojoAsserter<${typeName}>{
                         private final PojoAssertionBuilder<${typeName}> pojoAssertionBuilder;
                     
                         private ${typeName}Asserter(final ${typeName} base) {
