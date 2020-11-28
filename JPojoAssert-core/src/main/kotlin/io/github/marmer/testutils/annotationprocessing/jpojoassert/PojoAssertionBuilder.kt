@@ -10,17 +10,17 @@ class PojoAssertionBuilder<T>(
     private val pojo: T,
     private val assertionConfigurations: List<AssertionConfiguration> = emptyList(),
     private val heading: String = "Unexpected exceptions thrown"
-) {
+) : PojoAsserter<T> {
 
     @JvmOverloads
     fun add(additionalHeading: String = "", assertionCallback: AssertionCallback<T>) =
         PojoAssertionBuilder(
-                pojo,
-                assertionConfigurations + AssertionConfiguration({ assertionCallback.assertFor(pojo) }, additionalHeading),
-                heading
+            pojo,
+            assertionConfigurations + AssertionConfiguration({ assertionCallback.assertFor(pojo) }, additionalHeading),
+            heading
         )
 
-    fun assertToFirstFail() =
+    override fun assertToFirstFail() =
         assertionConfigurations.forEach { assertionConfiguration ->
             assertionConfiguration.toThrownExceptionOrNull()
                 .let {
@@ -31,7 +31,7 @@ class PojoAssertionBuilder<T>(
                 }
         }
 
-    fun assertAll() {
+    override fun assertAll() {
         with(assertionConfigurations.map {
             it.toThrownExceptionOrNull()
         }.filterNotNull()) {
