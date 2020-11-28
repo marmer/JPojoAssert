@@ -138,7 +138,7 @@ internal class AssertionGeneratorProcessorTest {
         generics: String = ""
     ) = """
                     public ${baseTypeName}Asserter${generics} with${propertyName.capitalize()}(final AssertionCallback<${propertyType}> assertionCallback) {
-                        return new ${baseTypeName}Asserter${generics}(pojoAssertionBuilder.add("${propertyName}", base -> assertionCallback.accept(base.${accessorPrefix}${propertyName.capitalize()}())));
+                        return new ${baseTypeName}Asserter${generics}(pojoAssertionBuilder.add("${propertyName}", base -> assertionCallback.assertFor(base.${accessorPrefix}${propertyName.capitalize()}())));
                     }
                     
                     public ${baseTypeName}Asserter${generics} has${propertyName.capitalize()}(final ${propertyType} value) {
@@ -1063,7 +1063,7 @@ internal class AssertionGeneratorProcessorTest {
         )
         val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
         @Language("JAVA") val output = JavaFileObjects.forSourceString(
-            "some.other.pck.ContainerTypeAsserter", """
+                "some.other.pck.ContainerTypeAsserter", """
                         package some.other.pck;
                         
                         import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
@@ -1104,7 +1104,7 @@ internal class AssertionGeneratorProcessorTest {
                             }
                         
                             public ContainerTypeAsserter withClass(final AssertionCallback<Class<?>> assertionCallback) {
-                                return new ContainerTypeAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                                return new ContainerTypeAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.assertFor(base.getClass())));
                             }
                         
                             public ContainerTypeAsserter hasClass(final Class<?> value) {
@@ -1256,7 +1256,7 @@ internal class AssertionGeneratorProcessorTest {
 
                                 public InnerPublicStaticClassAsserter withClass(
                                         final AssertionCallback<Class<?>> assertionCallback) {
-                                    return new InnerPublicStaticClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                                    return new InnerPublicStaticClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.assertFor(base.getClass())));
                                 }
 
                                 public InnerPublicStaticClassAsserter hasClass(final Class<?> value) {
@@ -1304,7 +1304,7 @@ internal class AssertionGeneratorProcessorTest {
 
                                 public InnerPackagePrivateStaticClassAsserter withClass(
                                         final AssertionCallback<Class<?>> assertionCallback) {
-                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.assertFor(base.getClass())));
                                 }
 
                                 public InnerPackagePrivateStaticClassAsserter hasClass(final Class<?> value) {
@@ -1352,7 +1352,7 @@ internal class AssertionGeneratorProcessorTest {
                                 }
 
                                 public InnerPublicClassAsserter withClass(final AssertionCallback<Class<?>> assertionCallback) {
-                                    return new InnerPublicClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.accept(base.getClass())));
+                                    return new InnerPublicClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.assertFor(base.getClass())));
                                 }
 
                                 public InnerPublicClassAsserter hasClass(final Class<?> value) {

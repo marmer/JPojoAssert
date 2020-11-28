@@ -15,9 +15,9 @@ class PojoAssertionBuilder<T>(
     @JvmOverloads
     fun add(additionalHeading: String = "", assertionCallback: AssertionCallback<T>) =
         PojoAssertionBuilder(
-            pojo,
-            assertionConfigurations + AssertionConfiguration({ assertionCallback.accept(pojo) }, additionalHeading),
-            heading
+                pojo,
+                assertionConfigurations + AssertionConfiguration({ assertionCallback.assertFor(pojo) }, additionalHeading),
+                heading
         )
 
     fun assertToFirstFail() =
