@@ -4,7 +4,17 @@ import org.opentest4j.MultipleFailuresError
 
 private typealias LocalAssertionCallback = (() -> Unit)
 
-data class AssertionConfiguration(val assertionCallback: LocalAssertionCallback, val additionalHeading: String)
+private class AssertionCallbackAsserter(private val assertionCallback: LocalAssertionCallback) : Asserter {
+    override fun assertToFirstFail() {
+        assertionCallback()
+    }
+
+    override fun assertAll() {
+        assertionCallback()
+    }
+}
+
+data class AssertionConfiguration(val asserter: Asserter, val additionalHeading: String)
 
 class PojoAssertionBuilder<T>(
     private val pojo: T,
@@ -16,19 +26,27 @@ class PojoAssertionBuilder<T>(
     fun add(additionalHeading: String = "", assertionCallback: AssertionCallback<T>) =
         PojoAssertionBuilder(
             pojo,
-            assertionConfigurations + AssertionConfiguration({ assertionCallback.assertFor(pojo) }, additionalHeading),
+            assertionConfigurations +
+                    AssertionConfiguration(AssertionCallbackAsserter {
+                        assertionCallback.assertFor(
+                            pojo
+                        )
+                    }, additionalHeading),
             heading
         )
 
-    // TODO: marmer 28.11.2020 Do something with the heading
-    // TODO: marmer 28.11.2020 implement!
     @JvmOverloads
     fun add(additionalHeading: String = "", pojoAsserter: PojoAsserter<*>): PojoAssertionBuilder<T> =
-        TODO("not implemented yet")
+        PojoAssertionBuilder(
+            pojo,
+            assertionConfigurations + AssertionConfiguration(pojoAsserter, additionalHeading),
+            heading
+        )
+
 
     override fun assertToFirstFail() =
         assertionConfigurations.forEach { assertionConfiguration ->
-            assertionConfiguration.toThrownExceptionOrNull()
+            assertionConfiguration.assertToFirstFail()
                 .let {
                     if (it != null) throw MultipleFailuresError(
                         heading,
@@ -37,21 +55,31 @@ class PojoAssertionBuilder<T>(
                 }
         }
 
-    override fun assertAll() {
-        with(assertionConfigurations.map {
-            it.toThrownExceptionOrNull()
-        }.filterNotNull()) {
-            if (isNotEmpty()) throw MultipleFailuresError(heading, this)
-        }
-    }
-
-    private fun AssertionConfiguration.toThrownExceptionOrNull() =
+    private fun AssertionConfiguration.assertToFirstFail() =
         try {
-            assertionCallback()
+            asserter.assertToFirstFail()
             null
         } catch (e: Exception) {
             java.lang.AssertionError(additionalHeading + ": " + e.message, e)
         } catch (e: AssertionError) {
             java.lang.AssertionError(additionalHeading + ": " + e.message, e)
         }
+
+    override fun assertAll() {
+        with(assertionConfigurations.map {
+            it.assertAll()
+        }.filterNotNull()) {
+            if (isNotEmpty()) throw MultipleFailuresError(heading, this)
+        }
+    }
+
+    private fun AssertionConfiguration.assertAll() = try {
+        asserter.assertAll()
+        null
+    } catch (e: Exception) {
+        java.lang.AssertionError(additionalHeading + ": " + e.message, e)
+    } catch (e: AssertionError) {
+        java.lang.AssertionError(additionalHeading + ": " + e.message, e)
+    }
+
 }

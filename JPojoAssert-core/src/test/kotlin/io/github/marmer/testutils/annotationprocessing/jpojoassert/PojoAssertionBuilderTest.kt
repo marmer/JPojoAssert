@@ -141,11 +141,11 @@ internal class PojoAssertionBuilderTest {
         val builder = PojoAssertionBuilder(Type1(42))
             .add("outerHeading", object : PojoAsserter<Type1> {
                 override fun assertToFirstFail() {
-                    throw RuntimeException("a little expected inner fun")
+                    throw RuntimeException("totally unexpected so ... not fun")
                 }
 
                 override fun assertAll() {
-                    throw RuntimeException("totally unexpected so ... not fun")
+                    throw RuntimeException("a little expected inner fun")
                 }
 
             })
@@ -169,11 +169,11 @@ internal class PojoAssertionBuilderTest {
         val builder = PojoAssertionBuilder(Type1(42))
             .add("outerHeading", object : PojoAsserter<Type1> {
                 override fun assertToFirstFail() {
-                    throw RuntimeException("totally unexpected so ... not fun")
+                    throw RuntimeException("a little expected inner fun")
                 }
 
                 override fun assertAll() {
-                    throw RuntimeException("a little expected inner fun")
+                    throw RuntimeException("totally unexpected so ... not fun")
                 }
 
             })
