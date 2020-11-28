@@ -15,7 +15,6 @@ class SomePojoTest {
     @DisplayName("Simple assertions")
     void simpleAssertions() {
         // Preparation
-
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
                 () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
@@ -32,6 +31,34 @@ class SomePojoTest {
                 () -> assertThat(assertionError.toString(), containsString("HelgeX")),
                 () -> assertThat(assertionError.toString(), containsString("HelgeY")),
                 () -> assertThat(assertionError.toString(), containsString("Fancy Exception"))
+        );
+    }
+
+    @Test
+    @DisplayName("Nested asserters")
+    void NestedAsserters()
+            throws Exception {
+        // Preparation
+        final SomePojo<String> pojo = new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
+        };
+        // TODO: Idea
+        //        public SomePojoAsserter<T> hasAddress(
+        //        final Function<AddressAsserter,AddressAsserter> asserterFunction) {
+        //            return new SomePojoAsserter<T>(pojoAssertionBuilder.add("address", base -> asserterFunction.apply(AddressAsserter.prepareFor(base.getAddress()))));
+        //        }
+        final var assertionError = assertThrows(AssertionError.class,
+                // Execution
+                () -> SomePojoAsserter.prepareFor(pojo)
+                        .hasAddress(it -> it
+                                .hasCity("BadStreed")
+                                .hasStreet("Gotham"))
+                        .hasFirstName("Holge")
+                        .assertAll());
+        // Assertion
+        assertAll(
+                () -> assertThat(assertionError.toString(), containsString("Holge")),
+                () -> assertThat(assertionError.toString(), containsString("BadStreed")),
+                () -> assertThat(assertionError.toString(), containsString("Gotham"))
         );
     }
 
