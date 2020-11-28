@@ -1,6 +1,6 @@
 package io.github.marmer;
 
-import io.github.marmer.SomePojoAsserter.AdressAsserter;
+import io.github.marmer.SomePojoAsserter.AddressAsserter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class SomePojoTest {
 
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
-                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
+                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
                 })
                         .with(it -> assertEquals("HelgeX", it.getFirstName(), "firstName"))
                         .with(it -> {
@@ -42,7 +42,7 @@ class SomePojoTest {
 
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
-                () -> AdressAsserter.prepareFor(new SomePojo.Adress("Smurf Village"))
+                () -> AddressAsserter.prepareFor(new SomePojo.Address("Smurf Village", "Mushroom"))
                         .hasCity("Somewhere")
                         .assertAll());
         // Assertion
@@ -59,7 +59,7 @@ class SomePojoTest {
         // Preparation
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
-                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
+                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
                 })
                         .with(it -> assertEquals("HelgeX", it.getFirstName()))
                         .with(it -> {
@@ -84,7 +84,7 @@ class SomePojoTest {
         // Preparation
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
-                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr.")) {
+                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
                 })
                         .hasTitles(contains("Prof."))
                         .hasFirstName("Holge")

@@ -10,10 +10,12 @@ import java.util.List;
 public abstract class SomePojo<T extends CharSequence> {
     private final String firstName;
     private final List<T> titles;
+    private final Address address;
 
     @Getter
     @AllArgsConstructor
-    public static class Adress {
+    public static class Address {
         private final String city;
+        private final String street;
     }
 }
