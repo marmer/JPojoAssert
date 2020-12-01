@@ -93,22 +93,22 @@ internal class AssertionGeneratorProcessorTest {
                         return new ExampleTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     """.trimIndent() +
-            propertyMethodsFor("ExampleType", "objectProperty", "String") +
-            propertyMethodsFor("ExampleType", "primitiveProperty", "Integer") +
-            propertyMethodsFor("ExampleType", "primitiveBooleanProperty", "Boolean", "is", "") +
-            propertyMethodsFor("ExampleType", "getRightBooleanMixProperty", "Boolean", "is", "") +
-            propertyMethodsFor("ExampleType", "isWrongPrimitiveBooleanProperty", "Boolean") +
-            propertyMethodsFor("ExampleType", "getWrongBooleanWrapperProperty", "Boolean", "is", "") +
-            propertyMethodsFor("ExampleType", "isRightBooleanWrapperProperty", "Boolean") +
-            propertyMethodsFor("ExampleType", "primitiveArrayProperty", "int[]") +
-            propertyMethodsFor("ExampleType", "objectArrayProperty", "String[]") +
-            propertyMethodsFor("ExampleType", "multidimensionalArrayProperty", "String[][]") +
-            propertyMethodsFor("ExampleType", "packagePrivateProperty", "String") +
-            propertyMethodsFor("ExampleType", "protectedProperty", "String") +
-            propertyMethodsFor("ExampleType", "abstractProperty", "String") +
-            propertyMethodsFor("ExampleType", "finalProperty", "String") +
-            propertyMethodsFor("ExampleType", "class", "Class<?>") +
-            """
+                    propertyMethodsFor("ExampleType", "objectProperty", "String") +
+                    propertyMethodsFor("ExampleType", "primitiveProperty", "Integer") +
+                    propertyMethodsFor("ExampleType", "primitiveBooleanProperty", "Boolean", "is", "") +
+                    propertyMethodsFor("ExampleType", "getRightBooleanMixProperty", "Boolean", "is", "") +
+                    propertyMethodsFor("ExampleType", "isWrongPrimitiveBooleanProperty", "Boolean") +
+                    propertyMethodsFor("ExampleType", "getWrongBooleanWrapperProperty", "Boolean", "is", "") +
+                    propertyMethodsFor("ExampleType", "isRightBooleanWrapperProperty", "Boolean") +
+                    propertyMethodsFor("ExampleType", "primitiveArrayProperty", "int[]") +
+                    propertyMethodsFor("ExampleType", "objectArrayProperty", "String[]") +
+                    propertyMethodsFor("ExampleType", "multidimensionalArrayProperty", "String[][]") +
+                    propertyMethodsFor("ExampleType", "packagePrivateProperty", "String") +
+                    propertyMethodsFor("ExampleType", "protectedProperty", "String") +
+                    propertyMethodsFor("ExampleType", "abstractProperty", "String") +
+                    propertyMethodsFor("ExampleType", "finalProperty", "String") +
+                    propertyMethodsFor("ExampleType", "class", "Class<?>") +
+                    """
                     
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
@@ -124,6 +124,114 @@ internal class AssertionGeneratorProcessorTest {
         Truth.assert_()
             .about(JavaSourcesSubjectFactory.javaSources())
             .that(listOf(configurationClass, javaFileObject))
+            .processedWith(AssertionGeneratorProcessor { now })
+            // Assertion
+            .compilesWithoutWarnings()
+            .and()
+            .generatesSources(expectedOutput)
+    }
+
+    @Test
+    fun `when pojos have properties of other types an asserter exists for, a convenience method with an asserer callback should be provided`() {
+        // Preparation
+        @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
+            "some.pck.JPojoAssertConfiguration", """
+                package some.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.GenerateAsserter;
+                
+                @GenerateAsserter({"some.other.pck.ReferencingType","some.other.pck.ReferencedType"})
+                abstract class JPojoAssertConfiguration{}
+                """.trimIndent()
+        )
+
+        @Language("JAVA") val referencingType = JavaFileObjects.forSourceLines(
+            "some.other.pck.ReferencingType", """
+                package some.other.pck;
+                
+                public interface ReferencingType{
+                    ReferencedType getSomeProp();
+                }""".trimIndent()
+        )
+
+        @Language("JAVA") val referencedType = JavaFileObjects.forSourceLines(
+            "some.other.pck.ReferencedType", """
+                package some.other.pck;
+                
+                public interface ReferencedType{
+                }""".trimIndent()
+        )
+
+        val now = LocalDateTime.of(1985, 1, 2, 3, 4, 5, 123000000)
+        @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
+            "some.other.pck.ReferencingTypeAsserter", """
+                package some.other.pck;
+                
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.lang.Class;
+                import javax.annotation.processing.Generated;
+                import org.hamcrest.Matcher;
+                import org.hamcrest.MatcherAssert;
+                import org.hamcrest.Matchers;
+                
+                @Generated(
+                        value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                        date = "$now")
+                public class ReferencingTypeAsserter implements PojoAsserter<ReferencingType>{
+                    private final PojoAssertionBuilder<ReferencingType> pojoAssertionBuilder;
+                
+                    private ReferencingTypeAsserter(final ReferencingType base) {
+                        this(new PojoAssertionBuilder<ReferencingType>(base, Collections.emptyList(), "ReferencingType"));
+                    }
+                
+                    private ReferencingTypeAsserter(final PojoAssertionBuilder<ReferencingType> pojoAssertionBuilder) {
+                        this.pojoAssertionBuilder = pojoAssertionBuilder;
+                    }
+                
+                    public static ReferencingTypeAsserter prepareFor(final ReferencingType base) {
+                        return new ReferencingTypeAsserter(base);
+                    }
+                
+                    public ReferencingTypeAsserter with(final AssertionCallback<ReferencingType> assertionCallback) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                    }
+                    
+                    public ReferencingTypeAsserter matches(final Matcher<? super ReferencingType> matcher) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                    }
+                    
+                    public ReferencingTypeAsserter withSomeProp(final AssertionCallback<ReferencedType> assertionCallback) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("someProp", base -> assertionCallback.assertFor(base.getSomeProp;
+                    }
+                    
+                    public ReferencingTypeAsserter hasSomeProp(final ReferencedType value) {
+                        return hasSomeProp(Matchers.equalTo(value));
+                    }
+                    
+                    public ReferencingTypeAsserter hasSomeProp(final Matcher<? super ReferencedType> matcher) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("someProp", matcher))));
+                    }
+                    
+                    public SomePojoAsserter<T> hasSomeProp(final Function<ReferencedTypeAsserter,ReferencedTypeAsserter> asserterFunction) {
+                        return new SomePojoAsserter<T>(pojoAssertionBuilder.add("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
+                    }
+                    
+                    public void assertToFirstFail() {
+                        pojoAssertionBuilder.assertToFirstFail();
+                    }
+                
+                    public void assertAll() {
+                        pojoAssertionBuilder.assertAll();
+                    }
+                }""".trimIndent()
+        )
+
+        // Execution
+        Truth.assert_()
+            .about(JavaSourcesSubjectFactory.javaSources())
+            .that(listOf(configurationClass, referencingType))
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
             .compilesWithoutWarnings()
