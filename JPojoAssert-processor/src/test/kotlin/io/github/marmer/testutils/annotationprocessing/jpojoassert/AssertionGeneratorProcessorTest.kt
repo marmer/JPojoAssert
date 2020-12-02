@@ -166,10 +166,12 @@ internal class AssertionGeneratorProcessorTest {
         @Language("JAVA") val expectedOutput = JavaFileObjects.forSourceString(
             "some.other.pck.ReferencingTypeAsserter", """
                 package some.other.pck;
-                
+
+                import io.github.marmer.testutils.annotationprocessing.jpojoassert.Asserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.util.Collections;
                 import java.lang.Class;
                 import javax.annotation.processing.Generated;
                 import org.hamcrest.Matcher;
@@ -203,7 +205,7 @@ internal class AssertionGeneratorProcessorTest {
                     }
                     
                     public ReferencingTypeAsserter withSomeProp(final AssertionCallback<ReferencedType> assertionCallback) {
-                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("someProp", base -> assertionCallback.assertFor(base.getSomeProp;
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("someProp", base -> assertionCallback.assertFor(base.getSomeProp())));
                     }
                     
                     public ReferencingTypeAsserter hasSomeProp(final ReferencedType value) {
@@ -214,7 +216,7 @@ internal class AssertionGeneratorProcessorTest {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("someProp", matcher))));
                     }
                     
-                    public SomePojoAsserter<T> hasSomeProp(final Function<ReferencedTypeAsserter,ReferencedTypeAsserter> asserterFunction) {
+                    public SomePojoAsserter<T> hasSomeProp(final Function<Asserter<ReferencedType>, Asserter<ReferencedType>> asserterFunction) {
                         return new SomePojoAsserter<T>(pojoAssertionBuilder.add("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
                     }
                     
@@ -231,7 +233,7 @@ internal class AssertionGeneratorProcessorTest {
         // Execution
         Truth.assert_()
             .about(JavaSourcesSubjectFactory.javaSources())
-            .that(listOf(configurationClass, referencingType))
+            .that(listOf(configurationClass, referencingType, referencedType))
             .processedWith(AssertionGeneratorProcessor { now })
             // Assertion
             .compilesWithoutWarnings()
