@@ -106,7 +106,7 @@ class PojoAsserterGenerator(
 
     private fun asserterWillExistFor(property: Property): Boolean {
         val propertyType = processingEnv.typeUtils.asElement(property.boxedType)
-        return propertyType is TypeElement && typesWithAsserters.contains(propertyType)
+        return typesWithAsserters.contains(propertyType)
     }
 
     private fun getPlainAssertionMethodFor(property: Property) =
