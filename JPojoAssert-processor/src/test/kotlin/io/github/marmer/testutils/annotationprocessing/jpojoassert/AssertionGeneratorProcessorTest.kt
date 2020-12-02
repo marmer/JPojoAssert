@@ -136,6 +136,8 @@ internal class AssertionGeneratorProcessorTest {
     fun `when pojos have properties of other types an asserter exists for, a convenience method with an asserer callback should be provided`() {
         // TODO: marmer 02.12.2020 handle existing "asserters"
         // TODO: marmer 02.12.2020 dry run to reduce the risk of failures in generation
+        // TODO: marmer 02.12.2020 Nesting types
+        // TODO: marmer 02.12.2020 Generics
         // Preparation
         @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
             "some.pck.JPojoAssertConfiguration", """
@@ -170,12 +172,11 @@ internal class AssertionGeneratorProcessorTest {
             "some.other.pck.ReferencingTypeAsserter", """
                 package some.other.pck;
 
-                import io.github.marmer.testutils.annotationprocessing.jpojoassert.Asserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
                 import java.util.Collections;
-                import java.lang.Class;
+                import java.util.function.Function;
                 import javax.annotation.processing.Generated;
                 import org.hamcrest.Matcher;
                 import org.hamcrest.MatcherAssert;
@@ -219,8 +220,8 @@ internal class AssertionGeneratorProcessorTest {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("someProp", matcher))));
                     }
                     
-                    public SomePojoAsserter<T> hasSomeProp(final Function<Asserter<ReferencedType>, Asserter<ReferencedType>> asserterFunction) {
-                        return new SomePojoAsserter<T>(pojoAssertionBuilder.add("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
+                    public ReferencingTypeAsserter hasSomeProp(final Function<PojoAsserter<ReferencedType>, PojoAsserter<ReferencedType>> asserterFunction) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
                     }
                     
                     public void assertToFirstFail() {

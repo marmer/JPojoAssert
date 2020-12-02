@@ -23,22 +23,32 @@ class AssertionGeneratorProcessorWorker(
 
         return if (set.contains<GenerateAsserter>()) {
             roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
-                .forEach { generate(it) }
+                .forEach { generate(it, roundEnvironment) }
             true
         } else set.contains<Generated>() &&
                 roundEnvironment.existsAnySelfGeneratedSource()
     }
 
-    private fun generate(configurationType: Element) {
+    private fun generate(configurationType: Element, roundEnvironment: RoundEnvironment) {
         getAllTypeElementsFor(configurationType)
             .forEach {
                 if (it.isSelfGenerated()) {
                     printSkipNoteBecauseOfSelfGenerationFor(it)
                 } else {
-                    PojoAsserterGenerator(processingEnv, it, timeProvider, generatorName).generate()
+                    PojoAsserterGenerator(
+                        processingEnv,
+                        it,
+                        timeProvider,
+                        generatorName,
+                        getTypesWithAsserters(roundEnvironment)
+                    ).generate()
                 }
             }
     }
+
+    private fun getTypesWithAsserters(roundEnvironment: RoundEnvironment): Collection<TypeElement> =
+        roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
+            .flatMap { getAllTypeElementsFor(it) }
 
     private fun getAllTypeElementsFor(configurationType: Element): List<TypeElement> {
         return configurationType

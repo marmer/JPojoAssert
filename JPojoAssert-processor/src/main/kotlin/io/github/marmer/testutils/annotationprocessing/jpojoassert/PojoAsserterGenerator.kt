@@ -7,6 +7,7 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import java.time.LocalDateTime
 import java.util.*
+import java.util.function.Function
 import javax.annotation.processing.Generated
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.*
@@ -15,11 +16,13 @@ import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 
 
+
 class PojoAsserterGenerator(
     private val processingEnv: ProcessingEnvironment,
     private val baseType: TypeElement,
     private val generationTimeStamp: () -> LocalDateTime,
     private val generationMarker: String,
+    private val typesWithAsserters: Collection<TypeElement>
 ) {
     fun generate() = JavaFile.builder(
         baseType.packageElement.toString(),
@@ -53,7 +56,8 @@ class PojoAsserterGenerator(
                     processingEnv,
                     it,
                     generationTimeStamp,
-                    generationMarker
+                    generationMarker,
+                    typesWithAsserters
                 ).getPreparedTypeSpecBuilder()
                     .addModifiers(Modifier.STATIC)
                     .build()
@@ -62,12 +66,46 @@ class PojoAsserterGenerator(
     private fun getPropertyAssertionMethods() =
         baseType.properties
             .flatMap { property ->
-                listOf(
+                listOfNotNull(
                     getPlainAssertionMethodFor(property),
                     getEqualAssertionMethodFor(property),
-                    getMatcherAssertionMethodFor(property)
+                    getMatcherAssertionMethodFor(property),
+                    getReferenceAsserterMethodFor(property)
                 )
             }
+
+    private fun getReferenceAsserterMethodFor(property: Property) =
+        if (asserterWillExistFor(property))
+            methodBuilder("has${property.name.capitalize()}")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(
+                    ParameterizedTypeName.get(
+                        ClassName.get(Function::class.java),
+                        ParameterizedTypeName.get(
+                            ClassName.get(PojoAsserter::class.java),
+                            TypeName.get(property.boxedType)
+                        ),
+                        ParameterizedTypeName.get(
+                            ClassName.get(PojoAsserter::class.java),
+                            TypeName.get(property.boxedType)
+                        )
+                    ),
+                    "asserterFunction",
+                    Modifier.FINAL
+                )
+                .addStatement(
+                    "return new \$T($builderFieldName.add(\$S, base -> asserterFunction.apply(\$T.prepareFor(base.${property.accessor}))))",
+                    getGeneratedTypeName(),
+                    property.name,
+                    property.asserterName
+                )
+                .returns(getGeneratedTypeName())
+                .build()
+        else
+            null
+
+    private fun asserterWillExistFor(property: Property) =
+        typesWithAsserters.contains(property.type.asTypeElement())
 
     private fun getPlainAssertionMethodFor(property: Property) =
         methodBuilder("with${property.name.capitalize()}")
@@ -87,7 +125,6 @@ class PojoAsserterGenerator(
             )
             .returns(getGeneratedTypeName())
             .build()
-
     private fun getEqualAssertionMethodFor(property: Property) =
         methodBuilder("has${property.name.capitalize()}")
             .addModifiers(Modifier.PUBLIC)
@@ -162,11 +199,11 @@ class PojoAsserterGenerator(
         getSoftAssertMethod()
     )
 
-
     private fun getHardAssertMethod() = methodBuilder("assertToFirstFail")
         .addModifiers(Modifier.PUBLIC)
         .addStatement("$builderFieldName.assertToFirstFail()")
         .build()
+
 
     private fun getSoftAssertMethod() = methodBuilder("assertAll")
         .addModifiers(Modifier.PUBLIC)
@@ -227,11 +264,11 @@ class PojoAsserterGenerator(
         Modifier.FINAL
     ).build()
 
-
     private fun getBuilderFieldType() = ParameterizedTypeName.get(
         ClassName.get(PojoAssertionBuilder::class.java),
         baseType.typeName
     )
+
 
     private fun getGeneratedAnnotation() = AnnotationSpec.builder(Generated::class.java)
         .addMember("value", "\$S", generationMarker)
@@ -297,6 +334,13 @@ class PojoAsserterGenerator(
 
     private fun ExecutableElement.hasReturnType() =
         returnType.kind != TypeKind.VOID
+
+    private val Property.asserterName: TypeName
+        get() =
+            ClassName.get(
+                processingEnv.elementUtils.getPackageOf(boxedType.asTypeElement()).toString(),
+                "${type.asTypeElement().simpleName}Asserter"
+            )
 }
 
 data class Property(val name: String, val type: TypeMirror, val accessor: String)
