@@ -81,10 +81,7 @@ class PojoAsserterGenerator(
                 .addParameter(
                     ParameterizedTypeName.get(
                         ClassName.get(Function::class.java),
-                        ParameterizedTypeName.get(
-                            ClassName.get(PojoAsserter::class.java),
-                            TypeName.get(property.boxedType)
-                        ),
+                        property.asserterName,
                         ParameterizedTypeName.get(
                             ClassName.get(PojoAsserter::class.java),
                             TypeName.get(property.boxedType)
@@ -321,16 +318,13 @@ class PojoAsserterGenerator(
     private val Element.isProperty
         get() =
             this is ExecutableElement &&
-                !isPrivate &&
-                hasPropertyPrefix() &&
-                hasReturnType() &&
-                hasNoParameters()
+                    !isPrivate &&
+                    hasPropertyPrefix() &&
+                    hasReturnType() &&
+                    hasNoParameters()
 
     private fun Element.hasPropertyPrefix() =
         simpleName.startsWith("get") || simpleName.startsWith("is")
-
-    private val Element.isPrivate: Boolean
-        get() = modifiers.contains(Modifier.PRIVATE)
 
     private fun ExecutableElement.hasNoParameters() =
         this.parameters.isEmpty()
@@ -339,11 +333,35 @@ class PojoAsserterGenerator(
         returnType.kind != TypeKind.VOID
 
     private val Property.asserterName: TypeName
-        get() =
-            ClassName.get(
-                processingEnv.elementUtils.getPackageOf(boxedType.asTypeElement()).toString(),
-                "${type.asTypeElement().simpleName}Asserter"
-            )
+        get() {
+            val type = type.asTypeElement()
+
+            val nestingTypes: List<TypeElement> = type.toNestingTypes()
+
+            return if (nestingTypes.size > 1)
+                ClassName.get(
+                    processingEnv.elementUtils.getPackageOf(boxedType.asTypeElement()).toString(),
+                    "${nestingTypes[0].simpleName}Asserter",
+                    *nestingTypes
+                        .subList(1, nestingTypes.size)
+                        .map { "${it.simpleName}Asserter" }
+                        .toTypedArray()
+                )
+            else
+                ClassName.get(
+                    processingEnv.elementUtils.getPackageOf(boxedType.asTypeElement()).toString(),
+                    "${type.simpleName}Asserter"
+                )
+        }
 }
 
-data class Property(val name: String, val type: TypeMirror, val accessor: String)
+private fun TypeElement.toNestingTypes(): List<TypeElement> =
+    if (this.enclosingElement is TypeElement)
+        (enclosingElement as TypeElement).toNestingTypes() + this
+    else
+        listOf(this)
+
+private data class Property(val name: String, val type: TypeMirror, val accessor: String)
+
+internal val Element.isPrivate: Boolean
+    get() = modifiers.contains(Modifier.PRIVATE)

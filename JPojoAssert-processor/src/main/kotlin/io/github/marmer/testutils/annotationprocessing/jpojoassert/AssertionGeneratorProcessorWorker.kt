@@ -49,6 +49,23 @@ class AssertionGeneratorProcessorWorker(
     private fun getTypesWithAsserters(roundEnvironment: RoundEnvironment): Collection<TypeElement> =
         roundEnvironment.getElementsAnnotatedWith(GenerateAsserter::class.java)
             .flatMap { getAllTypeElementsFor(it) }
+            .flatMap { expandToNestingTypes(it) }
+            .flatMap { expandToNestedTypes(it) }
+            .distinct()
+
+    private fun expandToNestingTypes(typeElement: TypeElement): List<TypeElement> =
+        if (typeElement.enclosingElement is TypeElement)
+            listOf(typeElement) + expandToNestingTypes(typeElement.enclosingElement as TypeElement)
+        else
+            listOf(typeElement)
+
+    private fun expandToNestedTypes(typeElement: TypeElement): List<TypeElement> =
+        listOf(typeElement) +
+                typeElement.enclosedElements
+                    .filterIsInstance(TypeElement::class.java)
+                    .filterNot(TypeElement::isPrivate)
+                    .flatMap { expandToNestedTypes(it) }
+
 
     private fun getAllTypeElementsFor(configurationType: Element): List<TypeElement> {
         return configurationType

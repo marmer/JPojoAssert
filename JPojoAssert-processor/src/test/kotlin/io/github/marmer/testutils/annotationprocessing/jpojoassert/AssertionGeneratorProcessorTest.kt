@@ -131,12 +131,10 @@ internal class AssertionGeneratorProcessorTest {
             .generatesSources(expectedOutput)
     }
 
-
     @Test
-    fun `when pojos have properties of other types an asserter exists for, a convenience method with an asserer callback should be provided`() {
+    fun `when pojos have properties of other types an asserter exists for, a convenience method with an asserter callback should be provided`() {
         // TODO: marmer 02.12.2020 handle existing "asserters"
         // TODO: marmer 02.12.2020 dry run to reduce the risk of failures in generation
-        // TODO: marmer 02.12.2020 Nesting types
         // TODO: marmer 02.12.2020 Generics
         // Preparation
         @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
@@ -156,6 +154,8 @@ internal class AssertionGeneratorProcessorTest {
                 
                 public interface ReferencingType{
                     ReferencedType getSomeProp();
+                    InnerType getNestedTypeProp();
+                    interface InnerType{}
                 }""".trimIndent()
         )
 
@@ -220,18 +220,74 @@ internal class AssertionGeneratorProcessorTest {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("someProp", matcher))));
                     }
                     
-                    public ReferencingTypeAsserter hasSomeProp(final Function<PojoAsserter<ReferencedType>, PojoAsserter<ReferencedType>> asserterFunction) {
+                    public ReferencingTypeAsserter hasSomeProp(final Function<ReferencedTypeAsserter, PojoAsserter<ReferencedType>> asserterFunction) {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.add("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
                     }
                     
+                    public ReferencingTypeAsserter withNestedTypeProp(final AssertionCallback<ReferencingType.InnerType> assertionCallback) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("nestedTypeProp", base -> assertionCallback.assertFor(base.getNestedTypeProp())));
+                    }
+                    
+                    public ReferencingTypeAsserter hasNestedTypeProp(final ReferencingType.InnerType value) {
+                        return hasNestedTypeProp(Matchers.equalTo(value));
+                    }
+                    
+                    public ReferencingTypeAsserter hasNestedTypeProp(final Matcher<? super ReferencingType.InnerType> matcher) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("nestedTypeProp", matcher))));
+                    }
+
+                    public ReferencingTypeAsserter hasNestedTypeProp(
+                            final Function<InnerTypeAsserter, PojoAsserter<ReferencingType.InnerType>> asserterFunction) {
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("nestedTypeProp", base -> asserterFunction.apply(InnerTypeAsserter.prepareFor(base.getNestedTypeProp()))));
+                    }
+
                     public void assertToFirstFail() {
                         pojoAssertionBuilder.assertToFirstFail();
                     }
-                
+
                     public void assertAll() {
                         pojoAssertionBuilder.assertAll();
                     }
-                }""".trimIndent()
+
+                    @Generated(
+                            value = "io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionGeneratorProcessor",
+                            date = "${now}"
+                    )
+                    public static class InnerTypeAsserter implements PojoAsserter<ReferencingType.InnerType> {
+                        private final PojoAssertionBuilder<ReferencingType.InnerType> pojoAssertionBuilder;
+
+                        private InnerTypeAsserter(final ReferencingType.InnerType base) {
+                            this(new PojoAssertionBuilder<ReferencingType.InnerType> (base, Collections.emptyList(), "InnerType"));
+                        }
+
+                        private InnerTypeAsserter(
+                                final PojoAssertionBuilder<ReferencingType.InnerType> pojoAssertionBuilder) {
+                            this.pojoAssertionBuilder = pojoAssertionBuilder;
+                        }
+
+                        public static InnerTypeAsserter prepareFor(final ReferencingType.InnerType base) {
+                            return new InnerTypeAsserter(base);
+                        }
+
+                        public InnerTypeAsserter with(
+                                final AssertionCallback<ReferencingType.InnerType> assertionCallback) {
+                            return new InnerTypeAsserter(pojoAssertionBuilder.add(assertionCallback));
+                        }
+
+                        public InnerTypeAsserter matches(final Matcher<? super ReferencingType.InnerType> matcher) {
+                            return new InnerTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
+                        }
+
+                        public void assertToFirstFail() {
+                            pojoAssertionBuilder.assertToFirstFail();
+                        }
+
+                        public void assertAll() {
+                            pojoAssertionBuilder.assertAll();
+                        }
+                    }
+                }
+""".trimIndent()
         )
 
         // Execution

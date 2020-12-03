@@ -36,19 +36,19 @@ class SomePojoTest {
 
     @Test
     @DisplayName("Nested asserters")
-    void NestedAsserters()
-            throws Exception {
+    void NestedAsserters() {
         // Preparation
         final SomePojo<String> pojo = new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
         };
         final var assertionError = assertThrows(AssertionError.class,
                 // Execution
-                () -> SomePojoAsserter.prepareFor(pojo)
-                        .hasAddress(it -> it
-                                .hasCity("BadStreed")
-                                .hasStreet("Gotham"))
-                        .hasFirstName("Holge")
-                        .assertAll());
+                () ->
+                        SomePojoAsserter.prepareFor(pojo)
+                                .hasAddress(it -> it
+                                        .hasCity("BadStreed")
+                                        .hasStreet("Gotham"))
+                                .hasFirstName("Holge")
+                                .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("Holge")),
