@@ -12,12 +12,23 @@ class PojoAssertionBuilderJavaTest {
 
     @Test
     @DisplayName("Callbacks should work with java and contain the expected outputs")
-    void assertHard_CallbacksShouldWorkWithJava() {
+    void callbacksShouldWorkWithJava() {
 
         // Preparation
         final PojoAssertionBuilder<SomeType> builder = new PojoAssertionBuilder<>(new SomeType(), emptyList(), "someBaseHeading")
                 .add(it -> assertEquals(43, it.getValue()))
-                .add("someProp", it -> assertEquals(44, it.getValue()));
+                .add("someProp", it -> assertEquals(44, it.getValue()))
+                .add("bla", new PojoAsserter<String>() {
+                    @Override
+                    public void assertToFirstFail() {
+                        throw new UnsupportedOperationException("not implemented yet");
+                    }
+
+                    @Override
+                    public void assertAll() {
+                        fail("totally unexpected Exception of a nested failure");
+                    }
+                });
 
         // Assertion
         final AssertionError assertionError = assertThrows(AssertionError.class, builder::assertAll);
@@ -26,7 +37,8 @@ class PojoAssertionBuilderJavaTest {
                 () -> assertThat(assertionError.toString(), containsString("43")),
                 () -> assertThat(assertionError.toString(), containsString("44")),
                 () -> assertThat(assertionError.toString(), containsString("someProp")),
-                () -> assertThat(assertionError.toString(), containsString("someBaseHeading"))
+                () -> assertThat(assertionError.toString(), containsString("someBaseHeading")),
+                () -> assertThat(assertionError.toString(), containsString("totally unexpected Exception of a nested failure"))
         );
     }
 
