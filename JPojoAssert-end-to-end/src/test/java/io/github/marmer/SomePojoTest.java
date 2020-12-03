@@ -53,7 +53,8 @@ class SomePojoTest {
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("Holge")),
                 () -> assertThat(assertionError.toString(), containsString("BadStreed")),
-                () -> assertThat(assertionError.toString(), containsString("Gotham"))
+                () -> assertThat(assertionError.toString(), containsString("Gotham")),
+                () -> assertThat(assertionError.toString(), containsString("address"))
         );
     }
 
