@@ -221,7 +221,7 @@ internal class AssertionGeneratorProcessorTest {
                     }
                     
                     public ReferencingTypeAsserter hasSomeProp(final Function<ReferencedTypeAsserter, PojoAsserter<ReferencedType>> asserterFunction) {
-                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.addAsserter("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
                     }
                     
                     public ReferencingTypeAsserter withNestedTypeProp(final AssertionCallback<ReferencingType.InnerType> assertionCallback) {
@@ -238,7 +238,7 @@ internal class AssertionGeneratorProcessorTest {
 
                     public ReferencingTypeAsserter hasNestedTypeProp(
                             final Function<InnerTypeAsserter, PojoAsserter<ReferencingType.InnerType>> asserterFunction) {
-                        return new ReferencingTypeAsserter(pojoAssertionBuilder.add("nestedTypeProp", base -> asserterFunction.apply(InnerTypeAsserter.prepareFor(base.getNestedTypeProp()))));
+                        return new ReferencingTypeAsserter(pojoAssertionBuilder.addAsserter("nestedTypeProp", base -> asserterFunction.apply(InnerTypeAsserter.prepareFor(base.getNestedTypeProp()))));
                     }
 
                     public void assertToFirstFail() {

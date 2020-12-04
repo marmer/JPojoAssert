@@ -91,7 +91,7 @@ class PojoAsserterGenerator(
                     Modifier.FINAL
                 )
                 .addStatement(
-                    "return new \$T($builderFieldName.add(\$S, base -> asserterFunction.apply(\$T.prepareFor(base.${property.accessor}))))",
+                    "return new \$T($builderFieldName.addAsserter(\$S, base -> asserterFunction.apply(\$T.prepareFor(base.${property.accessor}))))",
                     getGeneratedTypeName(),
                     property.name,
                     property.asserterName

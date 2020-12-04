@@ -18,7 +18,7 @@ class PojoAssertionBuilderJavaTest {
         final PojoAssertionBuilder<SomeType> builder = new PojoAssertionBuilder<>(new SomeType(), emptyList(), "someBaseHeading")
                 .add(it -> assertEquals(43, it.getValue()))
                 .add("someProp", it -> assertEquals(44, it.getValue()))
-                .add("bla", new PojoAsserter<String>() {
+                .addAsserter("bla", new PojoAsserter<String>() {
                     @Override
                     public void assertToFirstFail() {
                         throw new UnsupportedOperationException("not implemented yet");
