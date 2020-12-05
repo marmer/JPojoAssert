@@ -16,16 +16,16 @@ class SomePojoTest {
     void simpleAssertions() {
         // Preparation
         final var assertionError = assertThrows(AssertionError.class,
-                // Execution
-                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
+            // Execution
+            () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address<>("x", "y", "x")) {
+            })
+                .with(it -> assertEquals("HelgeX", it.getFirstName(), "firstName"))
+                .with(it -> {
+                    throw new Exception("Fancy Exception");
                 })
-                        .with(it -> assertEquals("HelgeX", it.getFirstName(), "firstName"))
-                        .with(it -> {
-                            throw new Exception("Fancy Exception");
-                        })
-                        .withFirstName(it -> assertEquals("HelgeY", it))
-                        .withTitles(it -> assertThat(it, contains("Prof.", "Dr.")))
-                        .assertAll());
+                .withFirstName(it -> assertEquals("HelgeY", it))
+                .withTitles(it -> assertThat(it, contains("Prof.", "Dr.")))
+                .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("HelgeX")),
@@ -38,17 +38,17 @@ class SomePojoTest {
     @DisplayName("Nested asserters")
     void NestedAsserters() {
         // Preparation
-        final SomePojo<String> pojo = new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
+        final SomePojo<String> pojo = new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address<>("x", "y", "x")) {
         };
         final var assertionError = assertThrows(AssertionError.class,
-                // Execution
-                () ->
-                        SomePojoAsserter.prepareFor(pojo)
-                                .hasAddress(it -> it
-                                        .hasCity("BadStreed")
-                                        .hasStreet("Gotham"))
-                                .hasFirstName("Holge")
-                                .assertAll());
+            // Execution
+            () ->
+                SomePojoAsserter.prepareFor(pojo)
+                    .hasAddress(it -> it
+                        .hasCity("BadStreed")
+                        .hasStreet("Gotham"))
+                    .hasFirstName("Holge")
+                    .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("Holge")),
@@ -64,10 +64,10 @@ class SomePojoTest {
         // Preparation
 
         final var assertionError = assertThrows(AssertionError.class,
-                // Execution
-                () -> AddressAsserter.prepareFor(new SomePojo.Address("Smurf Village", "Mushroom"))
-                        .hasCity("Somewhere")
-                        .assertAll());
+            // Execution
+            () -> AddressAsserter.prepareFor(new SomePojo.Address<>("Smurf Village", "Mushroom", "X"))
+                .hasCity("Somewhere")
+                .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("Smurf Village")),
@@ -81,17 +81,17 @@ class SomePojoTest {
     void typeAndPropertyNamesWithiErrorMessages() {
         // Preparation
         final var assertionError = assertThrows(AssertionError.class,
-                // Execution
-                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
+            // Execution
+            () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address<>("x", "y", "x")) {
+            })
+                .with(it -> assertEquals("HelgeX", it.getFirstName()))
+                .with(it -> {
+                    throw new Exception("Fancy Exception");
                 })
-                        .with(it -> assertEquals("HelgeX", it.getFirstName()))
-                        .with(it -> {
-                            throw new Exception("Fancy Exception");
-                        })
-                        .withFirstName(it -> assertEquals("HelgeY", it))
-                        .matches(hasProperty("notExistingProp"))
-                        .withTitles(it -> assertThat(it, contains("Prof.", "Dr.", "Dr.")))
-                        .assertAll());
+                .withFirstName(it -> assertEquals("HelgeY", it))
+                .matches(hasProperty("notExistingProp"))
+                .withTitles(it -> assertThat(it, contains("Prof.", "Dr.", "Dr.")))
+                .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("SomePojo")),
@@ -106,13 +106,13 @@ class SomePojoTest {
     void conveniencePropertyComparisonMethodsShouldWorkAsExpected() {
         // Preparation
         final var assertionError = assertThrows(AssertionError.class,
-                // Execution
-                () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address("x", "y")) {
-                })
-                        .hasTitles(contains("Prof."))
-                        .hasFirstName("Holge")
-                        .hasClass(SomePojo.class)
-                        .assertAll());
+            // Execution
+            () -> SomePojoAsserter.prepareFor(new SomePojo<>("Helge", List.of("Prof.", "Dr."), new SomePojo.Address<>("x", "y", "x")) {
+            })
+                .hasTitles(contains("Prof."))
+                .hasFirstName("Holge")
+                .hasClass(SomePojo.class)
+                .assertAll());
         // Assertion
         assertAll(
                 () -> assertThat(assertionError.toString(), containsString("Dr.")),

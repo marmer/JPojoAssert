@@ -11,6 +11,7 @@ import java.util.function.Function
 import javax.annotation.processing.Generated
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.*
+import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
@@ -81,7 +82,16 @@ class PojoAsserterGenerator(
                 .addParameter(
                     ParameterizedTypeName.get(
                         ClassName.get(Function::class.java),
-                        property.asserterName,
+                        if (property.boxedType is DeclaredType && (property.boxedType as DeclaredType).typeArguments.isNotEmpty())
+                            ParameterizedTypeName.get(
+                                property.asserterName,
+                                *(property.boxedType as DeclaredType)
+                                    .typeArguments
+                                    .map { TypeName.get(it) }
+                                    .toTypedArray()
+                            )
+                        else
+                            property.asserterName,
                         ParameterizedTypeName.get(
                             ClassName.get(PojoAsserter::class.java),
                             TypeName.get(property.boxedType)
@@ -332,7 +342,7 @@ class PojoAsserterGenerator(
     private fun ExecutableElement.hasReturnType() =
         returnType.kind != TypeKind.VOID
 
-    private val Property.asserterName: TypeName
+    private val Property.asserterName: ClassName
         get() {
             val type = type.asTypeElement()
 

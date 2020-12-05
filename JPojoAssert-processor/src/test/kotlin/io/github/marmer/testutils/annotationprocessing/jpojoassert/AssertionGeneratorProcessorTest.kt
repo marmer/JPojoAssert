@@ -133,7 +133,6 @@ internal class AssertionGeneratorProcessorTest {
 
     @Test
     fun `when pojos have properties of other types an asserter exists for, a convenience method with an asserter callback should be provided`() {
-        // TODO: marmer 02.12.2020 Generics
         // Preparation
         @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
             "some.pck.JPojoAssertConfiguration", """
@@ -151,7 +150,7 @@ internal class AssertionGeneratorProcessorTest {
                 package some.other.pck;
                 
                 public interface ReferencingType{
-                    ReferencedType getSomeProp();
+                    ReferencedType<String> getSomeProp();
                     InnerType getNestedTypeProp();
                     interface InnerType{}
                 }""".trimIndent()
@@ -161,7 +160,7 @@ internal class AssertionGeneratorProcessorTest {
             "some.other.pck.ReferencedType", """
                 package some.other.pck;
                 
-                public interface ReferencedType{
+                public interface ReferencedType<T>{
                 }""".trimIndent()
         )
 
@@ -173,6 +172,7 @@ internal class AssertionGeneratorProcessorTest {
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.AssertionCallback;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAsserter;
                 import io.github.marmer.testutils.annotationprocessing.jpojoassert.PojoAssertionBuilder;
+                import java.lang.String;
                 import java.util.Collections;
                 import java.util.function.Function;
                 import javax.annotation.processing.Generated;
@@ -206,19 +206,19 @@ internal class AssertionGeneratorProcessorTest {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, matcher)));
                     }
                     
-                    public ReferencingTypeAsserter withSomeProp(final AssertionCallback<ReferencedType> assertionCallback) {
+                    public ReferencingTypeAsserter withSomeProp(final AssertionCallback<ReferencedType<String>> assertionCallback) {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.add("someProp", base -> assertionCallback.assertFor(base.getSomeProp())));
                     }
                     
-                    public ReferencingTypeAsserter hasSomeProp(final ReferencedType value) {
+                    public ReferencingTypeAsserter hasSomeProp(final ReferencedType<String> value) {
                         return hasSomeProp(Matchers.equalTo(value));
                     }
                     
-                    public ReferencingTypeAsserter hasSomeProp(final Matcher<? super ReferencedType> matcher) {
+                    public ReferencingTypeAsserter hasSomeProp(final Matcher<? super ReferencedType<String>> matcher) {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.add(base -> MatcherAssert.assertThat(base, Matchers.hasProperty("someProp", matcher))));
                     }
                     
-                    public ReferencingTypeAsserter hasSomeProp(final Function<ReferencedTypeAsserter, PojoAsserter<ReferencedType>> asserterFunction) {
+                    public ReferencingTypeAsserter hasSomeProp(final Function<ReferencedTypeAsserter<String>, PojoAsserter<ReferencedType<String>>> asserterFunction) {
                         return new ReferencingTypeAsserter(pojoAssertionBuilder.addAsserter("someProp", base -> asserterFunction.apply(ReferencedTypeAsserter.prepareFor(base.getSomeProp()))));
                     }
                     
