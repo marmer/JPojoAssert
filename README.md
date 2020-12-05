@@ -73,13 +73,35 @@ Enjoy some readable compile safe assertions for your configured types:
 
 Changelog
 ---------
+
+### 0.7.0
+
+Feature: Nesting of asserters for improved readability are generated for convenience for all properties related to types
+asserters are generated for.
+
+Assuming you have the following types Person and Address. The following code snipped would perform an assertion all for
+the persons name, and for the fields street and zip of the field address. So, "it" is in this case an "AddressAsserter".
+
+```.java
+    PersonAsserter.prepareFor(person)
+        .hasName("Einstein")
+        .hasAddress(it -> it
+            .hasStreet("Mockstreet 1")
+            .hasZip("12345"))
+        .assertAll()
+```
+
 ### 0.6.0
-Feature: Nested (inner) types can be handled now. Nested types will produce nested asserters if they are accessable somehow
+
+Feature: Nested (inner) types can be handled now. Nested types will produce nested asserters if they are accessable
+somehow
 
 ### 0.5.2
+
 Fixed: Project Homepage
 
 ### 0.5.1
+
 Fixed: Asserters are generated for generated types as well (except for the self generated ones)
 
 ### 0.5.0
