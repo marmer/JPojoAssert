@@ -36,10 +36,13 @@ class PojoAssertionBuilder<T>(
         )
 
     @JvmOverloads
-    fun addAsserter(additionalHeading: String = "", pojoAsserter: PojoAsserter<*>): PojoAssertionBuilder<T> =
+    fun addAsserter(
+        additionalHeading: String = "",
+        pojoAssertionCallback: (T) -> PojoAsserter<*>
+    ): PojoAssertionBuilder<T> =
         PojoAssertionBuilder(
             pojo,
-            assertionConfigurations + AssertionConfiguration(pojoAsserter, additionalHeading),
+            assertionConfigurations + AssertionConfiguration(pojoAssertionCallback(pojo), additionalHeading),
             heading
         )
 

@@ -133,8 +133,6 @@ internal class AssertionGeneratorProcessorTest {
 
     @Test
     fun `when pojos have properties of other types an asserter exists for, a convenience method with an asserter callback should be provided`() {
-        // TODO: marmer 02.12.2020 handle existing "asserters"
-        // TODO: marmer 02.12.2020 dry run to reduce the risk of failures in generation
         // TODO: marmer 02.12.2020 Generics
         // Preparation
         @Language("JAVA") val configurationClass = JavaFileObjects.forSourceLines(
