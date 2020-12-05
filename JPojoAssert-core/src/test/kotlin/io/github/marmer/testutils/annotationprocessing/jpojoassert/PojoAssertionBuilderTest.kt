@@ -136,6 +136,66 @@ internal class PojoAssertionBuilderTest {
     }
 
     @Test
+    fun `on soft asserts the inner soft asserts should be called`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(Type1(42))
+            .addAsserter("outerHeading") {
+                object : PojoAsserter<Type1> {
+                    override fun assertToFirstFail() {
+                        throw RuntimeException("totally unexpected so ... not fun")
+                    }
+
+                    override fun assertAll() {
+                        throw RuntimeException("a little expected inner fun ${it.value}")
+                    }
+
+                }
+            }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) {
+            builder.assertAll()
+        }
+
+        // Assertion
+        assertAll(
+            { assertThat(result.message, containsString("outerHeading")) },
+            { assertThat(result.message, containsString("a little expected inner fun 42")) },
+            { assertThat(result.message, not(containsString("totally unexpected so ... not fun"))) }
+        )
+    }
+
+    @Test
+    fun `on hard asserts the inner hard asserts should be called`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(Type1(42))
+            .addAsserter("outerHeading") {
+                object : PojoAsserter<Type1> {
+                    override fun assertToFirstFail() {
+                        throw RuntimeException("a little expected inner fun ${it.value}")
+                    }
+
+                    override fun assertAll() {
+                        throw RuntimeException("totally unexpected so ... not fun")
+                    }
+
+                }
+            }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) {
+            builder.assertToFirstFail()
+        }
+
+        // Assertion
+        assertAll(
+            { assertThat(result.message, containsString("outerHeading")) },
+            { assertThat(result.message, containsString("a little expected inner fun 42")) },
+            { assertThat(result.message, not(containsString("totally unexpected so ... not fun"))) }
+        )
+    }
+
+    @Test
     fun `on hard asserts a given heading should be used for the assertion error`() {
         // Preparation
         val builder = PojoAssertionBuilder(pojo = Type1(42), heading = "Some nice Failure Heading")
