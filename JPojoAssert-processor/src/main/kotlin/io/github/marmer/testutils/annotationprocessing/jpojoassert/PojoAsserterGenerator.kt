@@ -76,25 +76,25 @@ class PojoAsserterGenerator(
             }
 
     private fun getReferenceAsserterMethodFor(property: Property) =
-        if (asserterWillExistFor(property))
+        if (asserterWillExistFor(property)) {
+            val propertyType = property.boxedType as DeclaredType
             methodBuilder("has${property.name.capitalize()}")
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(
                     ParameterizedTypeName.get(
                         ClassName.get(Function::class.java),
-                        if (property.boxedType is DeclaredType && (property.boxedType as DeclaredType).typeArguments.isNotEmpty())
+                        if (propertyType.typeArguments.isNotEmpty())
                             ParameterizedTypeName.get(
                                 property.asserterName,
-                                *(property.boxedType as DeclaredType)
+                                *propertyType
                                     .typeArguments
                                     .map { TypeName.get(it) }
-                                    .toTypedArray()
-                            )
+                                    .toTypedArray())
                         else
                             property.asserterName,
                         ParameterizedTypeName.get(
                             ClassName.get(PojoAsserter::class.java),
-                            TypeName.get(property.boxedType)
+                            TypeName.get(propertyType)
                         )
                     ),
                     "asserterFunction",
@@ -108,7 +108,7 @@ class PojoAsserterGenerator(
                 )
                 .returns(getGeneratedTypeName())
                 .build()
-        else
+        } else
             null
 
     private fun asserterWillExistFor(property: Property): Boolean {
