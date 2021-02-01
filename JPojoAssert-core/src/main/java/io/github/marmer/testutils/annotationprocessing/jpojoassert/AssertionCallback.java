@@ -10,7 +10,7 @@ public interface AssertionCallback<T> {
     /**
      * Prepares a lazy assertion.
      *
-     * @param value Vallue used for the assertion
+     * @param value Value used for the assertion
      * @throws Exception Is allowed to throw any kind of exception. Is handled by the evaluating asserter
      */
     @SuppressWarnings("java:S112")
