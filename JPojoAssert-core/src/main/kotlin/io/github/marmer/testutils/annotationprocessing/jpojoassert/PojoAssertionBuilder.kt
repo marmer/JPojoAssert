@@ -1,6 +1,8 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.opentest4j.MultipleFailuresError
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 private typealias LocalAssertionCallback = (() -> Unit)
 
@@ -34,6 +36,10 @@ class PojoAssertionBuilder<T>(
                     }, additionalHeading),
             heading
         )
+
+    // TODO: marmer 01.02.2021 Add for "hasPropertyName" methods as well
+    fun <P> addForProperty(propertyName: String, assertionCallback: AssertionCallback<P>) =
+        add(propertyName) { assertionCallback.assertFor(getPropertyValue(pojo as Any, propertyName)) }
 
     fun addAsserter(
         additionalHeading: String,
@@ -85,3 +91,13 @@ class PojoAssertionBuilder<T>(
     }
 
 }
+
+// TODO: marmer 01.02.2021 care about transitive inheritance
+// TODO: marmer 01.02.2021 property like methods
+// TODO: marmer 01.02.2021 not existing property
+private fun <P> getPropertyValue(pojo: Any, propertyName: String): P {
+    return (pojo::class.memberProperties.first {
+        it.name === propertyName
+    } as KProperty1<Any, P>).get(pojo)
+}
+

@@ -1479,7 +1479,7 @@ internal class AssertionGeneratorProcessorTest {
 
                                 public InnerPackagePrivateStaticClassAsserter withClass(
                                         final AssertionCallback<Class<?>> assertionCallback) {
-                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.add("class", base -> assertionCallback.assertFor(base.getClass())));
+                                    return new InnerPackagePrivateStaticClassAsserter(pojoAssertionBuilder.addForProperty("class", assertionCallback));
                                 }
 
                                 public InnerPackagePrivateStaticClassAsserter hasClass(final Class<?> value) {
