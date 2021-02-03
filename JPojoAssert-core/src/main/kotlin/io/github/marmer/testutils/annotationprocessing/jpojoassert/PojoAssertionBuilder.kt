@@ -3,6 +3,7 @@ package io.github.marmer.testutils.annotationprocessing.jpojoassert
 import org.opentest4j.MultipleFailuresError
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 private typealias LocalAssertionCallback = (() -> Unit)
 
@@ -96,8 +97,15 @@ class PojoAssertionBuilder<T>(
 // TODO: marmer 01.02.2021 property like methods
 // TODO: marmer 01.02.2021 not existing property
 private fun <P> getPropertyValue(pojo: Any, propertyName: String): P {
-    return (pojo::class.memberProperties.first {
-        it.name === propertyName
-    } as KProperty1<Any, P>).get(pojo)
+    val prop = pojo::class.memberProperties.first {
+        it.name == propertyName
+    } as KProperty1<Any, P>
+    synchronized(pojo) {
+        var accessable = prop.isAccessible
+        prop.isAccessible = true
+        val propValue = prop.get(pojo)
+        prop.isAccessible = accessable
+        return propValue
+    }
 }
 

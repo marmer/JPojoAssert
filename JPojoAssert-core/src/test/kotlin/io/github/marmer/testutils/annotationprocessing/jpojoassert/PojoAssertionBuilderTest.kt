@@ -1,8 +1,7 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -163,6 +162,21 @@ internal class PojoAssertionBuilderTest {
             { assertThat(result.message, containsString("a little expected inner fun 42")) },
             { assertThat(result.message, not(containsString("totally unexpected so ... not fun"))) }
         )
+    }
+
+    @Test
+    fun `it should be possible to perform assertions for properties`() {
+        // Preparation
+        var builder = PojoAssertionBuilder(Type1(42))
+            .addForProperty<Int>("value") {
+                assertThat(it, `is`(42))
+            }
+
+        // Execution
+        builder.assertAll()
+
+        // Assertion
+        fail("Add test for appropriate error message!")
     }
 
     @Test
