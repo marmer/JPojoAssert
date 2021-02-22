@@ -97,7 +97,6 @@ class PojoAssertionBuilder<T>(
 
 // TODO: marmer 22.02.2021 care about extension functions
 // TODO: marmer 22.02.2021 care about extension properties
-// TODO: marmer 22.02.2021 care about java property like methods in kotlin
 private fun <P> getPropertyValue(pojo: Any, propertyName: String): P? {
     val methodProp = pojo::class.memberFunctions.firstOrNull { it.name == "get${propertyName.capitalize()}" }
     if (methodProp != null)

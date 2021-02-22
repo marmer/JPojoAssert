@@ -11,7 +11,9 @@ import kotlin.test.fail
 
 internal class PojoAssertionBuilderTest {
 
-    private data class Type1(val value: Int)
+    private data class Type1(val value: Int) {
+        fun getSomeJavaPropertyLikeValue() = "value of some java property like"
+    }
 
 
     @Test
@@ -205,6 +207,27 @@ internal class PojoAssertionBuilderTest {
             { assertThat(result.message, containsString("Expected Property does not exist: notExistingProp")) },
         )
     }
+
+    @Test
+    fun `it should be possible to perform assertions for java property like methods`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(Type1(42), heading = "someBaseHeading")
+            .addForProperty<String>("someJavaPropertyLikeValue") {
+                assertThat(it, `is`("some wrong value"))
+            }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) { builder.assertAll() }
+
+        // Assertion
+        assertAll(
+            { assertThat(result.message, containsString("someBaseHeading")) },
+            { assertThat(result.message, containsString("some wrong value")) },
+            { assertThat(result.message, containsString("value of some java property like")) },
+            { assertThat(result.message, containsString("someJavaPropertyLikeValue")) },
+        )
+    }
+
 
     @Test
     fun `on hard asserts the inner hard asserts should be called`() {
