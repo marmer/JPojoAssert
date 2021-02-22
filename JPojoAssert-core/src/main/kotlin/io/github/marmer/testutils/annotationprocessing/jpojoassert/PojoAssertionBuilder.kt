@@ -2,6 +2,7 @@ package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.opentest4j.MultipleFailuresError
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
@@ -96,15 +97,30 @@ class PojoAssertionBuilder<T>(
 // TODO: marmer 01.02.2021 care about transitive inheritance
 // TODO: marmer 01.02.2021 property like methods
 // TODO: marmer 01.02.2021 not existing property
+// TODO: marmer 22.02.2021 care about extension functions
+// TODO: marmer 22.02.2021 care about extension properties
+// TODO: marmer 22.02.2021 care about java property like methods in kotlin
 private fun <P> getPropertyValue(pojo: Any, propertyName: String): P {
-    val prop = pojo::class.memberProperties.first {
+    val methodProp = pojo::class.memberFunctions.firstOrNull { it.name == "get${propertyName.capitalize()}" }
+    if (methodProp != null) {
+        synchronized(pojo) {
+            val accessable = methodProp.isAccessible
+            methodProp.isAccessible = true
+            val propValue = methodProp.call(pojo) as P
+            methodProp.isAccessible = accessable
+
+            return propValue
+        }
+    }
+
+    val fieldProp = pojo::class.memberProperties.first {
         it.name == propertyName
     } as KProperty1<Any, P>
     synchronized(pojo) {
-        var accessable = prop.isAccessible
-        prop.isAccessible = true
-        val propValue = prop.get(pojo)
-        prop.isAccessible = accessable
+        val accessable = fieldProp.isAccessible
+        fieldProp.isAccessible = true
+        val propValue = fieldProp.get(pojo)
+        fieldProp.isAccessible = accessable
         return propValue
     }
 }

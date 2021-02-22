@@ -167,16 +167,23 @@ internal class PojoAssertionBuilderTest {
     @Test
     fun `it should be possible to perform assertions for properties`() {
         // Preparation
-        var builder = PojoAssertionBuilder(Type1(42))
+        val builder = PojoAssertionBuilder(Type1(42), heading = "someBaseHeading")
             .addForProperty<Int>("value") {
-                assertThat(it, `is`(42))
+                assertThat(it, `is`(43))
             }
 
         // Execution
-        builder.assertAll()
+        val result = assertThrows(AssertionError::class.java) { builder.assertAll() }
 
         // Assertion
-        fail("Add test for appropriate error message!")
+
+        // Assertion
+        assertAll(
+            { assertThat(result.message, containsString("value")) },
+            { assertThat(result.message, containsString("someBaseHeading")) },
+            { assertThat(result.message, containsString("42")) },
+            { assertThat(result.message, containsString("43")) }
+        )
     }
 
     @Test

@@ -17,15 +17,19 @@ class PojoAssertionBuilderJavaTest {
         // Preparation
         final var builder = new PojoAssertionBuilder<>(new SomeType(), emptyList(), "someBaseHeading")
                 .addForProperty("value", (Integer it) -> {
-                    assertThat(it, is(42));
+                    assertThat(it, is(43));
                 });
 
         // Execution
-        builder.assertAll();
+        final var result = assertThrows(AssertionError.class, builder::assertAll);
 
         // Assertion
-        fail("Finish implementation");
-        fail("Add test for appropriate error message!");
+        assertAll(
+                () -> assertThat(result.getMessage(), containsString("value")),
+                () -> assertThat(result.getMessage(), containsString("someBaseHeading")),
+                () -> assertThat(result.getMessage(), containsString("42")),
+                () -> assertThat(result.getMessage(), containsString("43"))
+        );
     }
 
     @Test
