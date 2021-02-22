@@ -187,6 +187,26 @@ internal class PojoAssertionBuilderTest {
     }
 
     @Test
+    fun `if a requested property does not exist, an appropriate error should be thrown`() {
+        // Preparation
+        val builder = PojoAssertionBuilder(Type1(42), heading = "someBaseHeading")
+            .addForProperty<Int>("notExistingProp") {
+                assertThat(it, `is`(43))
+            }
+
+        // Execution
+        val result = assertThrows(AssertionError::class.java) { builder.assertAll() }
+
+        // Assertion
+
+        // Assertion
+        assertAll(
+            { assertThat(result.message, containsString("someBaseHeading")) },
+            { assertThat(result.message, containsString("Expected Property does not exist: notExistingProp")) },
+        )
+    }
+
+    @Test
     fun `on hard asserts the inner hard asserts should be called`() {
         // Preparation
         val builder = PojoAssertionBuilder(Type1(42))

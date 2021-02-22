@@ -95,22 +95,21 @@ class PojoAssertionBuilder<T>(
 
 }
 
-// TODO: marmer 01.02.2021 care about transitive inheritance
-// TODO: marmer 01.02.2021 property like methods
-// TODO: marmer 01.02.2021 not existing property
 // TODO: marmer 22.02.2021 care about extension functions
 // TODO: marmer 22.02.2021 care about extension properties
 // TODO: marmer 22.02.2021 care about java property like methods in kotlin
 private fun <P> getPropertyValue(pojo: Any, propertyName: String): P? {
     val methodProp = pojo::class.memberFunctions.firstOrNull { it.name == "get${propertyName.capitalize()}" }
-    if (methodProp != null) {
+    if (methodProp != null)
         return getPropertyValue<P>(pojo, methodProp)
-    }
 
-    val fieldProp = pojo::class.memberProperties.first {
+    val fieldProp = pojo::class.memberProperties.firstOrNull {
         it.name == propertyName
-    } as KProperty1<Any, P>
-    return getPropertyValue(pojo, fieldProp)
+    } as KProperty1<Any, P>?
+    if (fieldProp != null)
+        return getPropertyValue(pojo, fieldProp)
+
+    throw AssertionError("Expected Property does not exist: $propertyName")
 }
 
 private fun <P> getPropertyValue(pojo: Any, fieldProp: KProperty1<Any, P>): P? {
