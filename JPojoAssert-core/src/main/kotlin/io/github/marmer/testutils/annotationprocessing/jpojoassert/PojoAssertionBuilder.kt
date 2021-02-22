@@ -1,6 +1,7 @@
 package io.github.marmer.testutils.annotationprocessing.jpojoassert
 
 import org.opentest4j.MultipleFailuresError
+import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
@@ -103,24 +104,32 @@ class PojoAssertionBuilder<T>(
 private fun <P> getPropertyValue(pojo: Any, propertyName: String): P? {
     val methodProp = pojo::class.memberFunctions.firstOrNull { it.name == "get${propertyName.capitalize()}" }
     if (methodProp != null) {
-        synchronized(pojo) {
-            val accessable = methodProp.isAccessible
-            methodProp.isAccessible = true
-            val propValue = methodProp.call(pojo) as P?
-            methodProp.isAccessible = accessable
-
-            return propValue
-        }
+        return getPropertyValue<P>(pojo, methodProp)
     }
 
     val fieldProp = pojo::class.memberProperties.first {
         it.name == propertyName
     } as KProperty1<Any, P>
+    return getPropertyValue(pojo, fieldProp)
+}
+
+private fun <P> getPropertyValue(pojo: Any, fieldProp: KProperty1<Any, P>): P? {
     synchronized(pojo) {
         val accessable = fieldProp.isAccessible
         fieldProp.isAccessible = true
         val propValue = fieldProp.get(pojo)
         fieldProp.isAccessible = accessable
+        return propValue
+    }
+}
+
+private fun <P> getPropertyValue(pojo: Any, methodProp: KFunction<*>): P? {
+    synchronized(pojo) {
+        val accessable = methodProp.isAccessible
+        methodProp.isAccessible = true
+        val propValue = methodProp.call(pojo) as P?
+        methodProp.isAccessible = accessable
+
         return propValue
     }
 }
