@@ -41,6 +41,8 @@ class PojoAssertionBuilder<T>(
         )
 
     // TODO: marmer 01.02.2021 Add for "hasPropertyName" methods as well
+    // TODO: marmer 24.02.2021 care about nice error messages raised by addForProperty
+    // TODO: marmer 24.02.2021 the generated code should use 'addForProperty' and 'hasPropertyName'
     fun <P> addForProperty(propertyName: String, assertionCallback: AssertionCallback<P>) =
         add(propertyName) { assertionCallback.assertFor(getPropertyValue(pojo as Any, propertyName)) }
 
@@ -95,8 +97,6 @@ class PojoAssertionBuilder<T>(
 
 }
 
-// TODO: marmer 22.02.2021 care about extension functions
-// TODO: marmer 22.02.2021 care about extension properties
 private fun <P> getPropertyValue(pojo: Any, propertyName: String): P? {
     val methodProp = pojo::class.memberFunctions.firstOrNull { it.name == "get${propertyName.capitalize()}" }
     if (methodProp != null)
